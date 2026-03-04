@@ -1,0 +1,18 @@
+{
+  "iterations": 300,
+  "pil_final": {
+    "welfare": 78.25720977783203,
+    "epsilon_total": 10.56884479522705,
+    "kl": 8680.7392578125,
+    "ic_violation": 0.01711609959602356,
+    "ir_violation": 0.0
+  },
+  "dpmac_final": {
+    "welfare": -84.96221923828125,
+    "epsilon_total": 1.0,
+    "kl": 15553436.0,
+    "sigma2": 1324.1223067912506,
+    "dp_condition_satisfied": 1.0
+  },
+  "delta_welfare_pil_minus_dpmac": 163.21942901611328
+}
