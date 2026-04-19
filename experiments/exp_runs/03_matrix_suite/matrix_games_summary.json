@@ -1,0 +1,73 @@
+{
+  "games": {
+    "binary_sum": {
+      "pil": {
+        "mean_final_reward": 0.6837401191393534,
+        "std_final_reward": 0.03423131295743152,
+        "mean_final_error": 0.31625988086064655,
+        "std_final_error": 0.034231312957431516
+      },
+      "dpmac": {
+        "mean_final_reward": 0.6696000695228577,
+        "std_final_reward": 0.01111763227839658,
+        "mean_final_error": 0.33039990067481995,
+        "std_final_error": 0.011117674414022219
+      },
+      "i2c": {
+        "mean_final_reward": 0.6787883440653483,
+        "std_final_reward": 0.0059446555415703685,
+        "mean_final_error": 0.32121161619822186,
+        "std_final_error": 0.005944671920088534
+      },
+      "tarmac": {
+        "mean_final_reward": 0.6964753866195679,
+        "std_final_reward": 0.04774074336113482,
+        "mean_final_error": 0.3035246431827545,
+        "std_final_error": 0.04774074330591135
+      },
+      "maddpg": {
+        "mean_final_reward": 0.7011186281840006,
+        "std_final_reward": 0.04641032917746787,
+        "mean_final_error": 0.2988813817501068,
+        "std_final_error": 0.04641031514010835
+      }
+    },
+    "multi_round_sum": {
+      "pil": {
+        "mean_final_reward": 0.7047304113705953,
+        "std_final_reward": 0.003452769582058126,
+        "mean_final_error": 0.29526960849761963,
+        "std_final_error": 0.0034527673246926285
+      },
+      "dpmac": {
+        "mean_final_reward": 0.7083800435066223,
+        "std_final_reward": 0.0006225966034096717,
+        "mean_final_error": 0.2916199366251628,
+        "std_final_error": 0.0006225922677275066
+      },
+      "i2c": {
+        "mean_final_reward": 0.7039698163668314,
+        "std_final_reward": 0.002432161053628251,
+        "mean_final_error": 0.2960301637649536,
+        "std_final_error": 0.0024321471059554987
+      },
+      "tarmac": {
+        "mean_final_reward": 0.7013896902402242,
+        "std_final_reward": 0.00270969635122818,
+        "mean_final_error": 0.29861031969388324,
+        "std_final_error": 0.002709696971711562
+      },
+      "maddpg": {
+        "mean_final_reward": 0.7037482659022013,
+        "std_final_reward": 0.0040180366644831725,
+        "mean_final_error": 0.2962517539660136,
+        "std_final_error": 0.004018071406204618
+      }
+    }
+  },
+  "seeds": [
+    7,
+    11,
+    23
+  ]
+}

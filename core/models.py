@@ -1,83 +1,64 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
 
 
-@dataclass
-class ModelDims:
-    n_agents: int
-    state_dim: int
-    obs_dim: int
-    type_dim: int
-    latent_dim: int
+def build_mlp(input_dim: int, hidden_dim: int, output_dim: int) -> nn.Sequential:
+    return nn.Sequential(
+        nn.Linear(input_dim, hidden_dim),
+        nn.Tanh(),
+        nn.Linear(hidden_dim, hidden_dim),
+        nn.Tanh(),
+        nn.Linear(hidden_dim, output_dim),
+    )
 
 
-class PrivateEncoder(nn.Module):
-    """x_{i,t} = f_phi(theta_i, o_{i,t})."""
+class SenderNet(nn.Module):
+    """Gaussian sender used by each agent."""
 
-    def __init__(self, obs_dim: int, type_dim: int, latent_dim: int) -> None:
+    def __init__(self, input_dim: int, hidden_dim: int, message_dim: int) -> None:
         super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(obs_dim + type_dim, 64),
-            nn.Tanh(),
-            nn.Linear(64, latent_dim),
-        )
+        self.message_dim = message_dim
+        self.context_backbone = build_mlp(input_dim, hidden_dim, hidden_dim)
+        self.context_mean_head = nn.Linear(hidden_dim, message_dim)
+        self.log_std_head = nn.Linear(hidden_dim, message_dim)
+        self.type_scale = nn.Parameter(torch.ones(message_dim))
+        self.type_bias = nn.Parameter(torch.zeros(message_dim))
 
-    def forward(self, obs: torch.Tensor, theta: torch.Tensor) -> torch.Tensor:
-        x = torch.cat([obs, theta], dim=-1)
-        return self.net(x)
+    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        hidden = self.context_backbone(x)
+        theta = x[:, :1]
+        context_mean = self.context_mean_head(hidden)
+        type_component = theta * self.type_scale.view(1, self.message_dim) + self.type_bias.view(1, self.message_dim)
+        mean = type_component + 0.25 * context_mean
+        log_std = torch.clamp(self.log_std_head(hidden), min=-2.5, max=1.0)
+        std = torch.exp(log_std)
+        return mean, std
 
 
-class PrivacyScheduler(nn.Module):
-    """sigma_t^2 = softplus(g_eta(s_t, theta_hat_{t-1})) + sigma_min^2."""
+class PosteriorNet(nn.Module):
+    """Privacy-aware posterior estimator over persistent agent types."""
 
-    def __init__(self, state_dim: int, type_dim: int, sigma_min: float) -> None:
+    def __init__(self, input_dim: int, hidden_dim: int, num_agents: int) -> None:
         super().__init__()
-        self.sigma_min = sigma_min
-        self.net = nn.Sequential(
-            nn.Linear(state_dim + type_dim, 64),
-            nn.ReLU(),
-            nn.Linear(64, 1),
-        )
+        self.backbone = build_mlp(input_dim, hidden_dim, hidden_dim)
+        self.mean_head = nn.Linear(hidden_dim, num_agents)
+        self.log_var_head = nn.Linear(hidden_dim, num_agents)
 
-    def forward(self, state: torch.Tensor, prev_theta_hat: torch.Tensor) -> torch.Tensor:
-        x = torch.cat([state, prev_theta_hat], dim=-1)
-        raw = self.net(x).squeeze(-1)
-        return F.softplus(raw) + self.sigma_min**2
+    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        hidden = self.backbone(x)
+        mean = torch.sigmoid(self.mean_head(hidden))
+        log_var = torch.clamp(self.log_var_head(hidden), min=-4.0, max=1.5)
+        return mean, log_var
 
 
-class TypeEstimator(nn.Module):
-    """theta_hat_t = h_psi(m_{1,t}, ..., m_{N,t})."""
+class ActorNet(nn.Module):
+    """Decentralized continuous actor for each agent."""
 
-    def __init__(self, n_agents: int, latent_dim: int, type_dim: int) -> None:
+    def __init__(self, input_dim: int, hidden_dim: int) -> None:
         super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(n_agents * latent_dim, 64),
-            nn.ReLU(),
-            nn.Linear(64, type_dim),
-        )
+        self.network = build_mlp(input_dim, hidden_dim, 1)
 
-    def forward(self, messages: torch.Tensor) -> torch.Tensor:
-        # messages: [batch, n_agents, latent_dim]
-        flat = messages.reshape(messages.shape[0], -1)
-        return self.net(flat)
-
-
-class TransferMechanism(nn.Module):
-    """c_t = C_omega(theta_hat_t, s_t), returns per-agent transfer vector."""
-
-    def __init__(self, state_dim: int, type_dim: int, n_agents: int) -> None:
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(state_dim + type_dim, 64),
-            nn.Tanh(),
-            nn.Linear(64, n_agents),
-        )
-
-    def forward(self, state: torch.Tensor, theta_hat: torch.Tensor) -> torch.Tensor:
-        inp = torch.cat([state, theta_hat], dim=-1)
-        return self.net(inp)
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return torch.sigmoid(self.network(x))

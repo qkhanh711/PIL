@@ -1,20 +1,45 @@
 from __future__ import annotations
 
-import json
+import argparse
+import sys
+from dataclasses import fields
 from pathlib import Path
 
-from PIL.core.trainer import PILAPSConfig, PILAPSTrainer
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from core.trainer import PILConfig, PILTrainer
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Run the PIL-APS prototype.")
+    for field in fields(PILConfig):
+        parser.add_argument(f"--{field.name}", type=type(field.default), default=field.default)
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=str(ROOT / "experiments" / "pil_aps_metrics.json"),
+        help="Path to the output JSON file.",
+    )
+    return parser
 
 
 def main() -> None:
-    cfg = PILAPSConfig()
-    trainer = PILAPSTrainer(cfg)
-    history = trainer.train(num_iterations=1000, log_every=10)
-
-    out_dir = Path(__file__).resolve().parent
-    out_path = out_dir / "pil_aps_metrics.json"
-    out_path.write_text(json.dumps(history, indent=2), encoding="utf-8")
-    print(f"Saved metrics to: {out_path}")
+    parser = build_parser()
+    args = parser.parse_args()
+    config = PILConfig.from_namespace(args)
+    trainer = PILTrainer(config)
+    results = trainer.run()
+    trainer.save_results(results, args.output)
+    final = results["final"]
+    last = results.get("last", final)
+    print(f"PIL final team reward: {final['team_reward']:.4f}")
+    print(f"PIL final welfare regret: {final['welfare_regret']:.4f}")
+    print(f"PIL final mean epsilon: {sum(final['privacy']['epsilon']) / len(final['privacy']['epsilon']):.4f}")
+    if last and last != final:
+        print(f"PIL last-block team reward: {last['team_reward']:.4f}")
+        print(f"PIL last-block welfare regret: {last['welfare_regret']:.4f}")
 
 
 if __name__ == "__main__":

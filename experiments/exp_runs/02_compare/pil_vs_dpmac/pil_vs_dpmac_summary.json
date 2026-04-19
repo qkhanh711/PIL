@@ -1,0 +1,35 @@
+{
+  "seeds": [
+    7,
+    11,
+    23
+  ],
+  "checkpoint_source": "final",
+  "pil_aps": {
+    "team_reward": 1.6280685663223267,
+    "oracle_team_reward": 1.6299618085225422,
+    "welfare_regret": 0.0018932422002156575,
+    "mean_epsilon": 21.095708284198654,
+    "mean_epsilon_ic": 0.0,
+    "mean_epsilon_ir": 0.0,
+    "mean_kl_distortion": 0.8083835045496622
+  },
+  "dpmac": {
+    "team_reward": 1.6232229868570964,
+    "oracle_team_reward": 1.6248827775319417,
+    "welfare_regret": 0.0016597906748453777,
+    "mean_epsilon": 23.070113457325387,
+    "mean_epsilon_ic": 0.0,
+    "mean_epsilon_ir": 0.0,
+    "mean_kl_distortion": 0.541448732217153
+  },
+  "deltas": {
+    "team_reward": 0.004845579465230232,
+    "oracle_team_reward": 0.005079030990600586,
+    "welfare_regret": 0.0002334515253702798,
+    "mean_epsilon": -1.9744051731267334,
+    "mean_epsilon_ic": 0.0,
+    "mean_epsilon_ir": 0.0,
+    "mean_kl_distortion": 0.2669347723325093
+  }
+}

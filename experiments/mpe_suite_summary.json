@@ -1,0 +1,163 @@
+{
+  "scenarios": {
+    "cn": {
+      "pil": {
+        "mean_final_reward": -23.135039487741196,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 7.570113457325395,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.02836520748037045,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 177.9046525891622,
+        "std_final_kl": 0.0
+      },
+      "dpmac": {
+        "mean_final_reward": -23.216998142485444,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 7.570113457325395,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.03713316026472002,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 188.59102553685508,
+        "std_final_kl": 0.0
+      },
+      "i2c": {
+        "mean_final_reward": -21.90726044953439,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.9841345014649779,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "tarmac": {
+        "mean_final_reward": -23.258617955128607,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.9802167606078873,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "maddpg": {
+        "mean_final_reward": -21.921530300538926,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.0,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      }
+    },
+    "ccn": {
+      "pil": {
+        "mean_final_reward": -37.75018241250393,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 7.570113457325395,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.04365527775542566,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 450.47886453628536,
+        "std_final_kl": 0.0
+      },
+      "dpmac": {
+        "mean_final_reward": -36.38076805788725,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 7.570113457325395,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.02532563468303728,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 654.542713432312,
+        "std_final_kl": 0.0
+      },
+      "i2c": {
+        "mean_final_reward": -30.476344500755353,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.49989471298074445,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "tarmac": {
+        "mean_final_reward": -28.181790135503107,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.4979488241739481,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "maddpg": {
+        "mean_final_reward": -30.21781121042121,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.0,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      }
+    },
+    "pp": {
+      "pil": {
+        "mean_final_reward": 7.5,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 7.570113457325395,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.04731311056355314,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 127.82336128234863,
+        "std_final_kl": 0.0
+      },
+      "dpmac": {
+        "mean_final_reward": 0.0,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 7.570113457325395,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.05684839736600319,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 407.45755626678465,
+        "std_final_kl": 0.0
+      },
+      "i2c": {
+        "mean_final_reward": 5.0,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.9356660220133755,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "tarmac": {
+        "mean_final_reward": 5.0,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.9654028971937386,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "maddpg": {
+        "mean_final_reward": 2.5,
+        "std_final_reward": 0.0,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.0,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      }
+    }
+  },
+  "seeds": [
+    7
+  ]
+}

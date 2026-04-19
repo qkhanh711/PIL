@@ -1,0 +1,165 @@
+{
+  "scenarios": {
+    "cn": {
+      "pil": {
+        "mean_final_reward": -25.01808186736243,
+        "std_final_reward": 2.6439973920162108,
+        "mean_final_epsilon": 11.867611935098692,
+        "std_final_epsilon": 0.0007731443070466749,
+        "mean_final_leakage": 0.03249415132689621,
+        "std_final_leakage": 0.0029316330373121463,
+        "mean_final_kl": 175.00008003658718,
+        "std_final_kl": 21.476665814386543
+      },
+      "dpmac": {
+        "mean_final_reward": -25.09827983291689,
+        "std_final_reward": 2.4414093977247924,
+        "mean_final_epsilon": 12.070113457325396,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.036105281809217245,
+        "std_final_leakage": 0.0029709929407963813,
+        "mean_final_kl": 155.67439245329965,
+        "std_final_kl": 57.26763455727104
+      },
+      "i2c": {
+        "mean_final_reward": -24.724939481697856,
+        "std_final_reward": 2.597210824792841,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.9898185125170379,
+        "std_final_leakage": 0.0040539832976257545,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "tarmac": {
+        "mean_final_reward": -25.30085164166459,
+        "std_final_reward": 2.1542274934318697,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.9765896327746312,
+        "std_final_leakage": 0.012117834403516294,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "maddpg": {
+        "mean_final_reward": -24.304079442730693,
+        "std_final_reward": 2.9752235417082966,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.0,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      }
+    },
+    "ccn": {
+      "pil": {
+        "mean_final_reward": -43.812686647973045,
+        "std_final_reward": 4.662077034022027,
+        "mean_final_epsilon": 11.770111813023751,
+        "std_final_epsilon": 0.0028252857000873894,
+        "mean_final_leakage": 0.03529223526888183,
+        "std_final_leakage": 0.006657798673829459,
+        "mean_final_kl": 349.1836207040151,
+        "std_final_kl": 100.8786533907716
+      },
+      "dpmac": {
+        "mean_final_reward": -44.12735357771703,
+        "std_final_reward": 6.223165278695451,
+        "mean_final_epsilon": 12.070113457325396,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.024526704127807646,
+        "std_final_leakage": 0.006403439112706292,
+        "mean_final_kl": 430.6687908768654,
+        "std_final_kl": 187.34734797314428
+      },
+      "i2c": {
+        "mean_final_reward": -42.986161267904116,
+        "std_final_reward": 8.845778255832082,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.4993741679234431,
+        "std_final_leakage": 0.0004598928355832104,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "tarmac": {
+        "mean_final_reward": -39.47874431746347,
+        "std_final_reward": 8.737337878244896,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.4957687388657388,
+        "std_final_leakage": 0.0024445352790419448,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "maddpg": {
+        "mean_final_reward": -38.21802810524057,
+        "std_final_reward": 6.038873159680689,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.0,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      }
+    },
+    "pp": {
+      "pil": {
+        "mean_final_reward": 4.583333333333333,
+        "std_final_reward": 2.124591463996994,
+        "mean_final_epsilon": 11.879969950938234,
+        "std_final_epsilon": 0.004558492254114401,
+        "mean_final_leakage": 0.03756834850181278,
+        "std_final_leakage": 0.014837830966392795,
+        "mean_final_kl": 163.77833286179438,
+        "std_final_kl": 20.805510210717795
+      },
+      "dpmac": {
+        "mean_final_reward": 0.4166666666666667,
+        "std_final_reward": 0.5892556509887895,
+        "mean_final_epsilon": 12.070113457325396,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.04234405801263364,
+        "std_final_leakage": 0.011567020115967143,
+        "mean_final_kl": 355.5563304403093,
+        "std_final_kl": 213.99770208394395
+      },
+      "i2c": {
+        "mean_final_reward": 4.583333333333333,
+        "std_final_reward": 0.5892556509887896,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.9680267693800256,
+        "std_final_leakage": 0.009660576399168262,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "tarmac": {
+        "mean_final_reward": 1.25,
+        "std_final_reward": 1.0206207261596576,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.9419122459358351,
+        "std_final_leakage": 0.025343101164951438,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      },
+      "maddpg": {
+        "mean_final_reward": 4.166666666666667,
+        "std_final_reward": 3.280836614171588,
+        "mean_final_epsilon": 0.0,
+        "std_final_epsilon": 0.0,
+        "mean_final_leakage": 0.0,
+        "std_final_leakage": 0.0,
+        "mean_final_kl": 0.0,
+        "std_final_kl": 0.0
+      }
+    }
+  },
+  "seeds": [
+    7,
+    11,
+    23
+  ]
+}

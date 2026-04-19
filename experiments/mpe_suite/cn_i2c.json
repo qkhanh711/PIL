@@ -1,0 +1,838 @@
+{
+  "config": {
+    "seed": 7,
+    "device": "cpu",
+    "scenario": "cn",
+    "algorithm": "i2c",
+    "episodes": 100,
+    "eval_episodes": 8,
+    "eval_interval": 10,
+    "max_cycles": 25,
+    "hidden_dim": 64,
+    "critic_hidden_dim": 96,
+    "message_dim": 8,
+    "lr": 0.0003,
+    "critic_lr": 0.0005,
+    "gamma": 0.99,
+    "action_std": 0.15,
+    "privacy_sigma": 0.2,
+    "privacy_sigma_min": 0.05,
+    "privacy_sigma_max": 0.35,
+    "privacy_alpha": 4.0,
+    "delta": 0.0001,
+    "sensitivity": 1.0,
+    "entropy_coef": 0.001,
+    "posterior_loss_coef": 0.15,
+    "planner_bonus_coef": 0.12,
+    "privacy_penalty_coef": 0.05,
+    "message_std_coef": 0.01,
+    "message_clip": 1.0,
+    "grad_clip": 5.0,
+    "total_rho_budget": 9.0,
+    "rho_min": 0.02,
+    "rho_max": 0.45,
+    "lambda_init": 1.0,
+    "lambda_max": 32.0,
+    "benefit_init": 1.0,
+    "uncertainty_weight": 1.0,
+    "error_weight": 1.2,
+    "reward_weight": 0.5,
+    "frontload_factor": 0.2,
+    "type_cost_base": 1.0,
+    "type_cost_scale": 0.35,
+    "noise_std_min": 0.08,
+    "noise_std_max": 1.2,
+    "fixed_baseline_fraction": 1.0
+  },
+  "scenario": "Cooperative Navigation",
+  "algorithm": "i2c",
+  "adaptive_privacy": false,
+  "controlled_agents": [
+    "agent_0",
+    "agent_1",
+    "agent_2"
+  ],
+  "history": [
+    {
+      "episode": 10,
+      "train_episode_reward": -36.34435461402692,
+      "running_train_reward": -28.68670444445932,
+      "loss": 408.1593017578125,
+      "actor_loss": 0.21704068779945374,
+      "critic_loss": 407.9422607421875,
+      "average_episode_reward": -23.362197338622053,
+      "std_episode_reward": 6.814014705655456,
+      "message_norm": [
+        0.32788531318306924,
+        0.33430589556694024,
+        0.295393324047327
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.9925280579444878,
+        0.9909066442890115,
+        0.9541302095540507
+      ],
+      "posterior_error": [
+        0.004296068102121353,
+        0.0023981682024896145,
+        0.00980682298541069
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "episode": 20,
+      "train_episode_reward": -9.2640462835801,
+      "running_train_reward": -26.147832556577963,
+      "loss": 25.406248092651367,
+      "actor_loss": 0.4003113806247711,
+      "critic_loss": 25.005937576293945,
+      "average_episode_reward": -22.63083211247763,
+      "std_episode_reward": 7.4750283100113055,
+      "message_norm": [
+        0.2852990087121725,
+        0.3218454338610172,
+        0.30160961255431173
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.9691613611654837,
+        0.9928476393524567,
+        0.9790884622960438
+      ],
+      "posterior_error": [
+        0.010108325630426407,
+        0.0032049899455159903,
+        0.006365237291902304
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "episode": 30,
+      "train_episode_reward": -22.907202546623402,
+      "running_train_reward": -26.73528553498324,
+      "loss": 142.50265502929688,
+      "actor_loss": 1.2083977460861206,
+      "critic_loss": 141.29425048828125,
+      "average_episode_reward": -23.678218123648037,
+      "std_episode_reward": 6.165370162254581,
+      "message_norm": [
+        0.24030382916331292,
+        0.41023395672440527,
+        0.2780113357305527
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.9887003384143122,
+        0.9979409747646713,
+        0.9953362781944135
+      ],
+      "posterior_error": [
+        0.001908986596390605,
+        0.0018668147968128324,
+        0.0021101702004671097
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "episode": 40,
+      "train_episode_reward": -35.59772930943351,
+      "running_train_reward": -26.065986508396215,
+      "loss": 356.1552429199219,
+      "actor_loss": 1.4280781745910645,
+      "critic_loss": 354.7271728515625,
+      "average_episode_reward": -23.65440802555048,
+      "std_episode_reward": 6.018380631604261,
+      "message_norm": [
+        0.28169546715915206,
+        0.4570728215575218,
+        0.3104311693459749
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.997405244572077,
+        0.9841807939825098,
+        0.9927709486980123
+      ],
+      "posterior_error": [
+        0.002105517080053687,
+        0.0065203164704144,
+        0.0029911580495536327
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "episode": 50,
+      "train_episode_reward": -30.886214069270093,
+      "running_train_reward": -26.73014173663868,
+      "loss": 249.87242126464844,
+      "actor_loss": 2.971010684967041,
+      "critic_loss": 246.9014129638672,
+      "average_episode_reward": -24.746665367630076,
+      "std_episode_reward": 8.438845051076509,
+      "message_norm": [
+        0.374837072044611,
+        0.49358353957533835,
+        0.3758078887313604
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.995994479020761,
+        0.9944437380956579,
+        0.9934681307959291
+      ],
+      "posterior_error": [
+        0.0018333190819248557,
+        0.004032310098409653,
+        0.0027383172418922186
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "episode": 60,
+      "train_episode_reward": -15.65736655177589,
+      "running_train_reward": -21.934697998126484,
+      "loss": 29.89760971069336,
+      "actor_loss": 5.507805347442627,
+      "critic_loss": 24.38980484008789,
+      "average_episode_reward": -22.86920969502598,
+      "std_episode_reward": 6.939147732378312,
+      "message_norm": [
+        0.44950102940201764,
+        0.5387206971645355,
+        0.4505620224773884
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.9928944431762295,
+        0.9557324053231219,
+        0.9904881679465884
+      ],
+      "posterior_error": [
+        0.0029792049899697304,
+        0.009641861543059349,
+        0.0038089915178716183
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "episode": 70,
+      "train_episode_reward": -13.793576403216104,
+      "running_train_reward": -24.762360690868746,
+      "loss": 21.231918334960938,
+      "actor_loss": 7.732631683349609,
+      "critic_loss": 13.499286651611328,
+      "average_episode_reward": -25.55474527171755,
+      "std_episode_reward": 6.519802180788959,
+      "message_norm": [
+        0.7564763827621938,
+        0.6443183188140392,
+        0.57516975030303
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.9937314381064745,
+        0.9978819434984267,
+        0.9815343258176743
+      ],
+      "posterior_error": [
+        0.002755900612100959,
+        0.001419795909896493,
+        0.004616960417479277
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "episode": 80,
+      "train_episode_reward": -21.90296203309536,
+      "running_train_reward": -24.666626936592124,
+      "loss": 44.18102264404297,
+      "actor_loss": 10.152017593383789,
+      "critic_loss": 34.02900314331055,
+      "average_episode_reward": -23.50526222052409,
+      "std_episode_reward": 6.820579738368524,
+      "message_norm": [
+        0.7162431614845991,
+        0.7137782774865626,
+        0.56939220353961
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.9754517234966525,
+        0.977167910164286,
+        0.991955532122011
+      ],
+      "posterior_error": [
+        0.0054813106544315815,
+        0.006155367009341717,
+        0.004280781373381615
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "episode": 90,
+      "train_episode_reward": -29.771119116738454,
+      "running_train_reward": -23.21568764583634,
+      "loss": 80.10261535644531,
+      "actor_loss": 9.179862976074219,
+      "critic_loss": 70.9227523803711,
+      "average_episode_reward": -27.533341500340878,
+      "std_episode_reward": 7.0148352218067656,
+      "message_norm": [
+        1.0129861056804659,
+        0.8981757533550262,
+        0.7068702773749829
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.9797860505300934,
+        0.9987768922128317,
+        0.9494608029817757
+      ],
+      "posterior_error": [
+        0.004412576090544462,
+        0.0010418110759928823,
+        0.005485732574015856
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "episode": 100,
+      "train_episode_reward": -28.314302861087413,
+      "running_train_reward": -23.27706399765609,
+      "loss": 62.50640106201172,
+      "actor_loss": 11.921415328979492,
+      "critic_loss": 50.584983825683594,
+      "average_episode_reward": -21.90726044953439,
+      "std_episode_reward": 7.1441957418597895,
+      "message_norm": [
+        1.0762346789240835,
+        1.1392471390962602,
+        0.807659257054329
+      ],
+      "kl_distortion": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "empirical_leakage": [
+        0.9742649190001154,
+        0.9849660367713685,
+        0.9931725486234498
+      ],
+      "posterior_error": [
+        0.005455917678773403,
+        0.0068994080647826195,
+        0.0038701207377016544
+      ],
+      "posterior_uncertainty": 0.0,
+      "posterior_quality": 0.0,
+      "privacy": {
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "total_rho_spent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "epsilon": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "privacy_price": 0.0,
+      "privacy_rho": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "privacy_sigma": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "best": {
+    "episode": 100,
+    "train_episode_reward": -28.314302861087413,
+    "running_train_reward": -23.27706399765609,
+    "loss": 62.50640106201172,
+    "actor_loss": 11.921415328979492,
+    "critic_loss": 50.584983825683594,
+    "average_episode_reward": -21.90726044953439,
+    "std_episode_reward": 7.1441957418597895,
+    "message_norm": [
+      1.0762346789240835,
+      1.1392471390962602,
+      0.807659257054329
+    ],
+    "kl_distortion": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "empirical_leakage": [
+      0.9742649190001154,
+      0.9849660367713685,
+      0.9931725486234498
+    ],
+    "posterior_error": [
+      0.005455917678773403,
+      0.0068994080647826195,
+      0.0038701207377016544
+    ],
+    "posterior_uncertainty": 0.0,
+    "posterior_quality": 0.0,
+    "privacy": {
+      "sigma": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "total_rho_spent": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "epsilon": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "privacy_price": 0.0,
+    "privacy_rho": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "privacy_sigma": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "last": {
+    "episode": 100,
+    "train_episode_reward": -28.314302861087413,
+    "running_train_reward": -23.27706399765609,
+    "loss": 62.50640106201172,
+    "actor_loss": 11.921415328979492,
+    "critic_loss": 50.584983825683594,
+    "average_episode_reward": -21.90726044953439,
+    "std_episode_reward": 7.1441957418597895,
+    "message_norm": [
+      1.0762346789240835,
+      1.1392471390962602,
+      0.807659257054329
+    ],
+    "kl_distortion": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "empirical_leakage": [
+      0.9742649190001154,
+      0.9849660367713685,
+      0.9931725486234498
+    ],
+    "posterior_error": [
+      0.005455917678773403,
+      0.0068994080647826195,
+      0.0038701207377016544
+    ],
+    "posterior_uncertainty": 0.0,
+    "posterior_quality": 0.0,
+    "privacy": {
+      "sigma": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "total_rho_spent": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "epsilon": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "privacy_price": 0.0,
+    "privacy_rho": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "privacy_sigma": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "checkpoint_selection": "last",
+  "final": {
+    "episode": 100,
+    "train_episode_reward": -28.314302861087413,
+    "running_train_reward": -23.27706399765609,
+    "loss": 62.50640106201172,
+    "actor_loss": 11.921415328979492,
+    "critic_loss": 50.584983825683594,
+    "average_episode_reward": -21.90726044953439,
+    "std_episode_reward": 7.1441957418597895,
+    "message_norm": [
+      1.0762346789240835,
+      1.1392471390962602,
+      0.807659257054329
+    ],
+    "kl_distortion": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "empirical_leakage": [
+      0.9742649190001154,
+      0.9849660367713685,
+      0.9931725486234498
+    ],
+    "posterior_error": [
+      0.005455917678773403,
+      0.0068994080647826195,
+      0.0038701207377016544
+    ],
+    "posterior_uncertainty": 0.0,
+    "posterior_quality": 0.0,
+    "privacy": {
+      "sigma": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "total_rho_spent": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "epsilon": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "privacy_price": 0.0,
+    "privacy_rho": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "privacy_sigma": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}

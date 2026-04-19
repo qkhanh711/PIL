@@ -1,0 +1,4990 @@
+{
+  "runs": [
+    {
+      "config": {
+        "seed": 7,
+        "device": "cpu",
+        "game": "multi_round_sum",
+        "algorithm": "tarmac",
+        "num_agents": 3,
+        "episode_length": 4,
+        "num_blocks": 25,
+        "inner_updates": 50,
+        "train_batch_size": 128,
+        "eval_batch_size": 512,
+        "hidden_dim": 64,
+        "critic_hidden_dim": 96,
+        "message_dim": 4,
+        "lr": 0.003,
+        "critic_lr": 0.004,
+        "max_grad_norm": 5.0,
+        "signal_prob": 0.5,
+        "gamma": 0.95,
+        "posterior_loss_coef": 0.12,
+        "planner_bonus_coef": 0.06,
+        "privacy_penalty_coef": 0.02,
+        "message_std_coef": 0.01,
+        "message_clip": 1.0,
+        "privacy_alpha": 4.0,
+        "delta": 0.0001,
+        "sensitivity": 1.0,
+        "total_rho_budget": 12.0,
+        "rho_min": 0.05,
+        "rho_max": 1.0,
+        "lambda_init": 1.0,
+        "lambda_max": 48.0,
+        "benefit_init": 1.0,
+        "uncertainty_weight": 0.8,
+        "error_weight": 1.1,
+        "reward_weight": 0.25,
+        "frontload_factor": 0.35,
+        "type_cost_base": 1.0,
+        "type_cost_scale": 0.5,
+        "noise_std_min": 0.05,
+        "noise_std_max": 2.5,
+        "fixed_baseline_fraction": 1.0,
+        "privacy_block_length": 4
+      },
+      "game": "multi_round_sum",
+      "algorithm": "tarmac",
+      "history": [
+        {
+          "block": 0,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7030470371246338,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2969529628753662,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5031751990318298,
+            0.5027263760566711,
+            0.5039168000221252
+          ],
+          "message_norm": [
+            1.9450937509536743,
+            1.999995470046997,
+            1.9882326126098633
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2969529628753662,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 1,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.708091139793396,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2919088304042816,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49846339225769043,
+            0.49897632002830505,
+            0.4989239573478699
+          ],
+          "message_norm": [
+            1.9999501705169678,
+            1.9853980541229248,
+            1.9997457265853882
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.291908860206604,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 2,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6969059109687805,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.3030940592288971,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5082897543907166,
+            0.5083891153335571,
+            0.5084271430969238
+          ],
+          "message_norm": [
+            1.995072603225708,
+            1.9992928504943848,
+            1.9996776580810547
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.3030940890312195,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 3,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7036494016647339,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2963506579399109,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5039287209510803,
+            0.5040240287780762,
+            0.5040357112884521
+          ],
+          "message_norm": [
+            1.9948158264160156,
+            1.9999184608459473,
+            1.9998931884765625
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2963505983352661,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 4,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7011498212814331,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2988501489162445,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5040112733840942,
+            0.5040918588638306,
+            0.5041017532348633
+          ],
+          "message_norm": [
+            1.9948396682739258,
+            1.9999274015426636,
+            1.9999363422393799
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2988501787185669,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 5,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7004314661026001,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2995685636997223,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5050281882286072,
+            0.5050995945930481,
+            0.5051073431968689
+          ],
+          "message_norm": [
+            1.9948277473449707,
+            1.9999295473098755,
+            1.9999549388885498
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2995685338973999,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 6,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7158255577087402,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28417450189590454,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49234065413475037,
+            0.4924028813838959,
+            0.49240976572036743
+          ],
+          "message_norm": [
+            1.9948629140853882,
+            1.9999276399612427,
+            1.9999662637710571
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.28417444229125977,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 7,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7068895101547241,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2931104898452759,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.500425398349762,
+            0.500481367111206,
+            0.5004873275756836
+          ],
+          "message_norm": [
+            1.9948267936706543,
+            1.9999216794967651,
+            1.9999727010726929
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2931104898452759,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 8,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.703472912311554,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29652702808380127,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5033970475196838,
+            0.5034440755844116,
+            0.5034496784210205
+          ],
+          "message_norm": [
+            1.9949042797088623,
+            1.9999102354049683,
+            1.9999771118164062
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29652708768844604,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 9,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.719631552696228,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.280368447303772,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4862498342990875,
+            0.48629239201545715,
+            0.4862983226776123
+          ],
+          "message_norm": [
+            1.9948309659957886,
+            1.9998940229415894,
+            1.9999816417694092
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.280368447303772,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 10,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6957805752754211,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30421948432922363,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5128010511398315,
+            0.5128384828567505,
+            0.5128443241119385
+          ],
+          "message_norm": [
+            1.9948272705078125,
+            1.999855399131775,
+            1.999983549118042
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30421942472457886,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 11,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6939577460289001,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30604225397109985,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.514475405216217,
+            0.514510452747345,
+            0.5145155191421509
+          ],
+          "message_norm": [
+            1.994788646697998,
+            1.9997717142105103,
+            1.999985694885254
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30604225397109985,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 12,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.699813723564148,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30018627643585205,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.502005934715271,
+            0.5020358562469482,
+            0.5020402669906616
+          ],
+          "message_norm": [
+            1.9948405027389526,
+            1.999398946762085,
+            1.9999873638153076
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30018627643585205,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 13,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7129982709884644,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28700175881385803,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49434471130371094,
+            0.49438828229904175,
+            0.4943896532058716
+          ],
+          "message_norm": [
+            1.9948865175247192,
+            2.0,
+            1.9999887943267822
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.28700172901153564,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 14,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6853711605072021,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.31462886929512024,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5202853083610535,
+            0.5203229188919067,
+            0.5203248858451843
+          ],
+          "message_norm": [
+            1.9947755336761475,
+            2.0,
+            1.9999902248382568
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.31462883949279785,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 15,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6962785720825195,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.3037213683128357,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5089554786682129,
+            0.5089864134788513,
+            0.508988082408905
+          ],
+          "message_norm": [
+            1.9948234558105469,
+            2.0,
+            1.9999910593032837
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30372142791748047,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 16,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7189539670944214,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2810460031032562,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.489200234413147,
+            0.48922592401504517,
+            0.4892283082008362
+          ],
+          "message_norm": [
+            1.9948647022247314,
+            2.0,
+            1.9999922513961792
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2810460329055786,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 17,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7088826894760132,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2911173105239868,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4952685534954071,
+            0.49529027938842773,
+            0.49529263377189636
+          ],
+          "message_norm": [
+            1.994858741760254,
+            2.0,
+            1.9999932050704956
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2911173105239868,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 18,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6981343030929565,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30186572670936584,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5049829483032227,
+            0.5050029754638672,
+            0.5050050020217896
+          ],
+          "message_norm": [
+            1.994789481163025,
+            2.0,
+            1.9999938011169434
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30186569690704346,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 19,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.712517499923706,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28748250007629395,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49397388100624084,
+            0.49399036169052124,
+            0.49399271607398987
+          ],
+          "message_norm": [
+            1.9948724508285522,
+            2.0,
+            1.9999943971633911
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.28748250007629395,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 20,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7071226835250854,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29287731647491455,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49757081270217896,
+            0.4975857138633728,
+            0.4975878894329071
+          ],
+          "message_norm": [
+            1.9948394298553467,
+            2.0,
+            1.9999946355819702
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29287731647491455,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 21,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6971129179000854,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30288708209991455,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5072164535522461,
+            0.5072301626205444,
+            0.5072318911552429
+          ],
+          "message_norm": [
+            1.994805097579956,
+            2.0,
+            1.9999949932098389
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30288708209991455,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 22,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7029053568840027,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2970946431159973,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5035706162452698,
+            0.5035821795463562,
+            0.5035842061042786
+          ],
+          "message_norm": [
+            1.9948670864105225,
+            2.0,
+            1.9999953508377075
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2970946431159973,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 23,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6968199610710144,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.3031799793243408,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5078719854354858,
+            0.5078825950622559,
+            0.5078843235969543
+          ],
+          "message_norm": [
+            1.9948480129241943,
+            2.0,
+            1.999995470046997
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.3031800389289856,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 24,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7012204527854919,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29877957701683044,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5051202178001404,
+            0.5051301717758179,
+            0.5051316022872925
+          ],
+          "message_norm": [
+            1.9948043823242188,
+            2.0,
+            1.9999958276748657
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29877954721450806,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      ],
+      "final": {
+        "block": 24,
+        "price": 0.0,
+        "rho": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "average_episode_reward": 0.7012204527854919,
+        "oracle_team_reward": 1.0,
+        "prediction_error": 0.29877957701683044,
+        "posterior_nll": 0.0,
+        "posterior_quality": 0.0,
+        "posterior_uncertainty": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "allocation_error": [
+          0.5051202178001404,
+          0.5051301717758179,
+          0.5051316022872925
+        ],
+        "message_norm": [
+          1.9948043823242188,
+          2.0,
+          1.9999958276748657
+        ],
+        "kl_distortion": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "posterior_error": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "welfare_regret": 0.29877954721450806,
+        "privacy": {
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "total_rho_spent": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "config": {
+        "seed": 11,
+        "device": "cpu",
+        "game": "multi_round_sum",
+        "algorithm": "tarmac",
+        "num_agents": 3,
+        "episode_length": 4,
+        "num_blocks": 25,
+        "inner_updates": 50,
+        "train_batch_size": 128,
+        "eval_batch_size": 512,
+        "hidden_dim": 64,
+        "critic_hidden_dim": 96,
+        "message_dim": 4,
+        "lr": 0.003,
+        "critic_lr": 0.004,
+        "max_grad_norm": 5.0,
+        "signal_prob": 0.5,
+        "gamma": 0.95,
+        "posterior_loss_coef": 0.12,
+        "planner_bonus_coef": 0.06,
+        "privacy_penalty_coef": 0.02,
+        "message_std_coef": 0.01,
+        "message_clip": 1.0,
+        "privacy_alpha": 4.0,
+        "delta": 0.0001,
+        "sensitivity": 1.0,
+        "total_rho_budget": 12.0,
+        "rho_min": 0.05,
+        "rho_max": 1.0,
+        "lambda_init": 1.0,
+        "lambda_max": 48.0,
+        "benefit_init": 1.0,
+        "uncertainty_weight": 0.8,
+        "error_weight": 1.1,
+        "reward_weight": 0.25,
+        "frontload_factor": 0.35,
+        "type_cost_base": 1.0,
+        "type_cost_scale": 0.5,
+        "noise_std_min": 0.05,
+        "noise_std_max": 2.5,
+        "fixed_baseline_fraction": 1.0,
+        "privacy_block_length": 4
+      },
+      "game": "multi_round_sum",
+      "algorithm": "tarmac",
+      "history": [
+        {
+          "block": 0,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7052503824234009,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2947496175765991,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5019676685333252,
+            0.5020609498023987,
+            0.500657856464386
+          ],
+          "message_norm": [
+            1.9885448217391968,
+            1.9999430179595947,
+            1.9987986087799072
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2947496175765991,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 1,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7014322280883789,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29856783151626587,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.503746509552002,
+            0.503672182559967,
+            0.503347635269165
+          ],
+          "message_norm": [
+            1.9999996423721313,
+            1.9999972581863403,
+            1.9998201131820679
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2985677719116211,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 2,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6994622349739075,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30053776502609253,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5061004161834717,
+            0.506041944026947,
+            0.5059555172920227
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999964237213135,
+            1.9999364614486694
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30053776502609253,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 3,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7035478353500366,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2964521050453186,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5022618770599365,
+            0.5022154450416565,
+            0.5021787881851196
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999960660934448,
+            1.9999440908432007
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2964521646499634,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 4,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7121078372001648,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28789222240448,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5005221962928772,
+            0.5004839897155762,
+            0.5004652738571167
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999955892562866,
+            1.99994957447052
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2878921627998352,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 5,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7117566466331482,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2882433831691742,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.493588387966156,
+            0.4935561418533325,
+            0.4935467541217804
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999949932098389,
+            1.9999542236328125
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2882433533668518,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 6,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7068890929222107,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2931109070777893,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4969042241573334,
+            0.4968772232532501,
+            0.49687454104423523
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.999994158744812,
+            1.9999587535858154
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2931109070777893,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 7,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7026278376579285,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29737216234207153,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49872729182243347,
+            0.49870413541793823,
+            0.49870574474334717
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999924898147583,
+            1.9999626874923706
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29737216234207153,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 8,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7024381160736084,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2975618839263916,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5062046647071838,
+            0.5061837434768677,
+            0.5061857104301453
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999897480010986,
+            1.9999656677246094
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2975618839263916,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 9,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7113043069839478,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28869569301605225,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49321550130844116,
+            0.4931979775428772,
+            0.49320095777511597
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.999983787536621,
+            1.9999687671661377
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.28869569301605225,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 10,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7115733027458191,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2884267568588257,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4954974055290222,
+            0.49548086524009705,
+            0.4954841732978821
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999585151672363,
+            1.9999709129333496
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2884266972541809,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 11,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6992695331573486,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30073046684265137,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.508455753326416,
+            0.5084373950958252,
+            0.5084423422813416
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999945163726807,
+            1.9999734163284302
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30073046684265137,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 12,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7022291421890259,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2977708578109741,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.501662015914917,
+            0.5016467571258545,
+            0.5016510486602783
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999979734420776,
+            1.9999713897705078
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2977708578109741,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 13,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7088358402252197,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2911641597747803,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4991264045238495,
+            0.4991133213043213,
+            0.49911829829216003
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999964237213135,
+            1.999968409538269
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2911641597747803,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 14,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.699926495552063,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.3000735342502594,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5050548911094666,
+            0.5050430297851562,
+            0.5050474405288696
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999959468841553,
+            1.9999632835388184
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.300073504447937,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 15,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7155004739761353,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28449946641921997,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4905164837837219,
+            0.49050578474998474,
+            0.4905105531215668
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999955892562866,
+            1.99995756149292
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.28449952602386475,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 16,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7196115851402283,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28038841485977173,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.48475369811058044,
+            0.4847440719604492,
+            0.48474806547164917
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.999995231628418,
+            1.9999462366104126
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.28038841485977173,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 17,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7023836374282837,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2976164221763611,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5039187669754028,
+            0.5039099454879761,
+            0.503913938999176
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999947547912598,
+            1.9999282360076904
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2976163625717163,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 18,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7113679051399231,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2886320948600769,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.493123859167099,
+            0.4931155741214752,
+            0.49311959743499756
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.999993920326233,
+            1.9998897314071655
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2886320948600769,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 19,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7097004652023315,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2902994751930237,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49949896335601807,
+            0.4994915723800659,
+            0.49949508905410767
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.999992847442627,
+            1.9997628927230835
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29029953479766846,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 20,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6987683773040771,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30123162269592285,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5086416006088257,
+            0.5086347460746765,
+            0.5086381435394287
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999911785125732,
+            1.996207356452942
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30123162269592285,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 21,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6947884559631348,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30521154403686523,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5116671323776245,
+            0.5116618871688843,
+            0.5116641521453857
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999885559082031,
+            1.9988009929656982
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30521154403686523,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 22,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7015947103500366,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2984052896499634,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5047231912612915,
+            0.5047184228897095,
+            0.5047208070755005
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.999983787536621,
+            1.999658465385437
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2984052896499634,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 23,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.703015923500061,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29698407649993896,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5021061897277832,
+            0.5021016597747803,
+            0.5021037459373474
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999730587005615,
+            1.9997788667678833
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29698407649993896,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 24,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.698158860206604,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.301841139793396,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5076406002044678,
+            0.507636308670044,
+            0.5076385140419006
+          ],
+          "message_norm": [
+            1.999999761581421,
+            1.9999215602874756,
+            1.999828577041626
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.301841139793396,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      ],
+      "final": {
+        "block": 24,
+        "price": 0.0,
+        "rho": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "average_episode_reward": 0.698158860206604,
+        "oracle_team_reward": 1.0,
+        "prediction_error": 0.301841139793396,
+        "posterior_nll": 0.0,
+        "posterior_quality": 0.0,
+        "posterior_uncertainty": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "allocation_error": [
+          0.5076406002044678,
+          0.507636308670044,
+          0.5076385140419006
+        ],
+        "message_norm": [
+          1.999999761581421,
+          1.9999215602874756,
+          1.999828577041626
+        ],
+        "kl_distortion": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "posterior_error": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "welfare_regret": 0.301841139793396,
+        "privacy": {
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "total_rho_spent": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "config": {
+        "seed": 23,
+        "device": "cpu",
+        "game": "multi_round_sum",
+        "algorithm": "tarmac",
+        "num_agents": 3,
+        "episode_length": 4,
+        "num_blocks": 25,
+        "inner_updates": 50,
+        "train_batch_size": 128,
+        "eval_batch_size": 512,
+        "hidden_dim": 64,
+        "critic_hidden_dim": 96,
+        "message_dim": 4,
+        "lr": 0.003,
+        "critic_lr": 0.004,
+        "max_grad_norm": 5.0,
+        "signal_prob": 0.5,
+        "gamma": 0.95,
+        "posterior_loss_coef": 0.12,
+        "planner_bonus_coef": 0.06,
+        "privacy_penalty_coef": 0.02,
+        "message_std_coef": 0.01,
+        "message_clip": 1.0,
+        "privacy_alpha": 4.0,
+        "delta": 0.0001,
+        "sensitivity": 1.0,
+        "total_rho_budget": 12.0,
+        "rho_min": 0.05,
+        "rho_max": 1.0,
+        "lambda_init": 1.0,
+        "lambda_max": 48.0,
+        "benefit_init": 1.0,
+        "uncertainty_weight": 0.8,
+        "error_weight": 1.1,
+        "reward_weight": 0.25,
+        "frontload_factor": 0.35,
+        "type_cost_base": 1.0,
+        "type_cost_scale": 0.5,
+        "noise_std_min": 0.05,
+        "noise_std_max": 2.5,
+        "fixed_baseline_fraction": 1.0,
+        "privacy_block_length": 4
+      },
+      "game": "multi_round_sum",
+      "algorithm": "tarmac",
+      "history": [
+        {
+          "block": 0,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7095726132392883,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29042738676071167,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.495355486869812,
+            0.4945635497570038,
+            0.49519187211990356
+          ],
+          "message_norm": [
+            1.9979584217071533,
+            1.7495152950286865,
+            1.7459408044815063
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29042738676071167,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 1,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7128933668136597,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28710663318634033,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4924417734146118,
+            0.49224892258644104,
+            0.4924769997596741
+          ],
+          "message_norm": [
+            1.999908447265625,
+            1.9989781379699707,
+            1.9999996423721313
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.28710663318634033,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 2,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7009130716323853,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2990869879722595,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5057216882705688,
+            0.5056196451187134,
+            0.5057541728019714
+          ],
+          "message_norm": [
+            1.999804973602295,
+            1.962543249130249,
+            1.999999761581421
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29908692836761475,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 3,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7206916809082031,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2793083190917969,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4873558580875397,
+            0.48729273676872253,
+            0.48738598823547363
+          ],
+          "message_norm": [
+            1.99538254737854,
+            2.0,
+            1.9999996423721313
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2793083190917969,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 4,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6975652575492859,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.30243468284606934,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5089166164398193,
+            0.5088638067245483,
+            0.5089367032051086
+          ],
+          "message_norm": [
+            1.9997925758361816,
+            2.0,
+            1.999999761581421
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.3024347424507141,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 5,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7047178149223328,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29528218507766724,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5025513172149658,
+            0.5025063157081604,
+            0.5025688409805298
+          ],
+          "message_norm": [
+            1.9999090433120728,
+            2.0,
+            1.9999996423721313
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29528218507766724,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 6,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7100391387939453,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2899608612060547,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4972630441188812,
+            0.4972308278083801,
+            0.49727919697761536
+          ],
+          "message_norm": [
+            1.999940037727356,
+            2.0,
+            1.9999996423721313
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2899608612060547,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 7,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7032654285430908,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2967345416545868,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5004081726074219,
+            0.5003775358200073,
+            0.5004234313964844
+          ],
+          "message_norm": [
+            1.999955177307129,
+            2.0,
+            1.9999996423721313
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2967345714569092,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 8,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7031073570251465,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2968926429748535,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5019904375076294,
+            0.5019603967666626,
+            0.5020045042037964
+          ],
+          "message_norm": [
+            1.9999642372131348,
+            2.0,
+            1.999999761581421
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2968926429748535,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 9,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7194477319717407,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28055232763290405,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.48912662267684937,
+            0.4891032576560974,
+            0.48913711309432983
+          ],
+          "message_norm": [
+            1.9999711513519287,
+            2.0,
+            1.9999996423721313
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2805522680282593,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 10,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7037665247917175,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29623350501060486,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5002947449684143,
+            0.5002709627151489,
+            0.5003046989440918
+          ],
+          "message_norm": [
+            1.9999747276306152,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29623347520828247,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 11,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6927298307418823,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.3072701692581177,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5122623443603516,
+            0.5122429132461548,
+            0.5122710466384888
+          ],
+          "message_norm": [
+            1.9999773502349854,
+            2.0,
+            1.9999996423721313
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.3072701692581177,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 12,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7039830088615417,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29601699113845825,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5039646625518799,
+            0.5039472579956055,
+            0.5039732456207275
+          ],
+          "message_norm": [
+            1.9999797344207764,
+            2.0,
+            1.9999996423721313
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29601699113845825,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 13,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.707306444644928,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29269349575042725,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5019608736038208,
+            0.5019446015357971,
+            0.5019686818122864
+          ],
+          "message_norm": [
+            1.9999817609786987,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.292693555355072,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 14,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7076195478439331,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2923804223537445,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49838361144065857,
+            0.4983700215816498,
+            0.49839088320732117
+          ],
+          "message_norm": [
+            1.999983549118042,
+            2.0,
+            1.9999996423721313
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2923804521560669,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 15,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7034913301467896,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2965086102485657,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5026861429214478,
+            0.5026737451553345,
+            0.5026921033859253
+          ],
+          "message_norm": [
+            1.999984622001648,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29650866985321045,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 16,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7107216119766235,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28927841782569885,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4965980350971222,
+            0.49658674001693726,
+            0.49660399556159973
+          ],
+          "message_norm": [
+            1.9999860525131226,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.28927838802337646,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 17,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6974664330482483,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.3025335669517517,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5092000961303711,
+            0.5091902613639832,
+            0.5092055797576904
+          ],
+          "message_norm": [
+            1.9999868869781494,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.3025335669517517,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 18,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7158547639846802,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2841452360153198,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49213993549346924,
+            0.49213117361068726,
+            0.4921444058418274
+          ],
+          "message_norm": [
+            1.999988317489624,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2841452360153198,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 19,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7072627544403076,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2927372455596924,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4982178807258606,
+            0.49820929765701294,
+            0.4982219338417053
+          ],
+          "message_norm": [
+            1.9999890327453613,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2927372455596924,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 20,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.6984537243843079,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.3015463054180145,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5063022971153259,
+            0.5062954425811768,
+            0.5063065886497498
+          ],
+          "message_norm": [
+            1.9999889135360718,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.30154627561569214,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 21,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7150410413742065,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.28495901823043823,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.4943274259567261,
+            0.494320809841156,
+            0.4943313002586365
+          ],
+          "message_norm": [
+            1.9999903440475464,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.28495895862579346,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 22,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7246893644332886,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.2753106653690338,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.48285436630249023,
+            0.48284855484962463,
+            0.4828578233718872
+          ],
+          "message_norm": [
+            1.9999909400939941,
+            2.0,
+            1.9999995231628418
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2753106355667114,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 23,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7013769745826721,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29862305521965027,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.5030915141105652,
+            0.5030857920646667,
+            0.5030947327613831
+          ],
+          "message_norm": [
+            1.9999914169311523,
+            2.0,
+            1.9999992847442627
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.2986230254173279,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "block": 24,
+          "price": 0.0,
+          "rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "average_episode_reward": 0.7047897577285767,
+          "oracle_team_reward": 1.0,
+          "prediction_error": 0.29521024227142334,
+          "posterior_nll": 0.0,
+          "posterior_quality": 0.0,
+          "posterior_uncertainty": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "allocation_error": [
+            0.49953868985176086,
+            0.4995342493057251,
+            0.49954211711883545
+          ],
+          "message_norm": [
+            1.9999914169311523,
+            2.0,
+            1.9999992847442627
+          ],
+          "kl_distortion": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "posterior_error": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "welfare_regret": 0.29521024227142334,
+          "privacy": {
+            "sigma": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "total_rho_spent": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      ],
+      "final": {
+        "block": 24,
+        "price": 0.0,
+        "rho": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sigma": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "average_episode_reward": 0.7047897577285767,
+        "oracle_team_reward": 1.0,
+        "prediction_error": 0.29521024227142334,
+        "posterior_nll": 0.0,
+        "posterior_quality": 0.0,
+        "posterior_uncertainty": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "allocation_error": [
+          0.49953868985176086,
+          0.4995342493057251,
+          0.49954211711883545
+        ],
+        "message_norm": [
+          1.9999914169311523,
+          2.0,
+          1.9999992847442627
+        ],
+        "kl_distortion": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "posterior_error": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "welfare_regret": 0.29521024227142334,
+        "privacy": {
+          "sigma": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "total_rho_spent": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    }
+  ]
+}

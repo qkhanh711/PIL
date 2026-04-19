@@ -1,0 +1,93 @@
+{
+  "seeds": [
+    7,
+    11,
+    23
+  ],
+  "checkpoint_source": "ema_last",
+  "variants": {
+    "default": {
+      "overrides": {},
+      "metrics": {
+        "team_reward": 1.6179957787195842,
+        "oracle_team_reward": 1.625277320543925,
+        "welfare_regret": 0.00728154182434082,
+        "mean_epsilon": 20.77688943717442,
+        "mean_kl_distortion": 1.0405793190002441
+      },
+      "delta_vs_default": {
+        "team_reward": 0.0,
+        "oracle_team_reward": 0.0,
+        "welfare_regret": 0.0,
+        "mean_epsilon": 0.0,
+        "mean_kl_distortion": 0.0
+      }
+    },
+    "soft_contract": {
+      "overrides": {
+        "contract_uncertainty_coef": 0.32,
+        "contract_sigma_coef": 0.12,
+        "contract_price_coef": 0.02
+      },
+      "metrics": {
+        "team_reward": 1.6202476421991985,
+        "oracle_team_reward": 1.625277320543925,
+        "welfare_regret": 0.0050296783447265625,
+        "mean_epsilon": 20.773730008425474,
+        "mean_kl_distortion": 1.0376200940873888
+      },
+      "delta_vs_default": {
+        "team_reward": 0.002251863479614258,
+        "oracle_team_reward": 0.0,
+        "welfare_regret": -0.002251863479614258,
+        "mean_epsilon": -0.0031594287489475903,
+        "mean_kl_distortion": -0.002959224912855385
+      }
+    },
+    "kl_regularized": {
+      "overrides": {
+        "kl_loss_coef": 0.03,
+        "sender_std_coef": 0.04,
+        "rho_max": 0.9
+      },
+      "metrics": {
+        "team_reward": 1.6180829604466755,
+        "oracle_team_reward": 1.625277320543925,
+        "welfare_regret": 0.007194360097249349,
+        "mean_epsilon": 20.78138118668474,
+        "mean_kl_distortion": 0.9917165835698444
+      },
+      "delta_vs_default": {
+        "team_reward": 8.718172709132332e-05,
+        "oracle_team_reward": 0.0,
+        "welfare_regret": -8.718172709147164e-05,
+        "mean_epsilon": 0.004491749510318499,
+        "mean_kl_distortion": -0.04886273543039976
+      }
+    },
+    "balanced": {
+      "overrides": {
+        "kl_loss_coef": 0.025,
+        "contract_uncertainty_coef": 0.3,
+        "contract_sigma_coef": 0.1,
+        "contract_price_coef": 0.02,
+        "sender_std_coef": 0.035,
+        "rho_max": 0.85
+      },
+      "metrics": {
+        "team_reward": 1.6207250356674194,
+        "oracle_team_reward": 1.625277320543925,
+        "welfare_regret": 0.004552284876505534,
+        "mean_epsilon": 20.776451792229917,
+        "mean_kl_distortion": 1.0134036342302957
+      },
+      "delta_vs_default": {
+        "team_reward": 0.0027292569478352124,
+        "oracle_team_reward": 0.0,
+        "welfare_regret": -0.002729256947835286,
+        "mean_epsilon": -0.0004376449445047115,
+        "mean_kl_distortion": -0.02717568476994847
+      }
+    }
+  }
+}

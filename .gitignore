@@ -1,2 +1,8 @@
+DPMAC/
+dpmac*
+PIL*
+__init__.py
 __pycache__/
-__init__*.py
+*.sty
+*.bib
+.vscode/

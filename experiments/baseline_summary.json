@@ -1,0 +1,84 @@
+{
+  "seeds": [
+    7
+  ],
+  "baselines": {
+    "pil": {
+      "label": "PIL-APS",
+      "metrics": {
+        "team_reward": 1.6070910692214966,
+        "oracle_team_reward": 1.610673427581787,
+        "welfare_regret": 0.0035823583602905273,
+        "mean_epsilon": 20.56493121722282,
+        "mean_epsilon_ic": 0.0,
+        "mean_epsilon_ir": 0.0,
+        "mean_kl_distortion": 678.4231567382812
+      }
+    },
+    "dpmac": {
+      "label": "DPMAC",
+      "metrics": {
+        "team_reward": 1.600262999534607,
+        "oracle_team_reward": 1.6031334400177002,
+        "welfare_regret": 0.0028704404830932617,
+        "mean_epsilon": 21.070113457325395,
+        "mean_epsilon_ic": 0.0,
+        "mean_epsilon_ir": 0.0,
+        "mean_kl_distortion": 488.5005391438802
+      }
+    },
+    "i2c": {
+      "label": "I2C",
+      "metrics": {
+        "team_reward": 1.6354224681854248,
+        "oracle_team_reward": 1.6372475624084473,
+        "welfare_regret": 0.001825094223022461,
+        "mean_epsilon": 0.0,
+        "mean_epsilon_ic": 0.0,
+        "mean_epsilon_ir": 0.0,
+        "mean_kl_distortion": 0.0
+      }
+    },
+    "maddpg": {
+      "label": "MADDPG",
+      "metrics": {
+        "team_reward": 1.5909448862075806,
+        "oracle_team_reward": 1.6372475624084473,
+        "welfare_regret": 0.0463026762008667,
+        "mean_epsilon": 0.0,
+        "mean_epsilon_ic": 0.0,
+        "mean_epsilon_ir": 0.0,
+        "mean_kl_distortion": 0.0
+      }
+    }
+  },
+  "pil_deltas": {
+    "dpmac": {
+      "team_reward": 0.0068280696868896484,
+      "oracle_team_reward": 0.007539987564086914,
+      "welfare_regret": 0.0007119178771972656,
+      "mean_epsilon": -0.5051822401025738,
+      "mean_epsilon_ic": 0.0,
+      "mean_epsilon_ir": 0.0,
+      "mean_kl_distortion": 189.92261759440106
+    },
+    "i2c": {
+      "team_reward": -0.028331398963928223,
+      "oracle_team_reward": -0.026574134826660156,
+      "welfare_regret": 0.0017572641372680664,
+      "mean_epsilon": 20.56493121722282,
+      "mean_epsilon_ic": 0.0,
+      "mean_epsilon_ir": 0.0,
+      "mean_kl_distortion": 678.4231567382812
+    },
+    "maddpg": {
+      "team_reward": 0.016146183013916016,
+      "oracle_team_reward": -0.026574134826660156,
+      "welfare_regret": -0.04272031784057617,
+      "mean_epsilon": 20.56493121722282,
+      "mean_epsilon_ic": 0.0,
+      "mean_epsilon_ir": 0.0,
+      "mean_kl_distortion": 678.4231567382812
+    }
+  }
+}

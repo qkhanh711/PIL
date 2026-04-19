@@ -1,0 +1,13 @@
+[INFO] Root: /home/khanh/Khanh_stuff/Inprogress/PIL
+[INFO] Output root: /home/khanh/Khanh_stuff/Inprogress/PIL/experiments/exp_runs
+[INFO] Seeds: 7,11,23
+[INFO] Planned steps: 8
+[INFO] Started at: 2026-04-16 18:54:30
+
+[STEP 1/8] >>> python experiments/run_pil_aps.py --num_blocks 20 --inner_updates 20 --train_batch_size 64 --eval_batch_size 256 --episode_length 8 --hidden_dim 64 --message_dim 2 --output /home/khanh/Khanh_stuff/Inprogress/PIL/experiments/exp_runs/01_single_trainers/pil_aps_metrics.json
+Traceback (most recent call last):
+  File "/home/khanh/Khanh_stuff/Inprogress/PIL/experiments/run_pil_aps.py", line 12, in <module>
+    from core.trainer import PILConfig, PILTrainer
+  File "/home/khanh/Khanh_stuff/Inprogress/PIL/core/trainer.py", line 10, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'

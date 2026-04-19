@@ -1,20 +1,42 @@
 from __future__ import annotations
 
-import json
+import argparse
+import sys
+from dataclasses import fields
 from pathlib import Path
 
-from PIL.core.dpmac_trainer import DPMACConfig, DPMACTrainer
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from core.dpmac_trainer import DPMACTrainer
+from core.trainer import PILConfig
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Run the fixed-privacy DPMAC-style baseline.")
+    for field in fields(PILConfig):
+        parser.add_argument(f"--{field.name}", type=type(field.default), default=field.default)
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=str(ROOT / "experiments" / "dpmac_metrics.json"),
+        help="Path to the output JSON file.",
+    )
+    return parser
 
 
 def main() -> None:
-    cfg = DPMACConfig()
-    trainer = DPMACTrainer(cfg)
-    history = trainer.train(num_iterations=1000, log_every=10)
-
-    out_dir = Path(__file__).resolve().parent
-    out_path = out_dir / "dpmac_metrics.json"
-    out_path.write_text(json.dumps(history, indent=2), encoding="utf-8")
-    print(f"Saved metrics to: {out_path}")
+    parser = build_parser()
+    args = parser.parse_args()
+    config = PILConfig.from_namespace(args)
+    trainer = DPMACTrainer(config)
+    results = trainer.run()
+    trainer.save_results(results, args.output)
+    final = results["final"]
+    print(f"DPMAC final team reward: {final['team_reward']:.4f}")
+    print(f"DPMAC final welfare regret: {final['welfare_regret']:.4f}")
+    print(f"DPMAC final mean epsilon: {sum(final['privacy']['epsilon']) / len(final['privacy']['epsilon']):.4f}")
 
 
 if __name__ == "__main__":

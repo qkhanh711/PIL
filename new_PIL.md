@@ -1,0 +1,786 @@
+# Private Incentive Learning with Adaptive Privacy Scheduling
+
+**Author:** David S. Hippocampus¹
+
+¹ Department of Computer Science, Cranberry-Lemon University, Pittsburgh, PA 15213
+`hippo@cs.cranberry-lemon.edu`
+
+---
+
+## Abstract
+
+Privacy reshapes incentive design in decentralized multi-agent systems because differential-privacy noise distorts type inference, contract design, and social welfare. We study strategic multi-agent environments with persistent private types under differential-privacy constraints, which create a fundamental welfare–privacy tradeoff. We propose Private Incentive Learning with Adaptive Privacy Scheduling (PIL-APS), a framework that treats privacy as a dynamic design variable rather than a fixed constraint. PIL-APS protects each agent's private type $\theta_i$ over agent $i$'s released-message transcript $\tau_i = (m_{i,1}, \ldots, m_{i,T})$ — and, by post-processing, any planner-side quantity computed from $\tau_i$ — through a clipped-Gaussian mechanism combined with a Bayesian Stackelberg privacy-pricing game over MARL. Our main technical contributions are: (i) an exact transcript Rényi-DP guarantee via adaptive clipping, together with a counterexample showing that learning-augmented scheduling without clipping can violate the claimed privacy guarantee when $2\hat C_t < \Delta_t^{\mathrm{true}}$ at some step; (ii) a water-fill theorem that characterizes the unique welfare-optimal per-agent noise schedule as $\rho_t^\star \propto \Delta_t \sqrt{\Phi_t}/a_t$ under a strictly convex discounted-welfare objective, together with an explicit heavy-discount closed form whose correction factor satisfies $1 \le \varphi_t \le 1/\sqrt{1-\gamma}$; (iii) CLIP-LA, a learning-augmented scheduler that is DP-safe by construction (a one-step corollary of (i)) and recovers the schedule of (ii) without requiring the true sensitivity; (iv) welfare-regret and approximate IC/IR bounds in terms of privacy-induced KL distortion; and (v) existence and monotonicity of the pricing equilibrium. Experiments on multi-agent benchmarks confirm the predicted ordering: the water-fill schedule improves welfare over uniform DPMAC noise by up to $+23.4\%$ on pulse-sensitivity scenarios, CLIP-LA improves true MSE by $+6.3\%$ over DPMAC ($p = 0.005$), and the naive non-clipped learning-augmented scheme overspends its claimed privacy budget by factors of 2–23$\times$.
+
+---
+
+## 1. Introduction
+
+Multi-Agent Reinforcement Learning (MARL) has achieved remarkable success in cooperative and decentralized decision-making problems, including robotic coordination and distributed control [Busoniu et al., 2008; Cao et al., 2012]. Modern deep MARL frameworks such as actor–critic and value factorization methods further enable scalable learning in complex environments [Lowe et al., 2017; Rashid et al., 2020; Zhou et al., 2023]. In many real-world platforms, however, agents are strategic and possess private types that influence both individual utilities and collective welfare. Effective coordination therefore requires information sharing, yet revealing private information exposes agents to manipulation and privacy risks. Differential privacy (DP) provides a principled mechanism for limiting information leakage via calibrated noise injection [Dwork, 2025]. Recent work has incorporated DP into MARL and distributed learning to stabilize communication and protect sensitive information [Zhao et al., 2023; Ahmed et al., 2024; Chen et al., 2023].
+
+The central difficulty is that privacy noise does not merely reduce estimation accuracy; it reshapes the incentive landscape. Stronger privacy guarantees protect agents' types, but the induced noise distorts posterior inference and contract evaluation. In dynamic environments, privacy composition further amplifies this distortion across time. As a result, privacy allocation directly affects the feasibility of incentive-compatible (IC) and individually rational (IR) mechanisms. Designing learning, incentives, and privacy independently can therefore lead to suboptimal or unstable equilibria.
+
+Existing approaches typically treat privacy as a fixed ex ante calibration, decoupled from mechanism design, posterior uncertainty, and dynamic welfare optimization. This is too restrictive for strategic settings with persistent private types. The relevant privacy object is not a single message, but the entire released transcript of an episode. Moreover, if types are persistent, privacy has dynamic value: spending more privacy budget early can sharply reduce posterior uncertainty, after which the mechanism can conserve budget by increasing noise later.
+
+In this work, we study Bayesian Markov games with strategic agents under composable differential privacy constraints. We treat privacy as a finite and dynamically allocatable resource characterized through Rényi Differential Privacy (RDP) [Mironov, 2017], which composes additively and enables explicit budgeting [Dwork, 2025]. We quantify privacy-induced information loss using the KL divergence between the effective noisy signaling channel and its non-private optimum. Most importantly, we do not absorb mechanism design into a large black-box RL problem. Instead, we separate the problem into two timescales: an outer Bayesian Stackelberg privacy-pricing game solves for a single scalar mechanism parameter $\lambda$, while an inner MARL loop optimizes decentralized control under the induced privacy mechanism. This makes the incentive layer explicit and reduces the expensive search dimension from a full mechanism network to a one-dimensional price update.
+
+**Contributions.**
+
+- We formulate PIL-APS as a *type-level, per-agent* privacy problem: the object protected is agent $i$'s own released-message transcript $\tau_i = (m_{i,1}, \ldots, m_{i,T})$, together with any planner-side quantity obtained as a post-processing of $\tau_i$. (We do not claim joint-public-transcript privacy — other agents' messages and actions are not functions of $\tau_i$ alone and would require an interactive-composition theorem.) We establish an exact transcript RDP guarantee for the clipped-Gaussian mechanism under adaptive composition (Theorem 1) and exhibit a concrete failure mode for the "unclipped" learning-augmented variant (Theorem 2) in which the actual per-step RDP cost is inflated by $(\Delta^{\mathrm{true}}/(2\hat C))^2$.
+- We characterize the **unique welfare-optimal privacy schedule** as a water-fill formula $\rho_t^\star \propto \Delta_t \sqrt{\Phi_t}/a_t$ (Theorem 3), with the strict convexity of the welfare objective proved via a log-convexity chain (Lemma 1). An explicit $\varphi_t$-decomposition gives a closed-form heavy-discount expression whose correction factor is bounded by $1/\sqrt{1-\gamma}$ (Theorem 4).
+- We introduce **CLIP-LA**, a learning-augmented scheduler (Algorithm 1) that is DP-safe by construction (Theorem 5) and recovers the benefit of knowing the true sensitivity through an adaptive clip bound (Theorem 6).
+- We introduce a Bayesian Stackelberg privacy-pricing game (Proposition 1) that elicits agent-specific budgets; these compose with Theorem 3 to yield the full mechanism. We prove a **privacy-to-welfare regret bound with explicit constant $\kappa = 1$** via a product-channel Bayes chain-rule argument (Theorem 7), derive approximate IC/IR bounds (Corollary 3), show that **truthful signaling survives privatization** as an $\bar\varepsilon$-Bayes–Nash equilibrium with a strict-margin regime (Theorem 8), prove that after reparameterizing the follower problem in purchased information $q_i = B_i(\rho_i)$ the **socially optimal quantity profile is unique with a KKT-characterized implementing price** $\lambda^\star$ (unique under interiority; minimal-price convention on the boundary; Theorem 9) — giving $\mathrm{PoA}^{\mathrm{np}} = 1$ and a privacy-distortion-bounded $\mathrm{PoA}^{\mathrm{priv}}$ (Corollary 4) — and extend the layer to a **vector-price posted-price mechanism over blocks** (Theorem 10). We complete the picture with an explicit **blockwise-contraction tracking theorem** for the alternating game–MARL algorithm, giving local linear convergence under a spectral-radius condition $\rho(A_M) < 1$ on an explicit $2\times 2$ matrix $A_M$ (Proposition 2).
+- We validate the predicted ordering empirically on multi-agent benchmarks with heterogeneous budgets, auditing the DP safety of each schedule and confirming that CLIP-LA matches or exceeds a known-$\Delta$ oracle on true MSE.
+
+---
+
+## 2. Related Works
+
+**Privacy in MARL.**
+Privacy-aware MARL methods typically inject noise into messages, gradients, or local observations to protect sensitive information [Zhao et al., 2023; Ahmed et al., 2024; Chen et al., 2023]. DPMAC [Zhao et al., 2023] is the closest communication-based baseline: it integrates privacy into communication learning through stochastic messages and a privacy-aware receiver, but its privacy level is effectively chosen ex ante for each run. By contrast, PIL-APS treats privacy as an adaptive mechanism variable and couples it with explicit incentive design.
+
+**Differential privacy accounting.**
+Our privacy model builds on RDP composition [Mironov, 2017; Dwork, 2025], adaptive clipping [Andrew et al., 2021], and the broader view that transcript-level guarantees are the relevant object under adaptive interaction. This perspective is especially natural when agent types persist over an episode and the mechanism repeatedly releases messages, transfers, and planner outputs.
+
+**Incentives under privacy.**
+Incentive-aware privacy design has been studied in federated and collaborative settings [Wu et al., 2021; Sim et al., 2023]. PIL-APS differs in two ways. First, it focuses on strategic agents in a Bayesian Markov game rather than a static data-sharing problem. Second, it uses a Bayesian Stackelberg privacy-pricing game to expose the mechanism layer directly, instead of learning the full mechanism only through end-to-end RL.
+
+---
+
+## 3. System Model
+
+### 3.1 Bayesian Decentralized Markov Game
+
+We consider a Bayesian decentralized Markov game with $N$ strategic agents. Each agent $i \in \{1,\dots,N\}$ possesses a private type $\theta_i \in \Theta_i$ drawn from a common prior $\mathcal{P}(\theta)$ and fixed throughout the episode. The environment is defined by the tuple $\langle \mathcal{S}, \{\mathcal{A}_i\}_{i=1}^N, P, r, \gamma \rangle$. At time $t$, the global state is $s_t \in \mathcal{S}$, each agent receives observation $o_{i,t} \sim \mathcal{O}_i(s_t,\theta_i)$, chooses action $a_{i,t} \sim \pi_i(\cdot \mid o_{i,t})$, and the joint action $\mathbf{a}_t$ induces transition $s_{t+1}\sim P(\cdot \mid s_t,\mathbf{a}_t)$ with base reward $r_t=r(s_t,\mathbf{a}_t)$.
+
+### 3.2 Type-Level Transcript Privacy via Adaptive Clipping
+
+We model each agent's release at step $t$ as the composition of a deterministic **clipping** operator and an additive Gaussian noise channel:
+
+$$m_{i,t} \;=\; \mathrm{clip}_{\hat{C}_{i,t}}\!\big(f_{i,t}(\theta_i; \omega_t)\big) + u_{i,t}, \qquad u_{i,t} \stackrel{\mathrm{iid}}{\sim} \mathcal{N}(0,\,\sigma_{i,t}^2\, I_d),$$
+
+where $f_{i,t}$ is agent $i$'s message function (a learned Gaussian encoder, as in Zhao et al., 2023), $\omega_t$ is exogenous randomness, and $\mathrm{clip}_R(v) := v \cdot \min(1, R/\|v\|_2)$ is $\ell_2$-norm clipping to radius $R$. Here $\hat{C}_{i,t}$ is the **clip radius**; clipping to this radius enforces worst-case $\ell_2$-sensitivity $2\hat C_{i,t}$, since two antipodal clipped vectors $v = \hat C_{i,t} e$ and $v' = -\hat C_{i,t} e$ differ by exactly $2\hat C_{i,t}$. The scheduler chooses $\hat{C}_{i,t}$ and $\sigma_{i,t}^2$ from **previously-privatized outputs only** (or pre-scheduled). A key distinction from prior DPMAC-style mechanisms is that the sensitivity bound is **produced by the mechanism** via clipping rather than imposed as an exogenous property of $f_{i,t}$. As Theorem 2 below shows, this distinction is necessary — not cosmetic — for any learning-augmented schedule.
+
+**Definition 1 (Per-agent local transcript DP).**
+For agent $i$, neighboring executions differ only in the persistent private type $\theta_i$ while all other agent types, mechanism parameters, and exogenous randomness are fixed. Let $\tau_i = (m_{i,1}, \ldots, m_{i,T})$ denote the released transcript. The mechanism is $(\epsilon_i, \delta_i)$-DP for agent $i$ if for every measurable $A$ and every $\theta_i \sim \theta_i'$,
+
+$$\mathbb{P}\big(\tau_i(\theta_i) \in A\big) \;\le\; e^{\epsilon_i}\,\mathbb{P}\big(\tau_i(\theta_i') \in A\big) + \delta_i.$$
+
+Time is partitioned into outer blocks $\{\mathcal{B}_k\}_{k=1}^K$. At outer iteration $k$, the planner announces a scalar privacy price $\lambda_k \ge 0$, and each agent chooses a privacy expenditure $\rho_{i,k}$ over $[\rho_{\min}, \min\{\rho_{\max}, b_{i,k}\}]$ where $b_{i,k}$ is the remaining budget. Because clipping to radius $\hat C_{i,t}$ enforces $\ell_2$-sensitivity $2\hat C_{i,t}$ (two diametrically opposite clipped vectors differ by $2\hat C_{i,t}$), the per-step RDP cost of the clipped-Gaussian mechanism is
+
+$$\rho_{i,t} \;:=\; \frac{2\alpha \hat{C}_{i,t}^2}{\sigma_{i,t}^2}, \qquad \sigma_{i,t}^2 \;=\; \frac{2\alpha \hat{C}_{i,t}^2}{\rho_{i,t}}, \qquad \sum_{t \in \mathcal{B}_k} \rho_{i,t} \;=\; \rho_{i,k}.$$
+
+**Theorem 1 (Transcript RDP of the clipped-Gaussian mechanism).**
+Under the clip-and-add-noise mechanism of Section 3.2, with clip bound $\hat{C}_{i,t}$ and noise variance $\sigma_{i,t}^2$ chosen as deterministic functions of $\mathcal{F}_{t-1} = \sigma(m_{i,1}, \ldots, m_{i,t-1})$, the transcript $\tau_i$ is $(\alpha,\, \sum_{t=1}^T \rho_{i,t})$-RDP with respect to $\theta_i$ for any order $\alpha > 1$. Converting to approximate DP,
+
+$$\epsilon_i \;=\; \sum_{t=1}^T \frac{2\alpha \hat{C}_{i,t}^2}{\sigma_{i,t}^2} \;+\; \frac{\log(1/\delta_i)}{\alpha - 1}, \qquad \forall\, \delta_i \in (0,1).$$
+
+If the scheduler satisfies $\sum_t \rho_{i,t} = \bar\rho_i$ by construction, then the total transcript RDP cost equals $\bar\rho_i$ exactly.
+
+*Proof sketch.* Conditioning on $\mathcal{F}_{t-1}$ fixes $(\hat{C}_{i,t}, \sigma_{i,t}^2)$. After clipping to radius $\hat C_{i,t}$, $\ell_2$-sensitivity is bounded by $2\hat{C}_{i,t}$ pointwise; the Gaussian mechanism gives $(\alpha, \rho_{i,t})$-RDP per step. Adaptive composition sums the per-step costs; post-processing preserves the guarantee on any function of $\tau_i$ (in particular, planner-side estimators $q_{\psi,t}$ and contracts that depend on $\theta_i$ only through $\tau_i$). Full proof in Appendix A.1. $\square$
+
+**Remark (scope of the privacy guarantee).** Theorem 1 and Definition 1 are deliberately stated for the *per-agent* released-message transcript $\tau_i$. Post-processing extends this to any planner-side quantity computed from $\tau_i$ alone, but it does *not* automatically cover other agents' future messages, actions, or public states that can depend on $\theta_i$ through the game dynamics (e.g., through agent $j$'s observation of the shared state $s_t$). A joint public-transcript guarantee would require an *interactive*-composition theorem (e.g., Lyu 2022) applied to the whole multi-agent interaction, which is outside the scope of this paper.
+
+**Theorem 2 (Failure of naive learning-augmented scheduling without clipping).**
+Consider the **naive** LA mechanism that uses a learned $\hat{C}_{i,t}$ for allocation but *omits the clipping step*: releases $m_{i,t} = f_{i,t}(\theta_i) + u_{i,t}$ directly with $\sigma_{i,t}^2 = 2\alpha \hat{C}_{i,t}^2 / \rho_{i,t}$. Let $\Delta_{i,t}^{\mathrm{true}} := \sup_{\theta \sim \theta'}\|f_{i,t}(\theta) - f_{i,t}(\theta')\|_2$. Then the actual per-step RDP cost is
+
+$$\rho_{i,t}^{\mathrm{actual}} \;=\; \rho_{i,t} \cdot \left(\frac{\Delta_{i,t}^{\mathrm{true}}}{2\hat{C}_{i,t}}\right)^2.$$
+
+If $2\hat{C}_{i,t} < \Delta_{i,t}^{\mathrm{true}}$ for any $t$, then $\sum_t \rho_{i,t}^{\mathrm{actual}} > \sum_t \rho_{i,t}$, so the transcript is **not** $(\alpha,\, \sum_t \rho_{i,t})$-RDP. Therefore the claimed converted $(\varepsilon,\delta)$-DP certificate with $\varepsilon = \sum_t \rho_{i,t} + \log(1/\delta)/(\alpha-1)$ is not justified.
+
+*Proof sketch.* Direct application of the Gaussian mechanism's tight RDP formula to the unclipped function $f_{i,t}$. Full proof in Appendix A.2. $\square$
+
+**Remark.** Without clipping, $\hat{C}_{i,t}$ is only a scheduler's *estimate*, not an enforced bound. Theorem 1 (via actual clipping) is the principled fix. Section 5 reports an empirical audit confirming that the naive LA can overspend a claimed RDP budget by factors of 2–23$\times$ when the true sensitivity varies over time.
+
+### 3.3 Optimal Information-Gain Water-Fill Schedule (PIL-FL)
+
+Given a sensitivity profile $\{\Delta_{i,t}\}$, or equivalently fixed clip bounds $\{\hat C_{i,t}\}$, and RDP budget $\bar\rho_i$, how should $\sigma_{i,t}^2$ be allocated across time? We restrict to a tractable stylized setting and derive the optimal schedule.
+
+**Setting.** Isotropic prior $\theta_i \sim \mathcal{N}(0, I_d)$; observations $m_{i,t} = \theta_i + \eta_{i,t} + u_{i,t}$ with $\eta_{i,t} \sim \mathcal{N}(0, R_\eta I_d)$, $u_{i,t} \sim \mathcal{N}(0, \sigma_{i,t}^2 I_d)$. Let $v_{i,t} := \mathrm{Tr}(\Sigma_{i,t})/d$ denote per-coordinate posterior variance, evolving by the Kalman recursion
+
+$$v_{i,t}^{-1} \;=\; v_{i,t-1}^{-1} + a_{i,t}^{-1}, \qquad a_{i,t} \;:=\; R_\eta + \sigma_{i,t}^2, \qquad v_{i,0} = 1.$$
+
+The welfare objective is the discounted sum of posterior uncertainties: $W_i = -\sum_{t=1}^T \gamma^t \sqrt{v_{i,t}}$ (higher is better). Here $\Delta_{i,t}$ denotes the $\ell_2$-**sensitivity** of the $i$-th release at step $t$ (when clipping at radius $\hat C_{i,t}$ is active, $\Delta_{i,t} = 2\hat C_{i,t}$). Re-parametrizing in terms of $\rho_{i,t} = \alpha \Delta_{i,t}^2/(2\sigma_{i,t}^2)$ (with $\rho_{i,t} = 0 \Leftrightarrow \sigma_{i,t}^2 = \infty$, i.e.\ no release at step $t$, and then $a_{i,t} = \infty$, $v_{i,t} = v_{i,t-1}$), and writing $c_{i,t} := \alpha\Delta_{i,t}^2/2$ so that $a_{i,t} = R_\eta + c_{i,t}/\rho_{i,t}$, the **welfare scheduling problem** on the closed budget simplex is
+
+$$\textbf{(WF)} \quad \min_{\boldsymbol{\rho}_i \in \Omega_i} \;\sum_{t=1}^T \gamma^t \sqrt{v_{i,t}(\boldsymbol{\rho}_i)}, \qquad \Omega_i \;:=\; \Big\{\boldsymbol{\rho}_i \in \mathbb{R}_+^T \;:\; \textstyle\sum_{t=1}^T \rho_{i,t} \;=\; \bar\rho_i\Big\}.$$
+
+**Theorem 3 (Water-fill schedule: boundary-aware KKT characterization).**
+Consider (WF) posed on the **closed** simplex $\bar\Omega := \{\boldsymbol{\rho} \in \mathbb{R}_{\ge 0}^T : \sum_t \rho_t = \bar\rho\}$, with $J$ extended continuously to the boundary via $\sigma_t^2 = +\infty$ (equivalently $v_t = v_{t-1}$) whenever $\rho_t = 0$. Let
+$$\Phi_t \;:=\; \sum_{s=t}^T \gamma^s v_s^{3/2}, \qquad c_t \;:=\; \alpha\Delta_t^2/2.$$
+Then (WF) admits a unique global minimum $\boldsymbol{\rho}^\star \in \bar\Omega$. Let $\mathcal{A} := \{t : \rho_t^\star > 0\}$ denote the active set. There exists a Lagrange multiplier $\mu > 0$ such that the KKT conditions with complementary slackness hold:
+
+$$\boxed{\;\rho_t^\star \;=\; \bar\rho \cdot \frac{\Delta_t \sqrt{\Phi_t^\star}/a_t^\star}{\sum_{s \in \mathcal{A}} \Delta_s \sqrt{\Phi_s^\star}/a_s^\star}\;} \quad (t \in \mathcal{A}), \qquad \frac{\Phi_t^\star}{2 c_t} \;\le\; \mu \quad (t \notin \mathcal{A}). \tag{KKT-WF}$$
+
+The inactive-coordinate condition uses the finite boundary-gradient limit $\lim_{\rho_t \to 0^+} c_t\Phi_t/(2\rho_t^2 a_t^2) = \Phi_t/(2c_t)$, which holds because $a_t \sim c_t/\rho_t$ as $\rho_t \to 0^+$, so $\rho_t^2 a_t^2 \to c_t^2$. Consequently, boundary solutions with $\mathcal{A} \subsetneq \{1,\ldots,T\}$ can occur — for example, when $\gamma$ is sufficiently small the optimum concentrates budget on early steps and assigns $\rho_t^\star = 0$ to late steps.
+
+The fixed-point iteration
+$$\boldsymbol{\rho}^{(k+1)} \;\leftarrow\; \bar\rho \cdot \frac{\Delta_t \sqrt{\Phi_t^{(k)}}/a_t^{(k)}}{\sum_s \Delta_s \sqrt{\Phi_s^{(k)}}/a_s^{(k)}}$$
+is a practical heuristic for locating an interior (KKT-WF) point when the active set is all of $\{1,\ldots,T\}$; for the general case, projected gradient descent (or mirror descent) on the strictly convex objective $J$ over the compact convex set $\bar\Omega$ is guaranteed to converge to $\boldsymbol{\rho}^\star$.
+
+*Proof sketch.* Gradient (interior): $\partial J/\partial \rho_t = -c_t \Phi_t/(2 \rho_t^2 a_t^2)$ for $\rho_t > 0$, with the finite right-limit $-\Phi_t/(2c_t)$ at $\rho_t = 0^+$. Existence on the compact closed simplex $\bar\Omega$ follows from Weierstrass; uniqueness follows from strict convexity of $J$ on the interior (Lemma 1), extended to $\bar\Omega$ via a face argument (any segment with a zero coordinate lies entirely in the corresponding boundary face, on which strict convexity reapplies to the reduced problem). The interior KKT stationarity $\mu = c_t\Phi_t/(2\rho_t^2 a_t^2)$ for $t \in \mathcal{A}$ gives the active-set formula; complementary slackness at $t \notin \mathcal{A}$ requires the finite boundary gradient $-\Phi_t/(2c_t) \ge -\mu$. Full proof in Appendix A.3. $\square$
+
+**Theorem 4 (Explicit $\varphi_t$-correction on the active set).**
+For $t \in \mathcal{A}$, the water-fill schedule admits the decomposition
+
+$$\rho_t^\star \;\propto\; \underbrace{\frac{\gamma^{t/2}\, \Delta_t\, (v_t^\star)^{3/4}}{a_t^\star}}_{\text{heavy-discount leading order}} \;\cdot\; \varphi_t, \qquad \varphi_t \;:=\; \sqrt{1 + \psi_t}, \;\; \psi_t \;:=\; \sum_{s=t+1}^T \gamma^{s-t}\!\left(\frac{v_s^\star}{v_t^\star}\right)^{3/2},$$
+
+with provable bounds
+
+$$0 \;\le\; \psi_t \;\le\; \frac{\gamma}{1-\gamma}, \qquad 1 \;\le\; \varphi_t \;\le\; \frac{1}{\sqrt{1-\gamma}}.$$
+
+In the heavy-discount limit $\gamma \to 0$, $\varphi_t \to 1$ and (KKT-WF) collapses to the local closed form $\rho_t^\star \propto \gamma^{t/2} \Delta_t (v_t^\star)^{3/4}/a_t^\star$, requiring no tail sum.
+
+*Proof sketch.* Factor $\Phi_t^\star = \gamma^t (v_t^\star)^{3/2}(1 + \psi_t)$; monotonicity of the Kalman update ($v_s^\star \le v_t^\star$ for $s \ge t$, by (A3)) and the geometric series $\sum_{k\ge 1}\gamma^k = \gamma/(1-\gamma)$ give the upper bound. Full proof in Appendix A.4. $\square$
+
+**Lemma 1 (Strict convexity of $J$).**
+Under (A1) $\gamma \in (0,1)$, (A2) $\Delta_t > 0$, (A3) $R_\eta > 0$, the objective $J(\boldsymbol{\rho}) = \sum_{t=1}^T \gamma^t\sqrt{v_t(\boldsymbol{\rho})}$ is strictly convex on $\mathbb{R}_{++}^T$.
+
+*Proof sketch.* Log-convexity chain:
+$$g_u(\rho) := \frac{\rho}{R_\eta\rho + c_u} \;\xrightarrow[g_u''<0]{\text{concave}}\; v_t^{-1} = 1 + \sum_{u\le t}g_u \;\xrightarrow[\text{log}]{\text{log-concave}}\; \log v_t^{-1} \;\xrightarrow[\text{negate}]{\text{log-convex}}\; \log v_t \;\xrightarrow[\exp]{\text{convex}}\; \sqrt{v_t} \;\longrightarrow\; J.$$
+Each $g_u$ is strictly concave by (A3); sums of strict concaves are strictly concave; any strictly concave positive function is strictly log-concave. The term $\sqrt{v_T}$ depends on all $T$ coordinates and is strictly convex in them, so the positive-weight combination $\gamma^T \sqrt{v_T}$ alone is strictly convex and the sum $J$ is strictly convex on $\mathbb{R}_{++}^T$. Full proof in Appendix A.5. $\square$
+
+**Corollary 1 (DPMAC-uniform optimality in the homogeneous final-trace regime).**
+In the special case $\Delta_t \equiv \Delta$ constant and objective $\sqrt{v_T}$ (final step only), the unique minimum of (WF) is $\rho_t \equiv \bar\rho/T$ — the DPMAC-uniform schedule. The advantage of time-varying schedules therefore emerges only under discount $\gamma < 1$ *or* time-varying $\Delta_t$.
+
+**Corollary 2 (Suboptimality of the IG-precision heuristic).**
+The heuristic $\rho_t^{\mathrm{old}} \propto \gamma^{t/2} \Delta_t / \sqrt{v_{t-1}}$ weights by posterior *precision* $v_{t-1}^{-1/2}$, while (KKT-WF) via Theorem 4 weights (in the heavy-discount regime) by posterior *variance* $v_t^{3/4}$. The two formulas assign budget in opposite directions along the trajectory; the former is strictly suboptimal for the discounted-welfare objective.
+
+**Remark 3.1 (Welfare–MSE tradeoff).**
+The schedule (KKT-WF) minimizes the discounted cumulative posterior uncertainty $J_{\mathrm{WF}} = \sum_t \gamma^t \sqrt{v_t}$ — the quantity bounded by Theorem 7 below. It is *not* the MSE-optimizer. Repeating the KKT derivation with $J_{\mathrm{MSE}} = v_T$ yields $\Phi_t^{\mathrm{MSE}} = \gamma^T v_T^{3/2}$ constant across $t$, reducing the schedule to $\rho_t^{\mathrm{MSE}} \propto \Delta_t/a_t$. Deployments should choose the schedule matching their downstream metric; the convex combination $J_\lambda = \lambda J_{\mathrm{WF}} + (1-\lambda)J_{\mathrm{MSE}}$ admits the corresponding KKT formula with $\Phi_t^\lambda = \lambda\Phi_t + (1-\lambda)\gamma^T v_T^{3/2}$.
+
+### 3.4 CLIP-LA: Learning-Augmented Scheduling without Known Sensitivity
+
+Theorems 1–3 assume the sensitivity bounds $\{\Delta_{i,t}\}$ are known. In many practical deployments they are not — the mechanism designer only has a loose a-priori bound. **CLIP-LA** removes this assumption by learning $\hat C_{i,t}$ online from posterior uncertainty.
+
+**Algorithm 1 (CLIP-LA schedule + runtime).**
+
+```
+INPUT: horizon T, per-agent budget ρ̄_i, discount γ, RDP order α,
+       prior variance (taken =1), observation variance R_η, margin κ ≥ 1
+
+SCHEDULE (computed offline, or online from privatized past):
+  Initialize σ²_{i,t} = 2 α Ĉ₀² · T / ρ̄_i (uniform)  with Ĉ₀ = κ√(d(1+R_η))
+  Repeat until convergence:
+    1. Propagate Kalman to obtain {v_{i,t}} and a_{i,t} = R_η + σ²_{i,t}.
+    2. Set Ĉ_{i,t} = κ √(v_{i,t}·d + d R_η).     # adaptive clip bound
+    3. Compute Φ_{i,t} = Σ_{s=t}^T γ^s v_{i,s}^{3/2}.
+    4. Allocate ρ_{i,t} ∝ Ĉ_{i,t}√Φ_{i,t}/a_{i,t}, normalized to ρ̄_i.
+    5. Update σ²_{i,t} = 2 α Ĉ_{i,t}² / ρ_{i,t}.
+
+RUNTIME (for each t = 1,...,T):
+  Observe o_{i,t}; encode z_{i,t} = f_φ(θ_i, o_{i,t}).
+  Clip: z̃_{i,t} = z_{i,t} · min(1, Ĉ_{i,t}/‖z_{i,t}‖₂).
+  Release: m_{i,t} = z̃_{i,t} + u_{i,t},  u_{i,t} ~ N(0, σ²_{i,t}·I_d).
+  Update posterior q_{ψ,t}, transfers c_t; run MARL under frozen mechanism.
+```
+
+**Connection to Theorem 6.** Step 2 displays the posterior-uncertainty-driven clip bound $\hat C_{i,t} = \kappa\sqrt{d(v_{i,t}+R_\eta)}$, which is the default setting used in the experiments. Theorem 6's same-schedule clipping-bias bound additionally requires the margin condition $\hat C_{i,t} \ge M_{z,t} + c\sqrt{d\,\tau_\phi^2}$ (encoder-mean + sub-Gaussian-tail margin). The safe drop-in to make Algorithm 1 satisfy Theorem 6's hypotheses by construction is to replace step 2 by
+$$\hat C_{i,t} \;:=\; \max\!\Big\{\kappa\sqrt{d(v_{i,t}+R_\eta)},\;\; M_{z,t} + c\sqrt{d\,\tau_\phi^2}\Big\};$$
+alternatively, one can keep step 2 as displayed and verify the margin condition separately for the deployment's encoder. DP safety (Theorem 5) holds for either choice, since both $\hat C_{i,t}$ estimators depend on $\theta_i$ only through the privatized past.
+
+**Theorem 5 (CLIP-LA is DP-safe with exact budget).**
+CLIP-LA is $(\epsilon_i, \delta_i)$-DP with $\epsilon_i = \bar\rho_i + \log(1/\delta_i)/(\alpha-1)$, regardless of the choice of $\hat{C}_{i,t}$ estimator, provided $\hat{C}_{i,t}$ depends on $\theta_i$ only through previously-privatized outputs. The budget is spent exactly.
+
+*Proof sketch.* Direct corollary of Theorem 1: the adaptive estimator $\hat{C}_{i,t}$ is $\mathcal{F}_{t-1}$-measurable by construction, and actual clipping to radius $\hat C_{i,t}$ enforces $\ell_2$-sensitivity $\le 2\hat C_{i,t}$ pointwise, so the per-step RDP cost of the Gaussian mechanism is exactly $\rho_{i,t} = 2\alpha\hat C_{i,t}^2/\sigma_{i,t}^2$. Algorithm 1 step 5 sets $\sigma_{i,t}^2 = 2\alpha\hat C_{i,t}^2/\rho_{i,t}$, inverting this relation, so each step consumes exactly $\rho_{i,t}$ and $\sum_t \rho_{i,t} = \bar\rho_i$ by the normalization in step 4. Full proof in Appendix A.7. $\square$
+
+**Theorem 6 (Welfare gap of CLIP-LA vs. unclipped same-schedule reference).**
+Let $W^{\mathrm{ref}}(\bar\rho_i)$ denote the welfare of the *unclipped* mechanism that uses the **same noise schedule** $\{\sigma_{i,t}^2\}$ as CLIP-LA (i.e., the reference differs from CLIP-LA only in that it does not clip the encoder output; note that the reference is not DP-safe and is used here only as an analytical comparator). Assume the Lipschitz welfare hypothesis of Theorem 7, and either (a) bounded types $\|\theta_i\|_2 \le M$ almost surely, or (b) a high-probability event $\mathcal{E}_\beta := \{\|\theta_i\|_2 \le M_\beta\}$ with $\Pr(\mathcal{E}_\beta) \ge 1 - \beta$ (e.g.\ $M_\beta = \sqrt{d} + \sqrt{2\log(1/\beta)}$ under the Gaussian prior). Let $\tau_\phi^2$ denote a sub-Gaussian parameter of the unclipped encoder $z_{i,t} = f_{i,t}(\theta_i; \omega_t)$ conditional on $\theta_i$, i.e.\ $\Pr(\|z_{i,t} - \mathbb{E}[z_{i,t}|\theta_i]\|_2 > r) \le 2\exp(-r^2/(2 d \tau_\phi^2))$. **Assume further a bound on the encoder conditional mean**: there exists $M_{z,t} \ge 0$ such that
+$$\|\mathbb{E}[z_{i,t} \mid \theta_i]\|_2 \;\le\; M_{z,t} \qquad \text{almost surely under (a), or on } \mathcal{E}_\beta \text{ under (b).}$$
+For example, a Lipschitz encoder $\|\mathbb{E}[z_{i,t}\mid\theta_i]\|_2 \le L\|\theta_i\|_2 + b_t$ yields $M_{z,t} = LM + b_t$ (or $LM_\beta + b_t$). Suppose the clip radius $\hat C_{i,t}$ (cf.\ §3.2) satisfies
+$$\hat C_{i,t} \;\ge\; M_{z,t} + c\sqrt{d\,\tau_\phi^2}, \qquad c \ge \sqrt{2}.$$
+Then, conditional on $\mathcal{E}_\beta$ (or unconditionally under (a)), the welfare of CLIP-LA relative to the unclipped same-schedule reference satisfies
+$$W^{\mathrm{ref}}(\bar\rho_i) - W^{\mathrm{CLIP\text{-}LA}}(\bar\rho_i) \;\le\; L_W \sum_{t=1}^T \gamma^t\, B_t, \qquad B_t = O\!\left(\sqrt{d\,\tau_\phi^2}\, e^{-c^2/2}\right).$$
+Under case (b), adding the event complement gives an unconditional bound with an extra additive term $O(\beta)\cdot L_W \sum_t \gamma^t$. If one wants Theorem 6 to apply to Algorithm 1 as written, the encoder-mean bound can be enforced by construction, e.g.\ $\hat C_{i,t} := \max\!\big\{\kappa\sqrt{d(v_{i,t}+R_\eta)},\; M_{z,t}+c\sqrt{d\,\tau_\phi^2}\big\}$.
+
+**Remark (scope).** Theorem 6 isolates the *clipping-bias* component of the welfare gap by holding the schedule fixed. Comparison against the known-$\Delta$ oracle additionally involves a **schedule-estimation** term
+$$W^{\mathrm{oracle}(\Delta)}(\bar\rho_i) - W^{\mathrm{oracle}(\hat C)}(\bar\rho_i),$$
+which captures the suboptimality of the schedule induced by $\hat C_{i,t}$ versus the schedule induced by the true $\Delta_{i,t}$. A nonzero gap can remain even when clipping never activates, as the two schedules differ. Bounding this term requires a separate analysis (e.g., in terms of $\sum_t |\hat\Delta_t - \Delta_t|$ or an induced schedule-Lipschitz constant) and is outside the scope of Theorem 6.
+
+*Proof sketch.* Sub-Gaussian tail bound $\Pr(\|z_{i,t} - \mathbb{E}[z_{i,t}|\theta_i]\|_2 > \hat C_{i,t} - \|\mathbb{E}[z_{i,t}|\theta_i]\|_2) \le 2\exp(-c^2/2)$ yields a clipping-bias bound $\|b_{i,t}\|_2 = O(\sqrt{d\,\tau_\phi^2}\, e^{-c^2/2})$ conditional on $\mathcal{E}_\beta$. Interpreting the Kalman receiver as an approximate (misspecified) posterior, the bias propagates to a mean perturbation of the approximate posterior (covariance is unchanged for the approximate receiver by construction); TV perturbation is then passed through Theorem 7's Lipschitz bound. A clipping-aware receiver — which accounts for the clipping channel — is required if one instead wants a bound on the error of the *true* Bayesian posterior. Full proof in Appendix A.8. $\square$
+
+Empirically, CLIP-LA can match — and in some regimes exceed — the known-$\Delta$ oracle on downstream MSE because it also controls the clip bound $\hat C_{i,t}$ (a lever the oracle does not have); this is documented in Section 5. Such behavior is *not* implied by Theorem 6 alone, which, by design, bounds only the clipping-bias component of the welfare gap against a same-schedule reference; the schedule-estimation component between $\hat C$-induced and $\Delta$-induced schedules requires a separate analysis as discussed in the remark above.
+
+### 3.5 Privacy-to-Welfare Regret
+
+The following theorem, preserved from the original PIL-APS formulation, bounds welfare regret in terms of per-channel KL distortion. It applies verbatim to any DP-safe schedule whose effective private channel is Gaussian — PIL-FL, DPMAC, and the blockwise heuristic of §3.6 below. For **CLIP-LA**, the theorem applies *under the approximate Gaussian receiver model*: the effective private channel is taken to be the Gaussian proxy $\mathcal{N}(\mu_{i,t}, \Sigma_{i,t} + \sigma_{i,t}^2 I)$ that the Kalman receiver implicitly assumes, not the true clipped channel $p^{\mathrm{clip},\sigma}(m \mid \theta)$, which is generally non-Gaussian whenever clipping is active. Bounding regret under the true clipped channel would require a clipping-aware receiver and a posterior-stability lemma for that receiver; we do not derive such a bound here.
+
+Let the optimal non-private signaling channel for agent $i$ at time $t$ be $p_{i,t}^*(x \mid \theta_i, o_{i,t}) = \mathcal{N}(\mu_{i,t}^*, \Sigma_{i,t}^*)$, and the effective private channel be $p_{i,t}^\sigma(m \mid \theta_i, o_{i,t}) = \mathcal{N}(\mu_{i,t}, \Sigma_{i,t} + \sigma_{i,t}^2 I)$. Define the *conditional* per-agent channel KL and its *predictive* average under the posterior $q_{\psi,t-1}$:
+
+$$\mathcal{D}_{i,t}^{\mathrm{KL}}(\theta_i) \;:=\; D_{\mathrm{KL}}\!\left(p_{i,t}^\sigma(\cdot \mid \theta_i) \,\Vert\, p_{i,t}^*(\cdot \mid \theta_i)\right), \qquad \bar{\mathcal{D}}_{i,t}^{\mathrm{KL}} \;:=\; \mathbb{E}_{\theta_i \sim q_{\psi,t-1}}\!\big[\mathcal{D}_{i,t}^{\mathrm{KL}}(\theta_i)\big].$$
+
+For Gaussian channels this has the standard closed form,
+
+$$\mathcal{D}_{i,t}^{\mathrm{KL}}(\theta_i) = \tfrac{1}{2}\Big(\log(|\Sigma_{i,t}^*|/|\Sigma_{i,t}+\sigma_{i,t}^2 I|) - d + \mathrm{tr}((\Sigma_{i,t}^*)^{-1}(\Sigma_{i,t}+\sigma_{i,t}^2 I)) + \|\mu_{i,t}-\mu_{i,t}^*\|_{(\Sigma_{i,t}^*)^{-1}}^2\Big),$$
+
+and $\bar{\mathcal D}_{i,t}^{\mathrm{KL}}$ is obtained by taking the posterior expectation of the last (mean-shift) term (the other terms are $\theta_i$-independent under the Gaussian setting).
+
+**Theorem 7 (Privacy-to-welfare regret bound).**
+Assume: (i) the stage welfare functional $W_t(q, s_t)$ is Lipschitz in posterior beliefs,
+$$|W_t(q, s_t) - W_t(q', s_t)| \;\le\; L_W\,\mathrm{TV}(q, q'),$$
+(ii) conditional on $(\boldsymbol\theta, H_{t-1})$ — where $H_{t-1}$ is the public history — the per-agent releases $(m_{1,t}, \ldots, m_{N,t})$ are mutually independent under both the private channel $\prod_i p_{i,t}^\sigma$ and the non-private channel $\prod_i p_{i,t}^*$; (iii) both channels use the same likelihood model for posterior updating.
+
+Then the welfare regret of the private mechanism relative to the non-private benchmark satisfies
+
+$$\mathrm{Regret}^{\mathrm{welfare}} \;\le\; L_W \sum_{t=1}^T \gamma^t \sqrt{\tfrac{1}{2} \sum_{i=1}^N \bar{\mathcal{D}}_{i,t}^{\mathrm{KL}}}.$$
+
+*Proof sketch.* By the chain rule of KL, for conditionally independent channels the joint KL factors:
+$$D_{\mathrm{KL}}\!\big(\textstyle\prod_i p_{i,t}^\sigma \;\Vert\; \prod_i p_{i,t}^*\big)(\theta) = \sum_i \mathcal{D}_{i,t}^{\mathrm{KL}}(\theta_i).$$
+Bayes' rule with a shared prior then propagates this forward: taking posterior expectation of $\log\frac{dq_t^*}{dq_t^\sigma}$ gives $D_{\mathrm{KL}}(q_t^\sigma \| q_t^*) \le \sum_i \bar{\mathcal D}_{i,t}^{\mathrm{KL}}$ (equality when the posterior update is the Bayes-optimal one under the stated likelihood model), so the KL-stability condition of earlier drafts holds with $\kappa = 1$ and no additional hypothesis. Lipschitz + Pinsker + summation with discount gives the stated cumulative bound. Full proof in Appendix A.9. $\square$
+
+**Corollary 3 (Approximate IC/IR from distortion).**
+Assume each agent's continuation utility and participation value are Lipschitz in posterior beliefs with constant $L_i$, **and** that the non-private benchmark mechanism is $(\varepsilon_{0,i}^{\mathrm{IC}}, \varepsilon_{0,i}^{\mathrm{IR}})$-IC/IR (with $\varepsilon_{0,i}^{\mathrm{IC}} = \varepsilon_{0,i}^{\mathrm{IR}} = 0$ corresponding to the exactly IC/IR benchmark). Then there exists a problem-dependent constant $C_i$ such that
+
+$$\varepsilon_i^{\mathrm{IC}} + \varepsilon_i^{\mathrm{IR}} \;\le\; \varepsilon_{0,i}^{\mathrm{IC}} + \varepsilon_{0,i}^{\mathrm{IR}} + C_i \sum_{t=1}^T \gamma^t \sqrt{\sum_{j=1}^N \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}}.$$
+
+*Proof sketch.* Replacing the non-private posterior by the private posterior perturbs truthful utility, deviation utility, and participation value by at most a constant multiple of posterior total variation; the pre-existing non-private slack $\varepsilon_{0,i}^{\mathrm{IC}} + \varepsilon_{0,i}^{\mathrm{IR}}$ carries through additively. Pinsker and the chain-rule argument of Theorem 7 close the bound. Full proof in Appendix A.10. $\square$
+
+### 3.6 Bayesian Stackelberg Privacy-Pricing Game
+
+The planner maintains a privacy-aware posterior over types:
+
+$$q_{\psi,t}(\theta \mid s_t, \mathbf{m}_t, \boldsymbol{\sigma}_t) \;=\; h_\psi(s_t, \mathbf{m}_t, \boldsymbol{\sigma}_t),$$
+
+where $\mathbf{m}_t = (m_{1,t}, \ldots, m_{N,t})$ and $\boldsymbol{\sigma}_t = (\sigma_{1,t}, \ldots, \sigma_{N,t})$. From this posterior, the planner extracts summary statistics $\bar{\theta}_t = \mathbb{E}_{q_{\psi,t}}[\theta]$ and $\Xi_t = \mathrm{Cov}_{q_{\psi,t}}(\theta)$.
+
+At outer iteration $k$, the planner acts as a Stackelberg leader and announces privacy price $\lambda_k$. Agent $i$ then solves
+
+$$\rho_{i,k}^\star(\lambda_k) \;=\; \operatorname*{argmax}_{\rho \in [\rho_{\min}, \min\{\rho_{\max}, b_{i,k}\}]} \Big[\lambda_k B_i(\rho; \bar\theta_{k-1}, \Xi_{k-1}, s_k) - C_i(\rho; \theta_i, b_{i,k})\Big],$$
+
+where $B_i$ is the planner-facing value of information and $C_i$ is the agent's privacy disutility. The leader chooses $\lambda_k$ either by maximizing a blockwise welfare surrogate $\hat W_k$ or by satisfying a privacy-clearing rule $\sum_i \rho_{i,k}^\star(\lambda_k) = \bar\rho_k$. Transfers are assigned by $c_t = \mathcal{C}_\omega(q_{\psi,t}, s_t, \boldsymbol{\rho}_k^\star)$, and the modified reward is $\tilde r_{i,t} = r(s_t, \mathbf{a}_t) + c_{i,t}$.
+
+**Proposition 1 (Existence and monotonicity of the pricing equilibrium).**
+Assume that for each agent $i$, $B_i(\rho; \cdot)$ is continuous, increasing, and concave in $\rho$; $C_i(\rho; \cdot)$ is continuous, increasing, and strongly convex in $\rho$; and the feasible interval $[\rho_{\min}, \min\{\rho_{\max}, b_{i,k}\}]$ is compact. Then for every $\lambda_k \ge 0$, the follower problem admits a unique best response $\rho_{i,k}^\star(\lambda_k)$ that is continuous and nondecreasing in $\lambda_k$. If in addition $\sum_i \rho_{i,k}^\star(\lambda)$ is strictly increasing, the market-clearing price $\lambda_k^\star$ is unique.
+
+*Proof sketch.* Strict concavity of each follower objective on a compact interval yields existence and uniqueness of the best response; monotonicity in $\lambda_k$ follows from a single-crossing / implicit-function argument; strict monotonicity of the aggregate response yields uniqueness of the clearing price. Full proof in Appendix A.11. $\square$
+
+**Remark (connection to the water-fill).** Proposition 1 elicits agent-specific budgets $\bar\rho_i$ from strategic agents; given those budgets, Theorem 3 (via Lemma 1) provides the unique optimal intra-agent allocation across time. The two results compose: the pricing game determines $\bar\rho_i$, and water-fill (or CLIP-LA for unknown $\Delta$) determines $\{\sigma_{i,t}^2\}$.
+
+**Theorem 8 (Truthful signaling survives privatization).**
+Fix a block $k$. Assume: (i) for each agent $i$, the follower privacy choice $\rho_{i,k}^\star(\lambda_k)$ is unique for every $\lambda_k$ (Proposition 1); (ii) the non-private benchmark mechanism is $(\varepsilon_{0,i}^{\mathrm{IC}}, \varepsilon_{0,i}^{\mathrm{IR}})$-IC/IR; (iii) continuation utility $U_i(q,\varsigma,\rho)$ and participation value $V_i(q)$ are Lipschitz in posterior beliefs with constant $L_i$, and the conditional-independence channel structure of Theorem 7 holds. Then truthful signaling together with the follower best response, $(\varsigma_i^\star, \rho_{i,k}^\star(\lambda_k))$, is an $\bar\varepsilon_i^{\mathrm{BNE}}$-Bayes–Nash equilibrium under the privatized channel, with
+$$\bar\varepsilon_i^{\mathrm{BNE}} \;=\; \varepsilon_{0,i}^{\mathrm{IC}} \;+\; C_i \sum_{t=1}^T \gamma^t \sqrt{\sum_{j=1}^N \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}}.$$
+If, in addition, the non-private truthful profile has a strict truth-telling margin
+$$m_i \;:=\; \inf_{(\varsigma_i',\rho_i')} \Big[U_i(q^*, \varsigma_i^\star, \rho^\star) - U_i(q^*, \varsigma_i', \rho_i')\Big] \;>\; 0,$$
+and $C_i \sum_{t} \gamma^t \sqrt{\sum_j \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}} < m_i$, then truthful signaling remains a *strict* best response under the privatized channel.
+
+*Proof sketch.* For any unilateral deviation $(\varsigma_i',\rho_i')$, Appendix A.10 (proof of Corollary 3) already establishes
+$$U_i(q^\sigma,\varsigma_i^\star,\rho^\star) - U_i(q^\sigma,\varsigma_i',\rho_i') \;\ge\; -\varepsilon_{0,i}^{\mathrm{IC}} - C_i \sum_t \gamma^t \sqrt{\textstyle\sum_j \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}},$$
+which is the $\bar\varepsilon_i^{\mathrm{BNE}}$-equilibrium definition. Under the margin hypothesis the right-hand side is strictly positive. Full proof in Appendix A.13. $\square$
+
+**Theorem 9 (Welfare-optimal implementation).**
+Reparameterize the follower problem in terms of *purchased information quantity* $q_i := B_i(\rho_i)$; write $\widetilde C_i(q_i;\theta_i, b_{i,k}) := C_i(B_i^{-1}(q_i); \theta_i, b_{i,k})$ for the transformed cost, and let $Q := \sum_i q_i$. Fix a block $k$ and assume: (a) each $B_i$ is $C^2$, strictly increasing, and invertible on the feasible interval; (b) each $\widetilde C_i$ is $C^2$ and $\mu_i$-strongly convex; (c) planner block welfare $V_k(Q)$ is $C^2$, strictly concave, and strictly increasing; each feasible set $\mathcal{Q}_i = [\underline q_i, \bar q_i]$ is a compact interval.
+
+With followers solving
+$$q_i^\star(\lambda) \;=\; \arg\max_{q_i \in \mathcal{Q}_i} \{\lambda q_i - \widetilde C_i(q_i)\}, \qquad Q(\lambda) := \textstyle\sum_i q_i^\star(\lambda),$$
+the welfare $\mathcal{W}_k(\lambda) := V_k(Q(\lambda)) - \sum_i \widetilde C_i(q_i^\star(\lambda))$ satisfies:
+
+1. **Unique optimal quantity profile.** The social planner's direct problem $\max_{\mathbf q \in \prod_i \mathcal Q_i}\{V_k(\sum_i q_i) - \sum_i \widetilde C_i(q_i)\}$ has a unique maximizer $\mathbf q^{\mathrm{opt}}$.
+2. **KKT characterization.** Let $\bar\lambda := V_k'(Q^{\mathrm{opt}})$ denote the social-planner multiplier and
+$$\Lambda^\star \;:=\; \left\{\lambda \ge 0 \,:\, q_i^{\mathrm{opt}} = \Pi_{\mathcal Q_i}\!\big((\widetilde C_i')^{-1}(\lambda)\big) \ \forall i\right\}$$
+the implementing-price set. Equivalently, $\lambda \in \Lambda^\star$ iff, for every $i$,
+$$\begin{cases} \lambda \le \widetilde C_i'(\underline q_i), & q_i^{\mathrm{opt}} = \underline q_i, \\ \lambda = \widetilde C_i'(q_i^{\mathrm{opt}}), & q_i^{\mathrm{opt}} \in (\underline q_i, \bar q_i), \\ \lambda \ge \widetilde C_i'(\bar q_i), & q_i^{\mathrm{opt}} = \bar q_i. \end{cases}$$
+Then $\bar\lambda \in \Lambda^\star$ (the social multiplier is *one* implementing price), and $\Lambda^\star$ is a nonempty closed interval.
+3. **Interior uniqueness vs.\ boundary multiplicity.** If $q_i^{\mathrm{opt}} \in \mathrm{int}(\mathcal Q_i)$ for every $i$, then $\Lambda^\star = \{\bar\lambda\}$ and the implementing price is unique. If some $q_i^{\mathrm{opt}}$ lies on the boundary, $\Lambda^\star$ can be a proper interval; a canonical choice is the minimal implementing price
+$$\lambda_k^\star \;:=\; \min \Lambda^\star,$$
+which is uniquely defined and satisfies $\lambda_k^\star \le \bar\lambda$ in general (with equality in the interior case).
+
+*Proof sketch.* Each follower objective is strongly concave on $\mathcal Q_i$, so $q_i^\star(\lambda)$ is unique and given by the projection of the unconstrained maximizer $(\widetilde C_i')^{-1}(\lambda)$ onto $\mathcal Q_i$. The direct social-planner problem has a strictly concave objective (strictly concave $V_k$ composed with the linear aggregation map, plus strictly convex costs), hence a unique maximizer $\mathbf q^{\mathrm{opt}}$. The Lagrangian KKT conditions give $V_k'(Q^{\mathrm{opt}}) - \widetilde C_i'(q_i^{\mathrm{opt}}) = \underline\nu_i - \bar\nu_i$ with complementary slackness, so $\bar\lambda := V_k'(Q^{\mathrm{opt}})$ satisfies the per-$i$ condition displayed above — hence $\bar\lambda \in \Lambda^\star$. On the interior, the per-$i$ condition is the equality $\widetilde C_i'(q_i^{\mathrm{opt}}) = \lambda$, so $\Lambda^\star$ collapses to the single value $\bar\lambda$; on the boundary, a range of $\lambda$-values satisfy the inequality form, so $\Lambda^\star$ is a closed interval, and the min-price convention fixes a canonical element. Full proof in Appendix A.14. $\square$
+
+**Corollary 4 (Price of anarchy).**
+Under the assumptions of Theorem 9, the non-private pricing game has
+$$\mathrm{PoA}_k^{\mathrm{np}} \;=\; 1$$
+whenever an implementing price $\lambda^\star$ is used (any such price; under the interiority condition of Theorem 9(3) this price is unique, otherwise take the minimal-price convention).
+If the non-private equilibrium implements the social optimum $W^{\mathrm{opt,np}}$ and Theorem 7 gives welfare regret at most $\Delta_W := L_W \sum_t \gamma^t \sqrt{(1/2) \sum_i \bar{\mathcal{D}}_{i,t}^{\mathrm{KL}}}$, then whenever $W^{\mathrm{opt,np}} > \Delta_W$,
+$$\mathrm{PoA}^{\mathrm{priv}} \;:=\; \frac{W^{\mathrm{opt,np}}}{W^{\mathrm{eq,priv}}} \;\le\; \frac{W^{\mathrm{opt,np}}}{W^{\mathrm{opt,np}} - \Delta_W}.$$
+(When the private channel involves active clipping, Theorem 7's bound applies under the approximate Gaussian receiver model of §3.5, and $W^{\mathrm{eq,priv}}$ and $\Delta_W$ are understood as proxy-welfare quantities consistent with §5.1's experimental setup, not as quantities on the exact clipped-channel Bayesian posterior.)
+
+*Proof sketch.* The non-private bound follows immediately from Theorem 9(1)–(2): any implementing price yields the unique social optimum $\mathbf q^{\mathrm{opt}}$ and hence $W^{\mathrm{eq,np}} = W^{\mathrm{opt,np}}$. For the private bound, $W^{\mathrm{eq,priv}} \ge W^{\mathrm{opt,np}} - \Delta_W$ by Theorem 7 applied to the induced private equilibrium; rearranging gives the stated ratio. Full proof in Appendix A.15. $\square$
+
+**Theorem 10 (Vector-price implementation over blocks).**
+Let $k = 1,\ldots,K$ index blocks and let follower $i$ choose $\mathbf{q}_i = (q_{i,1},\ldots,q_{i,K}) \in \mathcal Q_i = \prod_k [\underline q_{i,k}, \bar q_{i,k}]$ solving
+$$\max_{\mathbf q_i \in \mathcal Q_i} \sum_{k=1}^K \big[\lambda_k q_{i,k} - \widetilde C_{i,k}(q_{i,k}; \theta_i, b_{i,k})\big],$$
+with $Q_k(\boldsymbol\lambda) := \sum_i q_{i,k}^\star(\boldsymbol\lambda)$, $\mathbf{Q}(\boldsymbol\lambda) = (Q_1,\ldots,Q_K)$, and planner welfare $\mathcal{W}(\boldsymbol\lambda) = V(\mathbf Q(\boldsymbol\lambda)) - \sum_{i,k} \widetilde C_{i,k}(q_{i,k}^\star(\boldsymbol\lambda))$, where $V$ is $C^2$, strictly concave, and strictly increasing in each coordinate and each $\widetilde C_{i,k}$ is $C^2$ and strongly convex. Then: (i) each follower best response $\mathbf q_i^\star(\boldsymbol\lambda)$ is unique and given coordinatewise by the projection $q_{i,k}^\star(\lambda_k) = \Pi_{[\underline q_{i,k}, \bar q_{i,k}]}\!\big((\widetilde C_{i,k}')^{-1}(\lambda_k)\big)$; (ii) the socially optimal quantity profile $\mathbf q^{\mathrm{opt}}$ is unique, and the per-block social multipliers $\bar\lambda_k := \partial V/\partial Q_k(\mathbf Q^{\mathrm{opt}})$ lie in the coordinatewise implementing-price sets $\Lambda_k^\star := \{\lambda_k \ge 0 : q_{i,k}^{\mathrm{opt}} = \Pi_{[\underline q_{i,k}, \bar q_{i,k}]}((\widetilde C_{i,k}')^{-1}(\lambda_k))\ \forall i\}$ defined as in Theorem 9(2); (iii) if every $q_{i,k}^{\mathrm{opt}} \in (\underline q_{i,k}, \bar q_{i,k})$ then $\Lambda_k^\star = \{\bar\lambda_k\}$ for every $k$ and the implementing price vector $\boldsymbol\lambda^\star = \nabla V(\mathbf Q^{\mathrm{opt}})$ is unique; otherwise each $\Lambda_k^\star$ can be a proper interval and a canonical choice is the coordinatewise minimal implementing price $\lambda_k^\star := \min \Lambda_k^\star$; (iv) the induced equilibrium is socially optimal.
+
+*Proof sketch.* The follower objective is separable across $k$, so each coordinate inherits the scalar Theorem 9 argument: $q_{i,k}^\star(\lambda_k)$ is the projection of $(\widetilde C_{i,k}')^{-1}(\lambda_k)$ onto $[\underline q_{i,k}, \bar q_{i,k}]$. The social-planner problem is strictly concave in $(\mathbf q_i)_{i,k}$, yielding a unique optimum with coordinatewise KKT conditions. The social multipliers $\bar\lambda_k = \partial V/\partial Q_k(\mathbf Q^{\mathrm{opt}})$ satisfy each per-$(i,k)$ KKT inequality, hence $\bar\lambda_k \in \Lambda_k^\star$; the interior/boundary dichotomy carries over from Theorem 9 coordinatewise. Full proof in Appendix A.16. $\square$
+
+**Remark (richer strategic structure).** Theorem 10 extends the scalar-price layer to a **vector posted-price mechanism** over privacy blocks (or message classes). Each block receives its own price $\lambda_k$, and the leader's problem becomes a $K$-dimensional welfare maximization. The separable structure across blocks preserves tractability — the follower problem decomposes into $K$ independent scalar subproblems — while the aggregate welfare function $V(\mathbf Q)$ can couple blocks arbitrarily through its gradient structure. This matches the paper's block partition $\{\mathcal{B}_k\}_{k=1}^K$ and makes the scalar-price case (Theorem 9) a one-block special case.
+
+### 3.7 Approximate Incentive Compatibility and Individual Rationality
+
+Strong privacy generally makes exact strategic guarantees brittle, so we target approximate IC and IR as downstream consequences of privacy-induced posterior distortion rather than as primitive privacy guarantees.
+
+**Approximate incentive compatibility.**
+Let $(\varsigma_i^\star, \rho_{i,k}^\star(\lambda_k))$ denote truthful signaling together with the follower best response, and let $(\varsigma_i', \rho_i')$ be any unilateral deviation. The mechanism is $\varepsilon_i^{\mathrm{IC}}$-IC if
+
+$$\mathbb{E}\!\left[\sum_t \gamma^t \tilde r_{i,t} \mid \varsigma_i^\star, \rho_{i,k}^\star(\lambda_k)\right] \;\ge\; \mathbb{E}\!\left[\sum_t \gamma^t \tilde r_{i,t} \mid \varsigma_i', \rho_i'\right] - \varepsilon_i^{\mathrm{IC}} \quad \forall (\varsigma_i', \rho_i').$$
+
+**Approximate individual rationality.** The mechanism is $\varepsilon_i^{\mathrm{IR}}$-IR if $\mathbb{E}[\sum_t \gamma^t \tilde r_{i,t}] \ge -\varepsilon_i^{\mathrm{IR}}$. Corollary 3 bounds both in terms of channel distortion.
+
+---
+
+## 4. Alternating Game–MARL Optimization
+
+The planner jointly chooses the signaling encoder, posterior estimator, contract mechanism, outer privacy prices, and decentralized policies:
+
+$$\{\phi,\psi,\omega,\lambda_{1:K},\pi_1,\dots,\pi_N\}.$$
+
+The resulting design problem is
+
+$$\begin{aligned}
+\max \quad & \mathbb{E}\left[\sum_{t=1}^{T}\gamma^t r(s_t,\mathbf{a}_t)\right] \\
+\text{s.t.}\quad & \tau_i \text{ is } (\epsilon_i,\delta_i)\text{-DP for all } i, \\
+& \mathrm{Regret}^{\mathrm{welfare}} \le \bar R, \\
+& \varepsilon_i^{\mathrm{IC}} \le \bar{\varepsilon}_i^{\mathrm{IC}}, \qquad \varepsilon_i^{\mathrm{IR}} \le \bar{\varepsilon}_i^{\mathrm{IR}}, \quad \forall i.
+\end{aligned}$$
+
+Equivalently, the transcript-DP constraint may be enforced through the sufficient accountant condition $\sum_{t=1}^{T}\rho_{i,t}\le \bar\rho_i$ together with Theorem 1.
+
+PIL-APS solves this problem by alternating between a cheap game update and a more expensive policy-learning update. In each outer iteration, the planner first computes posterior summaries and solves the one-dimensional privacy-pricing game for $\lambda_k$; the induced privacy expenditures are then mapped to fixed noise levels over the next training block, and MARL updates are run only under this frozen mechanism.
+
+**Proposition 2 (Explicit blockwise contraction tracking).**
+Write the alternating update in block form as
+$$\pi_{k+1} \;=\; G_{\lambda_k}^{\,M}(\pi_k) + \varepsilon_k, \qquad \lambda_{k+1} \;=\; T(\lambda_k, \pi_{k+1}) + \xi_k,$$
+where $G_\lambda$ is one inner MARL update under frozen mechanism parameter $\lambda$, $M$ is the number of inner updates per block, $\varepsilon_k$ is the inner block solve error, and $\xi_k$ is the outer price solve error. Assume:
+
+1. for every $\lambda$ in a neighborhood $\Lambda$, $G_\lambda$ has a unique locally stable fixed point $\pi^\star(\lambda)$, and $\|G_\lambda(\pi) - \pi^\star(\lambda)\| \le \beta \|\pi - \pi^\star(\lambda)\|$ with $0 < \beta < 1$;
+2. the equilibrium manifold is $L_\pi$-Lipschitz: $\|\pi^\star(\lambda) - \pi^\star(\lambda')\| \le L_\pi \|\lambda - \lambda'\|$;
+3. the reduced outer map $F(\lambda) := T(\lambda, \pi^\star(\lambda))$ is a contraction: $\|F(\lambda) - F(\lambda')\| \le \alpha \|\lambda - \lambda'\|$ with $0 < \alpha < 1$;
+4. the outer map is $L_T$-Lipschitz in policy mismatch: $\|T(\lambda, \pi) - T(\lambda, \pi^\star(\lambda))\| \le L_T \|\pi - \pi^\star(\lambda)\|$;
+5. the block errors vanish: $\varepsilon_k \to 0$ and $\xi_k \to 0$.
+
+Let $\lambda^\star$ be the unique fixed point of $F$ and $\pi^\star := \pi^\star(\lambda^\star)$. Define
+$$A_M \;:=\; \begin{pmatrix} (1 + L_\pi L_T)\beta^M & L_\pi(1+\alpha) \\ L_T \beta^M & \alpha \end{pmatrix}.$$
+If the spectral radius $\rho(A_M) < 1$, then
+$$\|\pi_k - \pi^\star(\lambda_k)\| + \|\lambda_k - \lambda^\star\| \;\longrightarrow\; 0.$$
+If in addition $\varepsilon_k = \xi_k = 0$, convergence is locally linear: there exist $C > 0$ and $q \in (0,1)$ with $\|\pi_k - \pi^\star(\lambda_k)\| + \|\lambda_k - \lambda^\star\| \le C q^k$. Since $\beta^M \to 0$ as $M \to \infty$ and $\rho(A_\infty) = \alpha < 1$, by continuity of the spectral radius some finite block length $M$ always makes $\rho(A_M) < 1$.
+
+*Proof sketch.* Define tracking errors $e_k := \|\pi_k - \pi^\star(\lambda_k)\|$ and $\delta_k := \|\lambda_k - \lambda^\star\|$. The inner contraction gives $\|G_{\lambda_k}^{\,M}(\pi_k) - \pi^\star(\lambda_k)\| \le \beta^M e_k$, so $\|\pi_{k+1} - \pi^\star(\lambda_k)\| \le \beta^M e_k + \|\varepsilon_k\|$. Decomposing $\delta_{k+1}$ through $T(\lambda_k, \pi^\star(\lambda_k))$ and using the $F$-contraction and the $L_T$-Lipschitz in policy mismatch, $\delta_{k+1} \le \alpha\delta_k + L_T(\beta^M e_k + \|\varepsilon_k\|) + \|\xi_k\|$. Bounding $e_{k+1}$ similarly via $\pi^\star$-Lipschitzness and substituting gives the coupled recursion $(e_{k+1}, \delta_{k+1})^\top \le A_M (e_k, \delta_k)^\top + $ perturbation. The spectral-radius condition $\rho(A_M) < 1$ then implies both convergence and (in the exact-block case) local linear rate. Full proof in Appendix A.12. $\square$
+
+**Remark 2.1.** If the stopping rule or effective horizon depends on the privatized transcript, then a privacy filter or odometer style accountant may be needed in addition to the fixed-horizon composition used in Theorem 1.
+
+### Algorithm 2: PIL-APS — Outer Privacy-Pricing Game with Inner MARL
+
+```
+Input: Initial parameters φ, ψ, ω, {π_i}_{i=1}^N; privacy budgets {b_{i,1}}_{i=1}^N;
+       block partition {B_k}_{k=1}^K; inner-block length M (per Proposition 2)
+
+for k = 1, ..., K do
+    Collect privatized rollouts under the mechanism fixed in the previous block
+    Estimate posterior summaries (θ̄_{k-1}, Ξ_{k-1}) and block clip radii Ĉ_{i,k}
+        from the privatized past only (CLIP-LA §3.4, or a precomputed schedule)
+    Solve the one-dimensional leader problem for λ_k by line search, bisection,
+       or budget-clearing
+    for each agent i do
+        Compute follower best response ρ*_{i,k}(λ_k)
+        Set block noise level σ²_{i,k} = 2 α · Ĉ²_{i,k} / ρ*_{i,k}(λ_k)
+    end for
+    Freeze (λ_k, {Ĉ_{i,k}, σ_{i,k}}_{i=1}^N) on block B_k
+    for each t ∈ B_k do
+        Sample observations and actions from the decentralized policies
+        Generate privatized messages m_{i,t} = clip_{Ĉ_{i,k}}(z_{i,t}) + u_{i,t},
+            with u_{i,t} ~ N(0, σ²_{i,k} · I)
+        Update posterior q_{ψ,t}, compute transfers c_t, and store transitions
+        Run MARL updates for {π_i}_{i=1}^N under the fixed mechanism
+    end for
+    Update the privacy accountant using the accumulated block expenditure,
+       and set b_{i,k+1}
+end for
+```
+
+Algorithm 2 instantiates the clipped-Gaussian mechanism of §3.2 at the block level: because each $\hat C_{i,k}$ is computed from previously-privatized outputs only (or is pre-scheduled), the per-step RDP cost is $\rho_{i,t} = 2\alpha \hat C_{i,k}^2/\sigma_{i,k}^2$ exactly by Theorem 1, and the blockwise budget $\rho_{i,k}^\star = |\mathcal{B}_k|\cdot \rho_{i,t}$ is spent exactly. The practical unknown-sensitivity instantiation of the clip-radius estimator is CLIP-LA (§3.4, Algorithm 1); Algorithm 2 is the outer game–MARL wrapper around that inner schedule.
+
+---
+
+## 5. Experiments
+
+**Questions.** We evaluate four questions. (i) Does the adaptive water-fill schedule of Theorem 3 beat uniform DPMAC noise on multi-agent tasks with heterogeneous budgets and time-varying sensitivity? (ii) Can a purely posterior-driven estimator $\hat\Delta_t$ replace the sensitivity oracle, and is such a scheme actually DP-safe? (iii) Does CLIP-LA (Algorithm 1) recover the adaptive-scheduling gain while preserving DP by construction? (iv) Does the schedule-level improvement carry into realistic multi-agent communication benchmarks?
+
+### 5.1 Setup
+
+**Model.** For each agent $i \in \{1, \ldots, N\}$: persistent type $\theta_i \sim \mathcal{N}(0, I_d)$, noisy local observation $o_{i,t} = \theta_i + \eta_{i,t}$ with $\eta_{i,t} \sim \mathcal{N}(0, R_\eta I)$, released privatized message $m_{i,t} = \mathrm{clip}_{\hat C_{i,t}}(o_{i,t}) + u_{i,t}$ with $u_{i,t} \sim \mathcal{N}(0, \sigma_{i,t}^2 I)$. The planner maintains an **approximate Kalman receiver** — a Gaussian proxy posterior $\mathcal{N}(\hat\theta_{i,t}, \Sigma_{i,t})$ computed as if the channel were the unclipped linear-Gaussian model. Because clipping destroys exact Kalman inference (the true conditional $p(\theta_i \mid m_{i,t})$ is generally not Gaussian whenever clipping is active on any step), $\Sigma_{i,t}$ is a receiver-model covariance, not the covariance of the true Bayesian posterior under clipping. The welfare objective (as in Section 3.3) is computed from this Gaussian proxy:
+$$W \;=\; -\sum_{i=1}^N \sum_{t=1}^T \gamma^t \sqrt{\mathrm{Tr}(\Sigma_{i,t})/d}.$$
+We therefore interpret $W$ as a **proxy welfare** — a Gaussian-receiver surrogate — rather than the exact Bayesian welfare under the clipped channel. This matches the scope of Theorem 6 / Appendix A.8, which bounds the error of the approximate receiver rather than the true posterior. A clipping-aware receiver (e.g.\ importance-reweighted or variational) is the natural replacement if one wants the exact Bayesian welfare, and is a direction for future work.
+Privacy accountant: Gaussian RDP at $\alpha = 8$, converted to $(\epsilon,\delta)$-DP at $\delta=10^{-5}$, per-step cost $\rho_{i,t} = 2\alpha\hat C_{i,t}^2/\sigma_{i,t}^2$ (consistent with Theorem 1). Budget values $\bar\rho$ reported below refer to this corrected accountant; runs originally instrumented under the legacy per-step formula $\alpha\hat C^2/(2\sigma^2)$ consume $4\bar\rho$ of true budget, so all DP-ratio figures should be read as multiples of the corrected $\bar\rho$.
+
+**Schedules compared.**
+
+| Schedule | Description |
+|---|---|
+| **DPMAC** | Per-agent uniform $\sigma_i^2 = 2\alpha \sum_t \hat C_{i,t}^2/\bar\rho_i$ (Zhao et al., 2023, under corrected accountant) |
+| **PIL-BLOCK** | Blockwise-decay heuristic: 4 blocks with per-block RDP decay $0.5^k$ |
+| **PIL-FL** (KKT) | Water-fill of Theorem 3: $\rho_{i,t} \propto \Delta_{i,t}\sqrt{\Phi_{i,t}}/a_{i,t}$, fixed-point iteration |
+| **CLIP-LA** | Algorithm 1: adaptive $\hat C_{i,t} = \kappa\sqrt{d(v_{i,t}+R_\eta)}$ with clipping, then KKT schedule |
+| **Naive LA** | Same $\hat C_{i,t}$ but *no* clipping — used only to audit DP safety |
+| **Oracle** | SLSQP numerical optimum against the true discounted-welfare objective |
+
+### 5.2 Exp A — Multi-agent heterogeneous budgets
+
+**Protocol.** $N \in \{2, 4\}$; $T = 50$; $d = 4$; $\gamma = 0.95$; $\alpha = 8$; per-agent budgets drawn by mode $\in$ {uniform, log-uniform heterogeneous $\bar\rho_i \in [\bar\rho/4.5, 4.5\bar\rho]$, bimodal $\{\bar\rho/4, 4\bar\rho\}$} with median $\bar\rho = 2$; sensitivity pattern $\in$ {homogeneous $\Delta_{i,t} = 1$, pulse $\Delta_{i,t} \in \{0.5, 2.0\}$ with per-agent phase offsets, heterogeneous exponential decay}. Eight seeds per cell, paired across schedules, one-sided paired $t$-test with $H_1$: schedule welfare $>$ DPMAC welfare.
+
+**Mean welfare improvement over DPMAC** ($N \times$ budget-mode averages):
+
+| Sensitivity pattern | PIL-BLOCK | PIL-FL (KKT) | Naive LA |
+|---|---:|---:|---:|
+| homogeneous $\Delta_t = 1$ | **+4.40%** | +1.69% | +4.58% |
+| pulse $\Delta_{i,t}$ | +9.22% | **+23.41%** | $-0.25\%$ |
+| heterogeneous decay | **+0.38%** | $-0.18\%$ | $-3.47\%$ |
+
+On pulse-sensitivity scenarios — the regime Corollary 1 identifies as off-optimal for uniform schedules — the KKT water-fill achieves **+23.4% mean welfare gain over DPMAC** with all 6 cells significant at $p<10^{-3}$. The blockwise heuristic PIL-BLOCK, despite being a simple 1:0.125 front-loader, performs strongly across patterns with no significant regressions (0/18 cells), confirming that front-loading — not the specific shape of the decay — drives most of the practical gain. In the homogeneous regime, Corollary 1 predicts and the experiment confirms that uniform DPMAC is near-optimal; the time-varying-schedule advantage emerges only once $\Delta_{i,t}$ varies or the discount starts to dominate.
+
+![Exp A](exp/fig_expA.png)
+
+### 5.3 Exp B — Learning-augmented $\hat\Delta_t$ from posterior uncertainty
+
+**Protocol.** Single-agent, $T = 60$, $d = 4$, $\bar\rho = 4$, $\gamma = 0.95$, 20 seeds per pattern. Estimator $\hat\Delta_t = \max(0.3, (\mathrm{Tr}(\Sigma_{t-1})/d)^p)$ with $p = 0.5$; a post-processing of the privatized transcript, hence DP-free under the accountant.
+
+**Calibration.** Correlation between $\hat\Delta_t$ and true $\Delta_t$ is $+0.98$ on monotone-decay patterns, $-0.98$ on monotone-growth patterns, and approximately zero on pulse. Yet the LA schedule *still helps* on growth patterns where it anticorrelates with truth. This reveals what the estimator is really doing: monotone front-loading. Because the discount $\gamma^t$ rewards early posterior concentration, a schedule that spends budget earlier beats uniform *regardless* of whether its motivation tracks the actual sensitivity. In other words, LA here is parameter-free front-loading dressed as adaptive estimation — which sets up the next experiment.
+
+### 5.4 Exp C — DP-safety audit
+
+**Audit.** For each sensitivity pattern $\times$ budget cell, compute the *true* RDP that the naive-LA schedule consumes against the real $\Delta_t$ (using Theorem 2's formula $\rho_t^{\mathrm{actual}} = \rho_t\, (\Delta_t/(2\hat C_t))^2$), and compare to the claimed RDP budget.
+
+**Finding.** Across 15 audited cells, the naive LA overspends its claimed $\bar\rho$ by factors of **$2\times$ to $23\times$** on time-varying patterns — confirming the prediction of Theorem 2. Thirteen of fifteen cells exhibit a ratio strictly greater than $1$, i.e., a DP violation.
+
+![DP audit](exp/fig_dp_audit.png)
+
+### 5.5 Exp D — CLIP-LA fix
+
+**Protocol.** Same environment as Exp C, with $T = 60$, $d = 4$, $\bar\rho \in \{16, 64, 256\}$, 30 seeds, $\kappa = 1.2$. Three schedules compared: DPMAC, oracle-$\Delta$ (known true sensitivity, with $\hat C_t$ fixed to a conservative constant), and CLIP-LA (Algorithm 1 of Section 3.4).
+
+| Metric | DPMAC | Oracle-$\Delta$ | **CLIP-LA** |
+|---|---:|---:|---:|
+| DP-safety ratio (max over cells) | 1.000 | 1.000 | **1.000** ✓ |
+| Mean welfare gain vs DPMAC | — | $+3.7\%$ | **$+5.5\%$** |
+| Mean true-MSE gain vs DPMAC | — | $+1.3\%$ | **$+6.3\%$** ($p = 0.005$) |
+| Calibration MSE/Tr at $\bar\rho=64$ | 0.95 | 0.93 | 1.01 |
+| Uses full budget | ✓ | ✓ | ✓ |
+
+CLIP-LA is DP-safe by Theorem 5 (ratio exactly $1$ on all cells) and achieves a **$+6.3\%$ true-MSE gain over DPMAC** ($p = 0.005$, 15 cells $\times$ 30 seeds), *exceeding* the oracle-$\Delta$ schedule. This is not a contradiction: the known-$\Delta$ oracle only chooses $\sigma_t^2$, while CLIP-LA additionally controls the clip radius $\hat C_t$. Section 3.4 formalized this: CLIP-LA jointly optimizes $(\sigma_t^2, \hat C_t)$ subject to the RDP-budget constraint $\sum_t 2\alpha \hat C_t^2/\sigma_t^2 \le \bar\rho$ (clip-radius convention, cf.\ §3.2); the oracle-$\Delta$ baseline here is restricted to the $\hat C_t$-fixed slice. Empirically the adaptive clip is the dominant lever.
+
+![CLIP-LA fix](exp/fig_dp_safe_la_final.png)
+
+**Calibration caveat.** At the largest budget ($\bar\rho = 256$), the vanilla Kalman receiver becomes overconfident (MSE/Tr $\approx 1.3$) because it does not model the clipping bias. The **true-MSE** gain remains robust at $\sim$6–9% in that regime; the welfare-proxy gain is amplified by the receiver miscalibration. A clipping-aware receiver — analogous to DPMAC's privacy-aware receiver — would close this gap and is a natural next step.
+
+### 5.6 PettingZoo MPE stress test
+
+As an external benchmark beyond the stylized Kalman setting, we run a PIL-style private communication stack (adaptive noise scale driven by posterior error and remaining budget) on three cooperative tasks from PettingZoo: cooperative navigation (CN), cooperative communication and navigation (CCN), and predator–prey (PP). Each method runs $100$ training episodes with $8$ evaluation rollouts every $10$ episodes. We report mean final reward and an empirical leakage score $R^2$ from a linear probe of released messages onto private targets.
+
+On CN, PIL slightly outperforms DPMAC ($-24.89$ vs.\ $-25.02$) while reducing leakage from $0.078$ to $0.038$. On CCN, PIL improves reward over DPMAC ($-41.62$ vs.\ $-42.25$) but remains behind non-private TarMAC and MADDPG. On PP — the task where selective communication matters most — PIL reaches $7.92$ mean final reward versus $0.42$ for DPMAC, $4.17$ for I2C, and $2.50$ for MADDPG, while reducing leakage from $0.95$ (non-private) to $0.063$. The absolute $\epsilon$ values are large (benchmark accumulates long horizons) and should be read comparatively rather than as deployment-grade certificates. Overall MPE confirms the schedule-level finding: adaptive scheduling dominates fixed-private baselines most cleanly when the environment rewards selective communication.
+
+### 5.7 Summary of empirical findings
+
+1. The KKT water-fill schedule of Theorem 3 lifts welfare over uniform DPMAC by $+23.4\%$ on pulse-sensitivity multi-agent benchmarks ($p<10^{-3}$), versus $+7.5\%$ for a precision-weighted heuristic — matching the theoretical gap predicted by Corollary 2.
+2. In the homogeneous final-trace regime, uniform DPMAC matches the numerical oracle to four decimals, consistent with Corollary 1.
+3. Naive learning-augmented scheduling without clipping violates DP by factors of 2–23$\times$ on time-varying sensitivity, as predicted by Theorem 2.
+4. CLIP-LA (Algorithm 1) is DP-safe by construction (Theorem 5), spends the full budget, and improves true MSE over DPMAC by $+6.3\%$ ($p = 0.005$), *exceeding* the known-$\Delta$ oracle because it controls the clip bound in addition to the noise variance.
+
+---
+
+## Appendix A. Full Proofs
+
+This appendix contains full proofs of the theorems, lemmas, and propositions stated in the main text. We adopt the notation of Section 3: $c_t := \alpha \Delta_t^2/2$ where $\Delta_t$ denotes the $\ell_2$-sensitivity of the release at step $t$ (so under clipping to radius $\hat C_t$ one has $\Delta_t = 2\hat C_t$ and $c_t = 2\alpha\hat C_t^2$); $a_t := R_\eta + \sigma_t^2$; the RDP cost is $\rho_t := c_t/\sigma_t^2$; equivalently, in clip-radius form, $\rho_t = 2\alpha\hat C_t^2/\sigma_t^2$. The scalar Kalman recursion $v_t^{-1} = v_{t-1}^{-1} + a_t^{-1}$ with $v_0 = 1$ defines the per-coordinate posterior variance, and $\Phi_t := \sum_{s=t}^T \gamma^s v_s^{3/2}$.
+
+### A.1 Proof of Theorem 1 (Transcript RDP of the clipped-Gaussian mechanism)
+
+Let $\mathcal{F}_{t-1} := \sigma(m_{i,1}, \ldots, m_{i,t-1})$. By hypothesis, $\hat C_{i,t}$ and $\sigma_{i,t}^2$ are $\mathcal{F}_{t-1}$-measurable.
+
+*Step 1 (per-step sensitivity).* The mechanism of §3.2 clips to radius $\hat C_{i,t}$ before adding noise. For any neighboring types $\theta_i, \theta_i'$, and conditional on $\mathcal{F}_{t-1}$, both clipped values lie in the ball of radius $\hat C_{i,t}$ centered at the origin, so
+$$\|\mathrm{clip}_{\hat C_{i,t}}(f_{i,t}(\theta_i; \omega_t)) - \mathrm{clip}_{\hat C_{i,t}}(f_{i,t}(\theta_i'; \omega_t))\|_2 \;\le\; 2\hat C_{i,t}.$$
+This bound is tight — e.g.\ for $v = \hat C_{i,t} e_1$ and $v' = -\hat C_{i,t} e_1$ the distance equals $2\hat C_{i,t}$ — so $2\hat C_{i,t}$ is the exact worst-case $\ell_2$-sensitivity of the post-clipping function. The Gaussian mechanism $\mathrm{clip}_{\hat C_{i,t}} + u_{i,t}$ with $u_{i,t} \sim \mathcal{N}(0, \sigma_{i,t}^2 I_d)$ therefore has per-step RDP cost
+$$\rho_{i,t} \;=\; \frac{\alpha\, (2\hat C_{i,t})^2}{2\sigma_{i,t}^2} \;=\; \frac{2\alpha\,\hat C_{i,t}^2}{\sigma_{i,t}^2}.$$
+
+*Step 2 (adaptive composition).* By Mironov (2017, Proposition 1), an adaptive composition of per-step mechanisms with $(\alpha, \rho_{i,t})$-RDP costs (where each $\rho_{i,t}$ is $\mathcal{F}_{t-1}$-measurable) is $(\alpha, \sum_t \rho_{i,t})$-RDP.
+
+*Step 3 (post-processing).* Any deterministic or randomized function of the privatized outputs — the planner's posterior estimator $q_{\psi,t}$, contract transfers $c_t$, etc. — inherits the RDP guarantee by post-processing invariance. The full transcript $\tau_i$ is a post-processing of the per-step privatized releases and therefore $(\alpha, \sum_t \rho_{i,t})$-RDP.
+
+*Step 4 (RDP-to-DP conversion).* Mironov (2017, Proposition 3) gives, for any $\delta_i \in (0,1)$,
+$$\epsilon_i(\delta_i) \;=\; \sum_{t=1}^T \rho_{i,t} + \frac{\log(1/\delta_i)}{\alpha - 1}.$$
+
+*Step 5 (budget exactness).* If the scheduler is designed so $\sum_t \rho_{i,t} = \bar\rho_i$ by construction — as in PIL-FL and CLIP-LA — then the inequality above is an equality at the chosen $\alpha$. $\blacksquare$
+
+### A.2 Proof of Theorem 2 (Failure of naive LA without clipping)
+
+In the naive mechanism, $m_{i,t} = f_{i,t}(\theta_i; \omega_t) + u_{i,t}$ without clipping. Conditional on $\mathcal{F}_{t-1}$, the $\ell_2$-sensitivity of the released function is $\Delta_{i,t}^{\mathrm{true}} = \sup_{\theta_i \sim \theta_i'} \|f_{i,t}(\theta_i;\omega_t) - f_{i,t}(\theta_i';\omega_t)\|_2$, not $2\hat C_{i,t}$. The Gaussian mechanism's tight RDP formula (Mironov 2017, Proposition 7) applied to this unclipped function yields per-step RDP cost
+$$\rho_{i,t}^{\mathrm{actual}} \;=\; \frac{\alpha (\Delta_{i,t}^{\mathrm{true}})^2}{2\sigma_{i,t}^2}.$$
+Substituting the naive-LA allocation $\sigma_{i,t}^2 = 2\alpha \hat C_{i,t}^2/\rho_{i,t}$ (Theorem 2 statement):
+$$\rho_{i,t}^{\mathrm{actual}} \;=\; \frac{\alpha (\Delta_{i,t}^{\mathrm{true}})^2}{2} \cdot \frac{\rho_{i,t}}{2\alpha \hat C_{i,t}^2} \;=\; \rho_{i,t}\left(\frac{\Delta_{i,t}^{\mathrm{true}}}{2\hat C_{i,t}}\right)^2.$$
+If $2\hat C_{i,t} < \Delta_{i,t}^{\mathrm{true}}$ for any $t$, then $\rho_{i,t}^{\mathrm{actual}} > \rho_{i,t}$, and by adaptive composition the total transcript RDP strictly exceeds $\sum_t \rho_{i,t}$; the mechanism is therefore not $(\alpha, \sum_t \rho_{i,t})$-RDP, and the converted $(\varepsilon,\delta)$-DP certificate with $\varepsilon = \sum_t \rho_{i,t} + \log(1/\delta_i)/(\alpha-1)$ is not justified. $\blacksquare$
+
+### A.3 Proof of Theorem 3 (KKT characterization)
+
+*Step 1 (gradient).* From the Kalman accumulation $v_s^{-1} = 1 + \sum_{u=1}^s a_u^{-1}$, only the $u = t$ term depends on $\rho_t$. Hence, for $s \ge t$,
+$$\frac{\partial v_s^{-1}}{\partial \rho_t} \;=\; -a_t^{-2}\cdot\frac{\partial a_t}{\partial \rho_t} \;=\; -a_t^{-2}\!\left(-\frac{c_t}{\rho_t^2}\right) \;=\; \frac{c_t}{\rho_t^2 a_t^2},$$
+and for $s < t$, the derivative is zero. Using $\partial v_s/\partial v_s^{-1} = -v_s^2$:
+$$\frac{\partial v_s}{\partial \rho_t} \;=\; -v_s^2 \cdot \frac{c_t}{\rho_t^2 a_t^2}, \qquad s \ge t.$$
+Substituting into $\partial \sqrt{v_s}/\partial v_s = 1/(2\sqrt{v_s})$ and summing with discount,
+$$\frac{\partial J}{\partial \rho_t} \;=\; \sum_{s=t}^T \gamma^s \cdot \frac{-v_s^2 c_t}{2\sqrt{v_s}\,\rho_t^2 a_t^2} \;=\; -\frac{c_t}{2\rho_t^2 a_t^2}\sum_{s=t}^T \gamma^s v_s^{3/2} \;=\; -\frac{c_t \Phi_t}{2\rho_t^2 a_t^2}.$$
+
+*Step 2 (existence and uniqueness on the closed simplex).* Extend $J$ continuously to $\bar\Omega = \{\boldsymbol\rho \ge 0, \sum_t \rho_t = \bar\rho\}$ by setting $a_t^{-1} = 0$ (equivalently $v_t = v_{t-1}$) whenever $\rho_t = 0$. $\bar\Omega$ is compact and $J$ is continuous on $\bar\Omega$, so a minimizer exists by Weierstrass. By Lemma 1 (Appendix A.5), $J$ is strictly convex on the open interior $\Omega^\circ = \{\boldsymbol\rho > 0, \sum_t \rho_t = \bar\rho\}$. For uniqueness on the closed simplex $\bar\Omega$, we use a face argument: each face of $\bar\Omega$ has the form $F_S = \{\boldsymbol\rho \in \bar\Omega : \rho_t = 0\text{ for }t \in S,\; \rho_t > 0\text{ for }t \notin S\}$ for some index set $S \subseteq \{1,\ldots,T\}$. If $\mathbf z = \theta \mathbf x + (1-\theta)\mathbf y \in \bar\Omega$ with $\theta \in (0,1)$ has a zero coordinate $z_t = 0$, then $\theta x_t + (1-\theta) y_t = 0$ with $x_t, y_t \ge 0$ forces $x_t = y_t = 0$; hence the whole segment $[\mathbf x, \mathbf y]$ lies in the same face $F_S$. The restriction of $J$ to $F_S$ is (by Lemma 1 applied to the reduced problem on the lower-dimensional face $\{\rho_t > 0 : t \notin S\}$) strictly convex on the relative interior of $F_S$ and continuous on its closure, and the same face-by-face strict-convexity argument iterates. Uniqueness of the minimizer $\boldsymbol{\rho}^\star$ on $\bar\Omega$ follows.
+
+*Step 3 (KKT with complementary slackness).* The Lagrangian is
+$$\mathcal{L}(\boldsymbol\rho, \mu, \boldsymbol\nu) \;=\; J(\boldsymbol\rho) + \mu\!\left(\textstyle\sum_t \rho_t - \bar\rho\right) - \sum_t \nu_t \rho_t, \qquad \nu_t \ge 0.$$
+KKT: for each $t$, $\partial J/\partial\rho_t + \mu - \nu_t = 0$ and $\nu_t \rho_t = 0$. Let $\mathcal{A}^\star := \{t : \rho_t^\star > 0\}$ denote the active set. For $t \in \mathcal{A}^\star$, $\nu_t = 0$, so Step 1 gives
+$$\mu \;=\; \frac{c_t \Phi_t^\star}{2 (\rho_t^\star)^2 (a_t^\star)^2}, \qquad t \in \mathcal{A}^\star.$$
+Solving and normalizing via $\sum_{t\in\mathcal{A}^\star} \rho_t^\star = \bar\rho$ gives (KKT-WF) on the active set. For $t \notin \mathcal{A}^\star$, $\rho_t^\star = 0$ by definition.
+
+*Step 4 (when boundary minima can occur).* Note that the heuristic "$\partial J/\partial\rho_t \to -\infty$ as $\rho_t \to 0^+$" is *not* valid because $a_t = R_\eta + c_t/\rho_t \to \infty$ in the same limit. Using (A.1), the one-sided boundary derivative is in fact finite:
+$$\lim_{\rho_t \to 0^+} \frac{\partial J}{\partial \rho_t} \;=\; \lim_{\rho_t \to 0^+} -\frac{c_t \Phi_t}{2\rho_t^2 a_t^2} \;=\; -\frac{\Phi_t^{\text{bdry}}}{2 c_t},$$
+where $\Phi_t^{\text{bdry}}$ is evaluated at the boundary point $\rho_t = 0$ (equivalently $v_t = v_{t-1}$). Consequently, when this finite derivative exceeds the Lagrange multiplier $\mu$ — which happens for sufficiently small $\gamma$ or budget-imbalanced configurations — the optimum assigns $\rho_t^\star = 0$ at step $t$. A concrete two-step example confirms this: with $T = 2$, $R_\eta = c_1 = c_2 = 1$, $\bar\rho = 1$, and $\gamma < 1/3$, the unique optimum is $(\rho_1^\star, \rho_2^\star) = (1, 0)$.
+
+*Step 5 (iteration).* Define $F: \boldsymbol{\rho} \mapsto \boldsymbol{\rho}'$ by: compute $v_t, a_t, \Phi_t$ from $\boldsymbol{\rho}$ and set $\rho_t' = \bar\rho \cdot (\Delta_t\sqrt{\Phi_t}/a_t)/\sum_s(\Delta_s\sqrt{\Phi_s}/a_s)$. Any interior fixed point of $F$ satisfies (KKT-WF) by Step 3. We do not establish contractivity of $F$ and therefore do not claim Picard-iteration convergence. In practice, projected gradient descent (or projected Newton/mirror descent) on the strictly convex objective $J$ over $\bar\Omega$ is guaranteed to converge to $\boldsymbol{\rho}^\star$ at standard rates. $\blacksquare$
+
+### A.4 Proof of Theorem 4 ($\varphi_t$-correction bounds)
+
+Factor $\Phi_t^\star$ by isolating the $s = t$ term:
+$$\Phi_t^\star \;=\; \gamma^t (v_t^\star)^{3/2} \;+\; \sum_{s=t+1}^T \gamma^s (v_s^\star)^{3/2} \;=\; \gamma^t (v_t^\star)^{3/2}\!\left(1 + \psi_t\right), \quad \psi_t = \sum_{s=t+1}^T \gamma^{s-t}\!\left(\frac{v_s^\star}{v_t^\star}\right)^{3/2}.$$
+Hence $\sqrt{\Phi_t^\star} = \gamma^{t/2}(v_t^\star)^{3/4}\varphi_t$ with $\varphi_t = \sqrt{1+\psi_t}$; substitution into Theorem 3 yields the claimed decomposition.
+
+*Lower bound.* Each summand in $\psi_t$ is nonneg, so $\psi_t \ge 0$ and $\varphi_t \ge 1$.
+
+*Upper bound.* The Kalman update $v_s^{-1} = v_{s-1}^{-1} + a_s^{-1}$ with $a_s^{-1} \ge 0$ (equality when $\rho_s^\star = 0$, i.e.\ $s$ is inactive; strict inequality on the active set) gives $v_s^\star \le v_{s-1}^\star$. By induction, $v_s^\star \le v_t^\star$ for all $s \ge t$, hence $(v_s^\star/v_t^\star)^{3/2} \le 1$. Therefore
+$$\psi_t \;\le\; \sum_{s=t+1}^T \gamma^{s-t} \;\le\; \sum_{k=1}^\infty \gamma^k \;=\; \frac{\gamma}{1-\gamma}, \quad \text{and} \quad \varphi_t \le \sqrt{1 + \gamma/(1-\gamma)} = \frac{1}{\sqrt{1-\gamma}}.$$
+
+*Heavy-discount limit.* As $\gamma \to 0$, $\gamma/(1-\gamma) \to 0$, hence $\psi_t \to 0$ and $\varphi_t \to 1$ uniformly in $t$. The schedule collapses to the local closed form $\rho_t^\star \propto \gamma^{t/2}\Delta_t (v_t^\star)^{3/4}/a_t^\star$. $\blacksquare$
+
+### A.5 Proof of Lemma 1 (Strict convexity of $J$)
+
+Let $g_u(\rho) := a_u^{-1} = \rho/(R_\eta\rho + c_u)$.
+
+**Lemma A.5.1.** $g_u$ is strictly concave on $\mathbb{R}_{++}$.
+
+*Proof.* Direct computation:
+$$g_u'(\rho) = \frac{c_u}{(R_\eta\rho + c_u)^2}, \qquad g_u''(\rho) = -\frac{2 R_\eta c_u}{(R_\eta\rho + c_u)^3} \;<\; 0,$$
+where strict negativity uses $c_u > 0$ by (A2) and $R_\eta > 0$ by (A3). $\square$
+
+**Lemma A.5.2.** $H_t(\boldsymbol{\rho}) := v_t^{-1}(\boldsymbol{\rho}) = 1 + \sum_{u=1}^t g_u(\rho_u)$ is jointly concave on $\mathbb{R}_{++}^T$, strictly concave in the first $t$ coordinates.
+
+*Proof.* Each $g_u(\rho_u)$ depends only on $\rho_u$. Its contribution to $\nabla^2 H_t$ is therefore a diagonal matrix with $g_u''(\rho_u) < 0$ in the $u$-th slot and zeros elsewhere. The sum $\nabla^2 H_t = \mathrm{diag}(g_1''(\rho_1), \ldots, g_t''(\rho_t), 0, \ldots, 0)$ is negative semidefinite on $\mathbb{R}^T$ and strictly negative definite on the first $t$ coordinates. $\square$
+
+**Lemma A.5.3.** For any strictly concave positive function $h$ on a convex domain, $\log h$ is strictly concave.
+
+*Proof.* For $x \ne y$ and $\lambda \in (0,1)$:
+\begin{align*}
+\log h(\lambda x + (1-\lambda)y) &> \log\!\big(\lambda h(x) + (1-\lambda)h(y)\big) \tag{strict concavity of $h$, monotonicity of $\log$} \\
+&\ge \lambda\log h(x) + (1-\lambda)\log h(y). \tag{concavity of $\log$ on $\mathbb{R}_{++}$}
+\end{align*}
+The first inequality is strict whenever the argument of $\log$ strictly exceeds $\lambda h(x) + (1-\lambda)h(y)$, which is the case whenever $h(x) \ne h(y)$ or $h$ is strictly concave at $x, y$; either way the combined inequality is strict, which is what is needed. $\square$
+
+**Lemma A.5.4.** $\log v_t = -\log H_t$ is strictly convex in the first $t$ coordinates.
+
+*Proof.* Apply Lemma A.5.3 to $H_t$ (strictly concave on first $t$ coordinates, strictly positive) and negate. $\square$
+
+**Lemma A.5.5.** $\sqrt{v_t} = \exp\!\big(\tfrac{1}{2}\log v_t\big)$ is strictly convex in the first $t$ coordinates.
+
+*Proof.* The function $\exp$ is strictly convex and strictly increasing; the composition of a strictly-convex-increasing function with a strictly convex function is strictly convex. $\square$
+
+*Proof of Lemma 1.* $J = \sum_{t=1}^T \gamma^t \sqrt{v_t}$. By Lemma A.5.5 with $t = T$, the term $\sqrt{v_T}$ is strictly convex in all $T$ coordinates jointly; hence $\gamma^T \sqrt{v_T}$ is strictly convex (since $\gamma^T > 0$). For $t < T$, $\gamma^t\sqrt{v_t}$ is convex. The sum of a strictly convex function and convex functions is strictly convex, so $J$ is strictly convex on $\mathbb{R}_{++}^T$. $\blacksquare$
+
+### A.6 Proof of Corollary 1 (DPMAC-uniform optimality)
+
+In the special case $\Delta_t \equiv \Delta$ constant, discount $\gamma$ arbitrary, and objective $\sqrt{v_T}$ only (not cumulative), the gradient calculation of Appendix A.3 Step 1 specialized to $s = T$ gives
+$$\frac{\partial \sqrt{v_T}}{\partial \rho_t} \;=\; -\frac{v_T^{3/2} c}{2\rho_t^2 a_t^2}, \qquad c = \frac{\alpha\Delta^2}{2},$$
+independent of $t$ except through $\rho_t$ and $a_t$. KKT stationarity $\mu = c v_T^{3/2}/(2\rho_t^2 a_t^2)$ for all $t$ gives $\rho_t a_t$ constant in $t$. Since $a_t = R_\eta + c/\rho_t$, constancy of $\rho_t a_t = \rho_t R_\eta + c$ forces $\rho_t$ constant in $t$, i.e.\ uniform. Lemma 1 applied with objective $\sqrt{v_T}$ (still strictly convex in all $T$ coordinates) gives uniqueness. The uniform schedule with $\sigma_t^2 = 2\alpha T \hat C^2/\bar\rho$ (corrected-accountant form) is precisely the DPMAC prescription. $\blacksquare$
+
+### A.7 Proof of Theorem 5 (CLIP-LA is DP-safe)
+
+The CLIP-LA algorithm (Algorithm 1) constructs $\hat C_{i,t}$ as a deterministic function of $\{v_{i,s}\}_{s \le t}$, where each $v_{i,s}$ is computed from the prior variance and the schedule $\{\sigma_{i,s}^2\}_{s \le t}$. Either (i) the schedule is precomputed offline — in which case $\hat C_{i,t}$ is constant and trivially $\mathcal{F}_{t-1}$-measurable — or (ii) the schedule is updated online from the privatized past, in which case $\hat C_{i,t}$ is a deterministic function of $m_{i,1}, \ldots, m_{i,t-1}$, hence $\mathcal{F}_{t-1}$-measurable.
+
+In both cases the hypotheses of Theorem 1 are met: $\hat C_{i,t}$ and $\sigma_{i,t}^2$ are $\mathcal{F}_{t-1}$-measurable, and the runtime actually clips messages to radius $\hat C_{i,t}$. Theorem 1 therefore applies and gives $(\alpha, \sum_t \rho_{i,t})$-RDP with $\rho_{i,t} = 2\alpha \hat C_{i,t}^2/\sigma_{i,t}^2$; by construction of the schedule (Algorithm 1 step 5, $\sigma_{i,t}^2 = 2\alpha\hat C_{i,t}^2/\rho_{i,t}$) we have $\sum_t \rho_{i,t} = \bar\rho_i$ exactly. Conversion to $(\epsilon_i, \delta_i)$-DP follows from Theorem 1 Step 4. $\blacksquare$
+
+### A.8 Proof of Theorem 6 (Welfare gap of CLIP-LA)
+
+Let $z_{i,t} := f_{i,t}(\theta_i; \omega_t)$ denote the unclipped encoder output and $\tilde z_{i,t} := \mathrm{clip}_{\hat C_{i,t}}(z_{i,t})$ the clipped version actually released (before adding Gaussian noise). The bias introduced by clipping is
+$$b_{i,t} := \mathbb{E}[\tilde z_{i,t} - z_{i,t} \mid \mathcal{F}_{t-1}, \theta_i], \qquad \|b_{i,t}\|_2 \le \mathbb{E}\!\left[\|z_{i,t}\|_2 \cdot \mathbf{1}_{\|z_{i,t}\|_2 > \hat C_{i,t}} \,\big|\, \mathcal{F}_{t-1}, \theta_i\right].$$
+By hypothesis, $z_{i,t}$ conditional on $\theta_i$ is sub-Gaussian with parameter $\tau_\phi^2$ around its conditional mean $\mathbb{E}[z_{i,t}\mid\theta_i]$. Using the encoder-mean assumption of Theorem 6, $\|\mathbb{E}[z_{i,t}\mid\theta_i]\|_2 \le M_{z,t}$ almost surely under (a) or on $\mathcal{E}_\beta$ under (b). Under the margin hypothesis $\hat C_{i,t} \ge M_{z,t} + c\sqrt{d\,\tau_\phi^2}$ with $c \ge \sqrt{2}$, the triangle inequality gives $\hat C_{i,t} - \|\mathbb{E}[z_{i,t}\mid\theta_i]\|_2 \ge c\sqrt{d\,\tau_\phi^2}$, and the sub-Gaussian tail yields
+$$\Pr\!\big(\|z_{i,t}\|_2 > \hat C_{i,t} \,\big|\, \mathcal{F}_{t-1}, \theta_i, \mathcal{E}_\beta\big) \;\le\; 2 e^{-c^2/2},$$
+and a matching bound on $\mathbb{E}[\|z_{i,t}\|_2 \mathbf{1}_{\cdot}]$ yields
+$$\|b_{i,t}\|_2 \;=\; O\!\left(\sqrt{d\,\tau_\phi^2}\, e^{-c^2/2}\right) \quad \text{on } \mathcal{E}_\beta.$$
+This bias propagates into a perturbation of the **approximate** posterior mean used by the Kalman receiver; the receiver's posterior covariance is unchanged because it is computed from the prescribed $(R_\eta, \sigma_{i,t}^2)$ noise structure, independently of the clipping event. (For the *true* Bayesian posterior, clipping also distorts the likelihood shape and the covariance is not preserved; a bound on the true posterior requires a clipping-aware receiver and is outside the scope of this theorem, which bounds the error of the approximate receiver.) Total variation between the CLIP-LA approximate posterior $q_t^{\mathrm{CLIP}}$ and the *unclipped same-schedule reference* approximate posterior $q_t^{\mathrm{ref}}$ — both using identical $\sigma_{i,t}^2$, differing only by the clipping operation — satisfies $\mathrm{TV}(q_t^{\mathrm{CLIP}}, q_t^{\mathrm{ref}}) \le C'\|b_{i,t}\|_2$. Applying Theorem 7's Lipschitz bound with constant $L_W$ and summing with discount, on $\mathcal{E}_\beta$:
+$$W^{\mathrm{ref}}(\bar\rho_i) - W^{\mathrm{CLIP\text{-}LA}}(\bar\rho_i) \;\le\; L_W \sum_{t=1}^T \gamma^t\, B_t, \qquad B_t = O\!\left(\sqrt{d\,\tau_\phi^2}\, e^{-c^2/2}\right).$$
+Under case (b), integrating over $\mathcal{E}_\beta^c$ (on which welfare is bounded by a constant $W_{\max}$) adds an unconditional term $\beta W_{\max} \sum_t \gamma^t$. $\blacksquare$
+
+### A.9 Proof of Theorem 7 (Privacy-to-welfare regret)
+
+Fix $t$ and condition on the public history $H_{t-1}$. Write $\pi_t(\boldsymbol\theta) := \Pr(\boldsymbol\theta \mid H_{t-1})$ for the predictive prior on types, and let
+$$P_t^\sigma(d\boldsymbol\theta, d\mathbf m) \;:=\; \pi_t(d\boldsymbol\theta)\,P_t^\sigma(d\mathbf m \mid \boldsymbol\theta, H_{t-1}), \qquad P_t^*(d\boldsymbol\theta, d\mathbf m) \;:=\; \pi_t(d\boldsymbol\theta)\,P_t^*(d\mathbf m \mid \boldsymbol\theta, H_{t-1})$$
+denote the joint type–message laws under the private and non-private channels respectively.
+
+*Step 1 (joint KL factorizes by agent).* Because the two mechanisms share the prior $\pi_t$, the KL chain rule gives
+$$D_{\mathrm{KL}}\big(P_t^\sigma(\boldsymbol\theta, \mathbf m) \,\Vert\, P_t^*(\boldsymbol\theta, \mathbf m)\big) \;=\; \mathbb{E}_{\boldsymbol\theta \sim \pi_t}\big[D_{\mathrm{KL}}(P_t^\sigma(\mathbf m \mid \boldsymbol\theta) \,\Vert\, P_t^*(\mathbf m \mid \boldsymbol\theta))\big].$$
+By the conditional-independence hypothesis (ii) of Theorem 7, $P_t^\sigma(\mathbf m \mid \boldsymbol\theta) = \prod_i p_{i,t}^\sigma(m_i \mid \theta_i)$ and similarly for $P_t^*$, so
+$$D_{\mathrm{KL}}(P_t^\sigma(\mathbf m \mid \boldsymbol\theta) \,\Vert\, P_t^*(\mathbf m \mid \boldsymbol\theta)) \;=\; \sum_{i=1}^N D_{\mathrm{KL}}(p_{i,t}^\sigma(\cdot \mid \theta_i) \,\Vert\, p_{i,t}^*(\cdot \mid \theta_i)) \;=\; \sum_{i=1}^N \mathcal{D}_{i,t}^{\mathrm{KL}}(\theta_i).$$
+Taking expectation under $\pi_t$,
+$$D_{\mathrm{KL}}(P_t^\sigma(\boldsymbol\theta, \mathbf m) \,\Vert\, P_t^*(\boldsymbol\theta, \mathbf m)) \;=\; \sum_{i=1}^N \bar{\mathcal{D}}_{i,t}^{\mathrm{KL}}. \tag{A.9.1}$$
+
+*Step 2 (chain rule the other way).* The same joint KL decomposes through the marginal over $\mathbf m$:
+$$D_{\mathrm{KL}}(P_t^\sigma(\boldsymbol\theta, \mathbf m) \,\Vert\, P_t^*(\boldsymbol\theta, \mathbf m)) \;=\; D_{\mathrm{KL}}(P_{t,\mathbf m}^\sigma \,\Vert\, P_{t,\mathbf m}^*) \;+\; \mathbb{E}_{\mathbf m \sim P_{t,\mathbf m}^\sigma}\big[D_{\mathrm{KL}}(q_t^\sigma(\cdot \mid \mathbf m) \,\Vert\, q_t^*(\cdot \mid \mathbf m))\big].$$
+Dropping the nonnegative marginal term and combining with (A.9.1),
+$$\mathbb{E}_{\mathbf m \sim P_{t,\mathbf m}^\sigma}\big[D_{\mathrm{KL}}(q_t^\sigma \,\Vert\, q_t^*)\big] \;\le\; \sum_{i=1}^N \bar{\mathcal{D}}_{i,t}^{\mathrm{KL}}. \tag{A.9.2}$$
+This is the KL-stability inequality with constant $\kappa = 1$.
+
+*Step 3 (welfare step).* Lipschitz-welfare + Pinsker + Jensen for the concave map $\sqrt{\cdot}$:
+\begin{align*}
+\mathbb{E}[W_t(q_t^*, s_t) - W_t(q_t^\sigma, s_t) \mid H_{t-1}] \;&\le\; L_W\,\mathbb{E}[\mathrm{TV}(q_t^\sigma, q_t^*) \mid H_{t-1}] \\
+&\le\; L_W\,\sqrt{\tfrac{1}{2}\,\mathbb{E}[D_{\mathrm{KL}}(q_t^\sigma \Vert q_t^*) \mid H_{t-1}]} \\
+&\le\; L_W\,\sqrt{\tfrac{1}{2}\textstyle\sum_{i=1}^N \bar{\mathcal{D}}_{i,t}^{\mathrm{KL}}}.
+\end{align*}
+
+*Step 4 (outer sum).* Take expectation over $H_{t-1}$ and sum with discount:
+$$\mathrm{Regret}^{\mathrm{welfare}} \;\le\; L_W\,\sum_{t=1}^T \gamma^t\,\sqrt{\tfrac{1}{2}\textstyle\sum_{i=1}^N \bar{\mathcal{D}}_{i,t}^{\mathrm{KL}}}. \;\blacksquare$$
+
+### A.10 Proof of Corollary 3 (Approximate IC/IR from distortion)
+
+Let $U_i(q, \varsigma, \rho)$ denote agent $i$'s continuation utility under posterior $q$, signaling strategy $\varsigma$, and privacy expenditure $\rho$; let $V_i(q)$ be the participation value. By hypothesis, both are Lipschitz in $q$ (with respect to total variation) with constants bounded by $L_i$.
+
+For any deviation $(\varsigma_i', \rho_i')$, the truthful-vs-deviation gap decomposes as
+\begin{align*}
+\text{Gap} \;=\;& \underbrace{U_i(q^*, \varsigma_i^\star, \rho^\star) - U_i(q^*, \varsigma_i', \rho_i')}_{\ge -\varepsilon_{0,i}^{\mathrm{IC}} \text{ by non-private } \varepsilon_{0,i}^{\mathrm{IC}}\text{-IC}} \\
+&+ \underbrace{[U_i(q^\sigma, \varsigma_i^\star, \rho^\star) - U_i(q^*, \varsigma_i^\star, \rho^\star)] - [U_i(q^\sigma, \varsigma_i', \rho_i') - U_i(q^*, \varsigma_i', \rho_i')]}_{|{\cdot}| \le 2 L_i \mathrm{TV}(q^\sigma, q^*)}.
+\end{align*}
+Summing with discount and applying Pinsker + the product-channel chain-rule bound of Theorem 7 (Appendix A.9, Step 2) gives an upper bound of the form $\varepsilon_{0,i}^{\mathrm{IC}} + 2 L_i \sqrt{1/2} \sum_t \gamma^t \sqrt{\sum_j \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}}$. The analogous argument for IR (using $V_i$ and the baseline $\varepsilon_{0,i}^{\mathrm{IR}}$) gives the same form. Setting $C_i := 2 L_i \sqrt{1/2} = L_i \sqrt{2}$:
+$$\varepsilon_i^{\mathrm{IC}} + \varepsilon_i^{\mathrm{IR}} \;\le\; \varepsilon_{0,i}^{\mathrm{IC}} + \varepsilon_{0,i}^{\mathrm{IR}} + C_i \sum_{t=1}^T \gamma^t \sqrt{\sum_{j=1}^N \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}}. \;\blacksquare$$
+
+### A.11 Proof of Proposition 1 (Pricing equilibrium)
+
+*Existence and uniqueness of the follower best response.* For fixed $\lambda_k \ge 0$, the follower objective
+$$\Pi_i(\rho; \lambda_k) := \lambda_k B_i(\rho; \cdot) - C_i(\rho; \cdot)$$
+is a continuous, strongly concave function of $\rho$ (sum of concave-times-nonneg and strongly-convex-negated). Its domain is the compact interval $I_{i,k} := [\rho_{\min}, \min\{\rho_{\max}, b_{i,k}\}]$. Strong concavity + compactness yields a unique maximizer $\rho_{i,k}^\star(\lambda_k)$.
+
+*Continuity and monotonicity of $\rho_{i,k}^\star(\lambda_k)$ in $\lambda_k$.* Berge's maximum theorem gives continuity. For monotonicity, differentiate the first-order condition (assuming the optimum is interior; boundary cases handled similarly):
+$$\lambda_k B_i'(\rho) = C_i'(\rho).$$
+Implicit differentiation yields
+$$\frac{d\rho_{i,k}^\star}{d\lambda_k} \;=\; \frac{B_i'(\rho)}{C_i''(\rho) - \lambda_k B_i''(\rho)} \;\ge\; 0,$$
+since $B_i' \ge 0$ (increasing), $C_i'' > 0$ (strongly convex), and $\lambda_k B_i'' \le 0$ (concave $B_i$). Hence $\rho_{i,k}^\star$ is nondecreasing in $\lambda_k$.
+
+*Uniqueness of the clearing price.* If $S(\lambda) := \sum_i \rho_{i,k}^\star(\lambda)$ is strictly increasing in $\lambda$, then the clearing equation $S(\lambda) = \bar\rho_k$ has at most one solution. Continuity of each $\rho_{i,k}^\star$ gives continuity of $S$; strict monotonicity is inherited if at least one $\rho_{i,k}^\star$ is strictly increasing at the solution. $\blacksquare$
+
+### A.12 Proof of Proposition 2 (Blockwise contraction tracking)
+
+Define the tracking errors
+$$e_k \;:=\; \|\pi_k - \pi^\star(\lambda_k)\|, \qquad \delta_k \;:=\; \|\lambda_k - \lambda^\star\|.$$
+
+*Step 1 (inner block contraction).* Because $G_{\lambda_k}$ is a $\beta$-contraction with fixed point $\pi^\star(\lambda_k)$ (hypothesis 1), iterating $M$ times gives
+$$\|G_{\lambda_k}^{\,M}(\pi_k) - \pi^\star(\lambda_k)\| \;\le\; \beta^M\,e_k.$$
+Combined with the block error,
+$$\|\pi_{k+1} - \pi^\star(\lambda_k)\| \;\le\; \beta^M\,e_k + \|\varepsilon_k\|. \tag{A.12.1}$$
+
+*Step 2 (outer recursion for $\delta_k$).* By definition, $\delta_{k+1} = \|\lambda_{k+1} - \lambda^\star\| \le \|T(\lambda_k, \pi_{k+1}) - T(\lambda^\star, \pi^\star(\lambda^\star))\| + \|\xi_k\|$. Add and subtract $T(\lambda_k, \pi^\star(\lambda_k))$:
+\begin{align*}
+\delta_{k+1} \;&\le\; \underbrace{\|T(\lambda_k, \pi^\star(\lambda_k)) - T(\lambda^\star, \pi^\star(\lambda^\star))\|}_{=\,\|F(\lambda_k) - F(\lambda^\star)\|\,\le\,\alpha\delta_k\text{ by hyp.\ 3}} \\
+&\qquad + \underbrace{\|T(\lambda_k, \pi_{k+1}) - T(\lambda_k, \pi^\star(\lambda_k))\|}_{\le\,L_T\|\pi_{k+1} - \pi^\star(\lambda_k)\|\text{ by hyp.\ 4}} \;+\; \|\xi_k\|.
+\end{align*}
+Substituting (A.12.1),
+$$\delta_{k+1} \;\le\; \alpha\,\delta_k + L_T\,(\beta^M\,e_k + \|\varepsilon_k\|) + \|\xi_k\|. \tag{A.12.2}$$
+
+*Step 3 (outer recursion for $e_{k+1}$).* Decompose $e_{k+1} = \|\pi_{k+1} - \pi^\star(\lambda_{k+1})\|$:
+$$e_{k+1} \;\le\; \|\pi_{k+1} - \pi^\star(\lambda_k)\| + \|\pi^\star(\lambda_k) - \pi^\star(\lambda_{k+1})\|.$$
+Using (A.12.1) and the $L_\pi$-Lipschitzness of the equilibrium manifold (hypothesis 2),
+$$e_{k+1} \;\le\; \beta^M\,e_k + \|\varepsilon_k\| + L_\pi\,\|\lambda_{k+1} - \lambda_k\|.$$
+Triangle inequality on $\|\lambda_{k+1} - \lambda_k\| \le \delta_{k+1} + \delta_k$, then substitute (A.12.2):
+$$e_{k+1} \;\le\; \beta^M\,e_k + \|\varepsilon_k\| + L_\pi\big[(1+\alpha)\delta_k + L_T\beta^M e_k + L_T\|\varepsilon_k\| + \|\xi_k\|\big],$$
+which rearranges to
+$$e_{k+1} \;\le\; (1+L_\pi L_T)\beta^M\,e_k + L_\pi(1+\alpha)\,\delta_k + (1+L_\pi L_T)\|\varepsilon_k\| + L_\pi\|\xi_k\|. \tag{A.12.3}$$
+
+*Step 4 (matrix recursion).* Collect (A.12.2) and (A.12.3):
+$$\begin{pmatrix} e_{k+1} \\ \delta_{k+1} \end{pmatrix} \;\le\; A_M \begin{pmatrix} e_k \\ \delta_k \end{pmatrix} + \begin{pmatrix} (1+L_\pi L_T)\|\varepsilon_k\| + L_\pi\|\xi_k\| \\ L_T\|\varepsilon_k\| + \|\xi_k\| \end{pmatrix}, \tag{A.12.4}$$
+where
+$$A_M \;=\; \begin{pmatrix} (1+L_\pi L_T)\beta^M & L_\pi(1+\alpha) \\ L_T\beta^M & \alpha \end{pmatrix}.$$
+
+*Step 5 (convergence under $\rho(A_M) < 1$).* If $\rho(A_M) < 1$, then $A_M^k \to 0$ exponentially. Under hypothesis 5 the perturbation vector in (A.12.4) vanishes, so by standard discrete Grönwall / linear-system stability $(e_k, \delta_k) \to (0,0)$. Hence $\|\pi_k - \pi^\star(\lambda_k)\| + \|\lambda_k - \lambda^\star\| \to 0$.
+
+*Step 6 (local linear rate in the exact-block case).* If $\varepsilon_k = \xi_k = 0$ for all $k$, then (A.12.4) is exact: $x_{k+1} \le A_M x_k$ with $x_k := (e_k, \delta_k)^\top$. By $\rho(A_M) < 1$ there exist $C > 0$ and $q \in (0,1)$ such that $\|A_M^k\| \le C q^k$, hence $\|x_k\| \le C q^k \|x_0\|$, which is local linear convergence.
+
+*Step 7 (sufficient block length).* As $M \to \infty$, $\beta^M \to 0$ and
+$$A_M \;\longrightarrow\; A_\infty \;:=\; \begin{pmatrix} 0 & L_\pi(1+\alpha) \\ 0 & \alpha \end{pmatrix},$$
+whose eigenvalues are $0$ and $\alpha$, so $\rho(A_\infty) = \alpha < 1$ by hypothesis 3. By continuity of the spectral radius at $A_\infty$, $\rho(A_M) < 1$ for all sufficiently large $M$. $\blacksquare$
+
+### A.13 Proof of Theorem 8 (Truthful signaling survives privatization)
+
+Fix block $k$ and agent $i$. Let $(\varsigma_i^\star, \rho_{i,k}^\star(\lambda_k))$ denote truthful signaling paired with the Proposition 1 follower best response, and let $(\varsigma_i', \rho_i')$ be any unilateral deviation with all other agents at their equilibrium profile. Let $q^*$ and $q^\sigma$ denote the non-private and private (privatized-channel) posteriors respectively.
+
+*Step 1 (decomposition).* Write the equilibrium-deviation utility gap under the private channel as
+\begin{align*}
+&U_i(q^\sigma,\varsigma_i^\star,\rho^\star) - U_i(q^\sigma,\varsigma_i',\rho_i') \\
+&\qquad = \underbrace{\big[U_i(q^*,\varsigma_i^\star,\rho^\star) - U_i(q^*,\varsigma_i',\rho_i')\big]}_{\ge -\varepsilon_{0,i}^{\mathrm{IC}} \text{ by hypothesis (ii)}} \\
+&\qquad\quad + \underbrace{\big[U_i(q^\sigma,\varsigma_i^\star,\rho^\star) - U_i(q^*,\varsigma_i^\star,\rho^\star)\big] - \big[U_i(q^\sigma,\varsigma_i',\rho_i') - U_i(q^*,\varsigma_i',\rho_i')\big]}_{\text{posterior-perturbation term}}.
+\end{align*}
+
+*Step 2 (Lipschitz bound on posterior perturbation).* By hypothesis (iii), each evaluation of $U_i$ at a fixed strategy pair is $L_i$-Lipschitz in the posterior (TV metric). The posterior-perturbation term is therefore bounded in absolute value by $2L_i \,\mathrm{TV}(q^\sigma, q^*)$. Pinsker plus the chain-rule bound of Theorem 7 (Appendix A.9, Step 2) gives
+$$\mathrm{TV}(q^\sigma_t, q^*_t) \;\le\; \sqrt{\tfrac{1}{2} \sum_{j=1}^N \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}}.$$
+Summing with discount and setting $C_i := 2 L_i \sqrt{1/2} = L_i\sqrt 2$,
+$$\big|\text{posterior-perturbation term}\big| \;\le\; C_i \sum_{t=1}^T \gamma^t \sqrt{\textstyle\sum_{j=1}^N \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}}.$$
+
+*Step 3 ($\bar\varepsilon^{\mathrm{BNE}}$ bound).* Combining Steps 1 and 2:
+$$U_i(q^\sigma,\varsigma_i^\star,\rho^\star) - U_i(q^\sigma,\varsigma_i',\rho_i') \;\ge\; -\varepsilon_{0,i}^{\mathrm{IC}} - C_i \sum_t \gamma^t \sqrt{\textstyle\sum_j \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}} \;=\; -\bar\varepsilon_i^{\mathrm{BNE}},$$
+which is the defining condition of $\bar\varepsilon_i^{\mathrm{BNE}}$-Bayes–Nash equilibrium.
+
+*Step 4 (strict margin regime).* If the non-private gap $U_i(q^*,\varsigma_i^\star,\rho^\star) - U_i(q^*,\varsigma_i',\rho_i') \ge m_i > 0$ for all deviations, the Step 1 decomposition becomes
+$$U_i(q^\sigma,\varsigma_i^\star,\rho^\star) - U_i(q^\sigma,\varsigma_i',\rho_i') \;\ge\; m_i - C_i \sum_t \gamma^t \sqrt{\textstyle\sum_j \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}},$$
+which is strictly positive under the hypothesis $C_i \sum_t \gamma^t \sqrt{\sum_j \bar{\mathcal{D}}_{j,t}^{\mathrm{KL}}} < m_i$. Hence truthful signaling is a strict best response. $\blacksquare$
+
+### A.14 Proof of Theorem 9 (Welfare-optimal implementation price)
+
+Fix block $k$. Write $\phi_i(\lambda, q_i) := \lambda q_i - \widetilde C_i(q_i)$ for the follower objective. Write $\mathcal Q_i = [\underline q_i, \bar q_i]$.
+
+*Step 1 (follower best response as a projection).* By hypothesis (b), $\widetilde C_i$ is $\mu_i$-strongly convex, so $\phi_i$ is $\mu_i$-strongly concave in $q_i$ and admits a unique maximizer $q_i^\star(\lambda)$ on the compact feasible interval $\mathcal{Q}_i$. The unconstrained maximizer is $(\widetilde C_i')^{-1}(\lambda)$; the constrained maximizer is its projection onto $\mathcal Q_i$:
+$$q_i^\star(\lambda) \;=\; \Pi_{[\underline q_i, \bar q_i]}\!\big((\widetilde C_i')^{-1}(\lambda)\big) \;=\; \begin{cases} \underline q_i, & \lambda \le \widetilde C_i'(\underline q_i), \\ (\widetilde C_i')^{-1}(\lambda), & \widetilde C_i'(\underline q_i) \le \lambda \le \widetilde C_i'(\bar q_i), \\ \bar q_i, & \lambda \ge \widetilde C_i'(\bar q_i). \end{cases}$$
+On the interior branch, implicit differentiation of $\widetilde C_i'(q_i^\star(\lambda)) = \lambda$ gives $d q_i^\star/d\lambda = 1/\widetilde C_i''(q_i^\star(\lambda)) > 0$; on the two boundary branches $q_i^\star$ is constant in $\lambda$. Hence $q_i^\star(\lambda)$ is continuous, nondecreasing in $\lambda$, and strictly increasing on the interior branch.
+
+*Step 2 (uniqueness of the social optimum).* The direct social-planner problem is
+$$\max_{\mathbf q \in \mathcal{Q}_1 \times \cdots \times \mathcal{Q}_N} \; V_k\!\Big(\textstyle\sum_i q_i\Big) - \sum_i \widetilde C_i(q_i).$$
+The objective is strictly concave in $\mathbf q$ (sum of strictly concave $V_k$ composed with the linear aggregation map and strictly concave $-\widetilde C_i$). On the compact feasible polytope $\mathcal Q_1 \times \cdots \times \mathcal Q_N$, Weierstrass gives existence and strict concavity gives uniqueness of the maximizer $\mathbf q^{\mathrm{opt}}$.
+
+*Step 3 (KKT characterization).* The Lagrangian of the social problem with box constraints $\underline q_i \le q_i \le \bar q_i$ yields the KKT conditions
+$$V_k'(Q^{\mathrm{opt}}) - \widetilde C_i'(q_i^{\mathrm{opt}}) \;=\; \underline\nu_i - \bar\nu_i, \qquad \underline\nu_i, \bar\nu_i \ge 0,$$
+with complementary slackness $\underline\nu_i (q_i^{\mathrm{opt}} - \underline q_i) = 0$ and $\bar\nu_i (\bar q_i - q_i^{\mathrm{opt}}) = 0$. Setting the social multiplier $\bar\lambda := V_k'(Q^{\mathrm{opt}})$, these collapse to
+$$\begin{cases} \widetilde C_i'(q_i^{\mathrm{opt}}) \ge \bar\lambda, & q_i^{\mathrm{opt}} = \underline q_i, \\ \widetilde C_i'(q_i^{\mathrm{opt}}) = \bar\lambda, & q_i^{\mathrm{opt}} \in (\underline q_i, \bar q_i), \\ \widetilde C_i'(q_i^{\mathrm{opt}}) \le \bar\lambda, & q_i^{\mathrm{opt}} = \bar q_i, \end{cases}$$
+which is exactly the fixed-point condition $q_i^{\mathrm{opt}} = \Pi_{[\underline q_i, \bar q_i]}\!\big((\widetilde C_i')^{-1}(\bar\lambda)\big)$. Hence $\bar\lambda = V_k'(Q^{\mathrm{opt}})$ is an implementing price, and every implementing price $\lambda \in \Lambda^\star$ satisfies the same per-$i$ KKT conditions at $\mathbf q^{\mathrm{opt}}$.
+
+*Step 4 (interior uniqueness vs.\ boundary multiplicity).* If $q_i^{\mathrm{opt}} \in (\underline q_i, \bar q_i)$ for *every* $i$, the KKT condition above forces the equality $\widetilde C_i'(q_i^{\mathrm{opt}}) = \lambda$ for every $i$, which pins down $\lambda = \widetilde C_i'(q_i^{\mathrm{opt}}) = \bar\lambda$ uniquely; consequently $\Lambda^\star = \{\bar\lambda\}$ is a singleton.
+
+If some $q_i^{\mathrm{opt}}$ is on the boundary — say $q_i^{\mathrm{opt}} = \bar q_i$ — the KKT condition is the inequality $\widetilde C_i'(\bar q_i) \le \lambda$, which is satisfied by an entire interval of $\lambda$-values. Thus the set of implementing prices
+$$\Lambda^\star \;:=\; \big\{\lambda \ge 0 : q^\star(\lambda) = \mathbf q^{\mathrm{opt}}\big\}$$
+is a (possibly unbounded) closed interval. Moreover, the social multiplier $\bar\lambda := V_k'(Q^{\mathrm{opt}})$ lies in $\Lambda^\star$: by Step 3 the pair $(\mathbf q^{\mathrm{opt}}, \bar\lambda)$ satisfies the per-$i$ KKT conditions, which is exactly the defining condition of $\Lambda^\star$. Define the *minimal implementing price*
+$$\lambda_k^\star \;:=\; \min \Lambda^\star,$$
+which exists because $\Lambda^\star$ is closed and bounded below by $0$. This canonical choice is uniquely defined and satisfies $\lambda_k^\star \le \bar\lambda$ (with equality in the interior case, since $\Lambda^\star = \{\bar\lambda\}$ there). The minimal price need not equal $V_k'(Q^{\mathrm{opt}})$ on the boundary: an example is a follower at the upper boundary $q_i^{\mathrm{opt}} = \bar q_i$, whose KKT condition $\widetilde C_i'(\bar q_i) \le \lambda$ leaves every $\lambda \in [\widetilde C_i'(\bar q_i), \bar\lambda]$ as a valid implementing price, and the minimal such price is $\widetilde C_i'(\bar q_i) \le \bar\lambda$.
+
+*Step 5 (social-optimum equality).* At any $\lambda \in \Lambda^\star$ (in particular at $\lambda_k^\star$), $q^\star(\lambda) = \mathbf q^{\mathrm{opt}}$ by construction, hence $\mathcal W_k(\lambda) = V_k(Q^{\mathrm{opt}}) - \sum_i \widetilde C_i(q_i^{\mathrm{opt}}) = W^{\mathrm{opt,np}}_k$. $\blacksquare$
+
+### A.15 Proof of Corollary 4 (Price of anarchy)
+
+*Non-private bound.* Theorem 9 establishes that the equilibrium profile induced by the implementation price $\lambda_k^\star$ coincides with the unique social optimum. Hence the equilibrium welfare equals the optimal welfare:
+$$W^{\mathrm{eq,np}}_k \;=\; V_k(Q(\lambda_k^\star)) - \sum_i \widetilde C_i(q_i^\star(\lambda_k^\star)) \;=\; W^{\mathrm{opt,np}}_k,$$
+so $\mathrm{PoA}_k^{\mathrm{np}} = W^{\mathrm{opt,np}}_k / W^{\mathrm{eq,np}}_k = 1$.
+
+*Private bound.* Let $W^{\mathrm{eq,priv}}$ denote the welfare of the private-channel equilibrium. By Theorem 7 applied to this equilibrium (i.e., treating the equilibrium profile as the policy whose welfare regret is bounded),
+$$W^{\mathrm{opt,np}} - W^{\mathrm{eq,priv}} \;\le\; \Delta_W \;:=\; L_W \sum_{t=1}^T \gamma^t \sqrt{\tfrac{1}{2} \sum_{i=1}^N \bar{\mathcal{D}}_{i,t}^{\mathrm{KL}}}.$$
+Hence $W^{\mathrm{eq,priv}} \ge W^{\mathrm{opt,np}} - \Delta_W$. When $W^{\mathrm{opt,np}} > \Delta_W$, both sides are positive and
+$$\mathrm{PoA}^{\mathrm{priv}} \;=\; \frac{W^{\mathrm{opt,np}}}{W^{\mathrm{eq,priv}}} \;\le\; \frac{W^{\mathrm{opt,np}}}{W^{\mathrm{opt,np}} - \Delta_W}. \;\blacksquare$$
+
+### A.16 Proof of Theorem 10 (Vector-price implementation)
+
+*Step 1 (coordinatewise separation).* The follower objective
+$$\sum_{k=1}^K \big[\lambda_k q_{i,k} - \widetilde C_{i,k}(q_{i,k})\big]$$
+is separable across $k$. Therefore the follower problem decomposes into $K$ independent scalar subproblems, one per block, each of the form $\max_{q_{i,k} \in [\underline q_{i,k}, \bar q_{i,k}]} \{\lambda_k q_{i,k} - \widetilde C_{i,k}(q_{i,k})\}$. Theorem 9's single-block argument (Appendix A.14, Step 1) applies to each subproblem: each $q_{i,k}^\star(\lambda_k)$ is the unique maximizer, given by the projection $q_{i,k}^\star(\lambda_k) = \Pi_{[\underline q_{i,k}, \bar q_{i,k}]}\!\big((\widetilde C_{i,k}')^{-1}(\lambda_k)\big)$. On the interior branch, $\partial q_{i,k}^\star/\partial\lambda_k = 1/\widetilde C_{i,k}''(q_{i,k}^\star) > 0$; on the boundary branches $q_{i,k}^\star$ is constant in $\lambda_k$. The cross-block derivative $\partial q_{i,k}^\star/\partial\lambda_\ell = 0$ for $\ell \ne k$ by separability. Uniqueness of the joint follower best response $\mathbf q_i^\star(\boldsymbol\lambda) = (q_{i,1}^\star(\lambda_1), \ldots, q_{i,K}^\star(\lambda_K))$ follows immediately, establishing (i).
+
+*Step 2 (social optimum).* Consider the direct social-planner problem
+$$\max_{\mathbf q \in \prod_{i,k} [\underline q_{i,k}, \bar q_{i,k}]} \; V\!\Big(\textstyle\sum_i q_{i,1}, \ldots, \sum_i q_{i,K}\Big) - \sum_{i,k} \widetilde C_{i,k}(q_{i,k}).$$
+The joint objective is strictly concave (strictly concave $V$ composed with the linear aggregation map, plus strictly convex $\widetilde C_{i,k}$ subtracted). On the compact feasible box, Weierstrass + strict concavity yield a unique maximizer $\mathbf q^{\mathrm{opt}}$.
+
+*Step 3 (KKT characterization).* The Lagrangian with box constraints $\underline q_{i,k} \le q_{i,k} \le \bar q_{i,k}$ yields the coordinatewise KKT conditions
+$$\frac{\partial V}{\partial Q_k}(\mathbf Q^{\mathrm{opt}}) - \widetilde C_{i,k}'(q_{i,k}^{\mathrm{opt}}) \;=\; \underline\nu_{i,k} - \bar\nu_{i,k},$$
+with $\underline\nu_{i,k}, \bar\nu_{i,k} \ge 0$ and complementary slackness. Setting the per-block social multiplier $\bar\lambda_k := \partial V/\partial Q_k(\mathbf Q^{\mathrm{opt}})$, these collapse to
+$$\begin{cases} \widetilde C_{i,k}'(q_{i,k}^{\mathrm{opt}}) \ge \bar\lambda_k, & q_{i,k}^{\mathrm{opt}} = \underline q_{i,k}, \\ \widetilde C_{i,k}'(q_{i,k}^{\mathrm{opt}}) = \bar\lambda_k, & q_{i,k}^{\mathrm{opt}} \in (\underline q_{i,k}, \bar q_{i,k}), \\ \widetilde C_{i,k}'(q_{i,k}^{\mathrm{opt}}) \le \bar\lambda_k, & q_{i,k}^{\mathrm{opt}} = \bar q_{i,k}, \end{cases}$$
+which is exactly $q_{i,k}^{\mathrm{opt}} = \Pi_{[\underline q_{i,k}, \bar q_{i,k}]}\!\big((\widetilde C_{i,k}')^{-1}(\bar\lambda_k)\big)$. So $\bar{\boldsymbol\lambda} := \nabla V(\mathbf Q^{\mathrm{opt}})$ is *an* implementing price vector — establishing (ii) and the existence part of (iii) — and $q^\star(\bar{\boldsymbol\lambda}) = \mathbf q^{\mathrm{opt}}$, giving social optimality (iv).
+
+*Step 4 (when $\boldsymbol\lambda^\star$ is unique).* Define, for each $k$, the coordinatewise implementing-price set
+$$\Lambda_k^\star \;:=\; \big\{\lambda_k \ge 0 : q_{i,k}^{\mathrm{opt}} = \Pi_{[\underline q_{i,k}, \bar q_{i,k}]}\!\big((\widetilde C_{i,k}')^{-1}(\lambda_k)\big) \ \forall i\big\}.$$
+By Step 3, $\bar\lambda_k := \partial V/\partial Q_k(\mathbf Q^{\mathrm{opt}})$ lies in $\Lambda_k^\star$.
+
+If every $q_{i,k}^{\mathrm{opt}} \in (\underline q_{i,k}, \bar q_{i,k})$, the KKT condition forces $\widetilde C_{i,k}'(q_{i,k}^{\mathrm{opt}}) = \lambda_k$ for every $i$, which pins down $\lambda_k = \widetilde C_{i,k}'(q_{i,k}^{\mathrm{opt}}) = \bar\lambda_k$ uniquely, so $\Lambda_k^\star = \{\bar\lambda_k\}$ and the implementing price vector is unique, equal to $\nabla V(\mathbf Q^{\mathrm{opt}})$. If some coordinate $q_{i,k}^{\mathrm{opt}}$ is on the boundary, $\Lambda_k^\star$ can be a proper closed interval (with $\bar\lambda_k$ still in it but possibly not its minimum), and applying the min-price convention coordinatewise yields a unique canonical implementing price vector
+$$\lambda_k^\star \;:=\; \min \Lambda_k^\star,$$
+establishing (iii). $\blacksquare$
+
+---
+
+## References
+
+Bibliography compiled from `refs.bib` using the `apalike` style (cited as `\citep{...}` in the source).

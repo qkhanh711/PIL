@@ -1,18 +1,35 @@
 {
-  "iterations": 300,
-  "pil_final": {
-    "welfare": 78.25720977783203,
-    "epsilon_total": 10.56884479522705,
-    "kl": 8680.7392578125,
-    "ic_violation": 0.01711609959602356,
-    "ir_violation": 0.0
+  "seeds": [
+    7,
+    11,
+    23
+  ],
+  "checkpoint_source": "ema_last",
+  "pil_aps": {
+    "team_reward": 1.6179957787195842,
+    "oracle_team_reward": 1.625277320543925,
+    "welfare_regret": 0.00728154182434082,
+    "mean_epsilon": 20.77688943717442,
+    "mean_epsilon_ic": 0.0,
+    "mean_epsilon_ir": 0.0,
+    "mean_kl_distortion": 1.0405793190002441
   },
-  "dpmac_final": {
-    "welfare": -84.96221923828125,
-    "epsilon_total": 1.0,
-    "kl": 15553436.0,
-    "sigma2": 1324.1223067912506,
-    "dp_condition_satisfied": 1.0
+  "dpmac": {
+    "team_reward": 1.6178814967473347,
+    "oracle_team_reward": 1.619452993075053,
+    "welfare_regret": 0.0015714963277180989,
+    "mean_epsilon": 21.430113457325387,
+    "mean_epsilon_ic": 0.0,
+    "mean_epsilon_ir": 0.0,
+    "mean_kl_distortion": 0.7922184864679972
   },
-  "delta_welfare_pil_minus_dpmac": 163.21942901611328
+  "deltas": {
+    "team_reward": 0.00011428197224949699,
+    "oracle_team_reward": 0.00582432746887207,
+    "welfare_regret": 0.005710045496622722,
+    "mean_epsilon": -0.6532240201509651,
+    "mean_epsilon_ic": 0.0,
+    "mean_epsilon_ir": 0.0,
+    "mean_kl_distortion": 0.24836083253224694
+  }
 }
