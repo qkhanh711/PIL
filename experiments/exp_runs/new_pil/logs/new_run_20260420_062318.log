@@ -1,0 +1,12 @@
+[INFO] Root: /home/khanh/Khanh_stuff/Inprogress/PIL
+[INFO] Output root: /home/khanh/Khanh_stuff/Inprogress/PIL/experiments/exp_runs/new_pil
+[INFO] Planned steps: 5
+[INFO] Started at: 2026-04-20 06:23:18
+
+[STEP 1/5] >>> python experiments/new_experiments.py --sections synthetic --seeds 7,11,23,31,43,59,71,89 --output_root /home/khanh/Khanh_stuff/Inprogress/PIL/experiments/exp_runs/new_pil/expA_multi_agent_heterogeneous --num_blocks 50 --inner_updates 50 --train_batch_size 64 --eval_batch_size 256 --episode_length 8 --hidden_dim 64 --message_dim 2 --privacy_alpha 8.0 --delta 1e-5 --discount_gamma 0.95
+Traceback (most recent call last):
+  File "/home/khanh/Khanh_stuff/Inprogress/PIL/experiments/new_experiments.py", line 17, in <module>
+    from benchmarks.matrix_games import MatrixGameConfig, MatrixGameRunner
+  File "/home/khanh/Khanh_stuff/Inprogress/PIL/benchmarks/matrix_games.py", line 11, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'

@@ -24,7 +24,7 @@ from benchmarks.comm_critic import (
 )
 from core.models import build_mlp
 from core.trainer import AdaptivePrivacyScheduler, PrivacySchedule
-from metrics.privacy import rho_to_sigma, summarize_privacy
+from metrics.privacy import rdp_to_dp_epsilon, rho_to_sigma, summarize_privacy
 
 
 @dataclass
@@ -43,6 +43,7 @@ class MPEBenchmarkConfig:
     lr: float = 3e-4
     critic_lr: float = 5e-4
     gamma: float = 0.99
+    discount_gamma: float = 0.99
     action_std: float = 0.15
     privacy_sigma: float = 0.20
     privacy_sigma_min: float = 0.05
@@ -73,6 +74,17 @@ class MPEBenchmarkConfig:
     noise_std_max: float = 1.2
     fixed_baseline_fraction: float = 1.0
     privacy_block_length: int | None = None
+    clip_multiplier: float = 1.2
+    clip_floor: float = 0.15
+    clip_ceiling: float = 3.0
+    clip_margin: float = 0.1
+    clip_margin_tail_coef: float = 1.5
+    enforce_clip_margin_condition: bool = True
+    scheduler_obs_noise: float = 0.15
+    scheduler_var_power: float = 1.5
+    scheduler_refine_steps: int = 2
+    scheduler_variant: str = "heuristic"
+    scheduler_mode: str = "clip_la"
 
     @classmethod
     def from_namespace(cls, args: Any) -> "MPEBenchmarkConfig":
@@ -181,6 +193,8 @@ class MPEBenchmarkRunner:
         self._set_seed(config.seed)
         self._init_env()
         self.total_rho_spent = np.zeros(len(self.controlled_agents), dtype=np.float64)
+        self.total_claimed_runtime_rho_spent = np.zeros(len(self.controlled_agents), dtype=np.float64)
+        self.total_unclipped_runtime_rho_spent = np.zeros(len(self.controlled_agents), dtype=np.float64)
         self.current_schedule = self._initial_schedule()
         self._init_modules()
 
@@ -222,6 +236,7 @@ class MPEBenchmarkRunner:
         num_blocks = max(1, math.ceil(self.config.episodes / max(self.config.eval_interval, 1)))
         return SimpleNamespace(
             num_agents=len(self.controlled_agents),
+            message_dim=self.config.message_dim,
             num_blocks=num_blocks,
             total_rho_budget=self.config.total_rho_budget,
             rho_min=self.config.rho_min,
@@ -233,6 +248,7 @@ class MPEBenchmarkRunner:
             error_weight=self.config.error_weight,
             reward_weight=self.config.reward_weight,
             frontload_factor=self.config.frontload_factor,
+            discount_gamma=self.config.discount_gamma,
             type_cost_base=self.config.type_cost_base,
             type_cost_scale=self.config.type_cost_scale,
             privacy_alpha=self.config.privacy_alpha,
@@ -240,6 +256,17 @@ class MPEBenchmarkRunner:
             noise_std_min=self.config.noise_std_min,
             noise_std_max=self.config.noise_std_max,
             privacy_block_length=max(int(self.config.privacy_block_length or self.config.eval_interval), 1),
+            clip_multiplier=self.config.clip_multiplier,
+            clip_floor=self.config.clip_floor,
+            clip_ceiling=self.config.clip_ceiling,
+            clip_margin=self.config.clip_margin,
+            clip_margin_tail_coef=self.config.clip_margin_tail_coef,
+            enforce_clip_margin_condition=self.config.enforce_clip_margin_condition,
+            scheduler_obs_noise=self.config.scheduler_obs_noise,
+            scheduler_var_power=self.config.scheduler_var_power,
+            scheduler_refine_steps=self.config.scheduler_refine_steps,
+            scheduler_variant=self.config.scheduler_variant,
+            scheduler_mode=self.config.scheduler_mode,
         )
 
     def _build_fixed_schedule(self) -> PrivacySchedule:
@@ -389,14 +416,22 @@ class MPEBenchmarkRunner:
         }
 
     def _sigma_tensor(self) -> torch.Tensor:
-        return torch.tensor(
-            np.asarray(self.current_schedule.sigma, dtype=np.float32).reshape(1, -1),
-            dtype=torch.float32,
-            device=self.device,
-        )
+        sigma = np.asarray(self.current_schedule.sigma, dtype=np.float32)
+        if sigma.ndim == 2:
+            sigma = sigma.mean(axis=0)
+        return torch.tensor(sigma.reshape(1, -1), dtype=torch.float32, device=self.device)
 
     def _sigma_vector(self) -> np.ndarray:
-        return np.asarray(self.current_schedule.sigma, dtype=np.float64)
+        sigma = np.asarray(self.current_schedule.sigma, dtype=np.float64)
+        if sigma.ndim == 2:
+            sigma = sigma.mean(axis=0)
+        return sigma
+
+    def _clip_vector(self) -> np.ndarray:
+        clip = np.asarray(self.current_schedule.clip, dtype=np.float64)
+        if clip.ndim == 2:
+            clip = clip.mean(axis=0)
+        return clip
 
     def _message_bundle(
         self,
@@ -479,12 +514,13 @@ class MPEBenchmarkRunner:
                 sender_input = torch.cat([obs_tensor, act_tensor, receiver_id], dim=-1)
                 mean, std = sender_module(sender_input)
                 latent = mean + std * torch.randn_like(std) if training else mean
-                latent = clip_by_norm(latent, self.config.message_clip)
-                sigma_value = float(self.current_schedule.sigma[self.controlled_index[sender]])
+                clipped_latent = clip_by_norm(latent, self.config.message_clip)
+                private_latent = latent if self.config.scheduler_mode == "naive_la" else clipped_latent
+                sigma_value = float(self._sigma_vector()[self.controlled_index[sender]])
                 if sigma_value > 0.0:
-                    latent = latent + sigma_value * torch.randn_like(latent)
-                edge_messages[(sender, receiver)] = latent
-                sender_messages.append(latent)
+                    private_latent = private_latent + sigma_value * torch.randn_like(latent)
+                edge_messages[(sender, receiver)] = private_latent
+                sender_messages.append(private_latent)
                 sender_stds.append(std)
             sent[sender] = torch.mean(torch.stack(sender_messages, dim=0), dim=0)
             base_std[sender] = torch.mean(torch.stack(sender_stds, dim=0), dim=0)
@@ -578,6 +614,8 @@ class MPEBenchmarkRunner:
 
         message_norm_sum = np.zeros(len(self.controlled_agents), dtype=np.float64)
         kl_distortion_sum = np.zeros(len(self.controlled_agents), dtype=np.float64)
+        claimed_runtime_rho_sum = np.zeros(len(self.controlled_agents), dtype=np.float64)
+        unclipped_runtime_rho_sum = np.zeros(len(self.controlled_agents), dtype=np.float64)
         message_counts = np.zeros(len(self.controlled_agents), dtype=np.float64)
         probe_messages = {agent: [] for agent in self.controlled_agents}
         probe_targets = {agent: [] for agent in self.controlled_agents}
@@ -625,6 +663,8 @@ class MPEBenchmarkRunner:
             reward_values = [rewards[agent] for agent in controlled_present] if controlled_present else [0.0]
             env_reward = float(np.mean(reward_values))
             train_reward = env_reward
+            sigma_vector = self._sigma_vector()
+            clip_vector = self._clip_vector()
             if posterior_stats is not None:
                 posterior_nlls.append(posterior_stats["nll"])
                 posterior_qualities.append(posterior_stats["quality"])
@@ -632,7 +672,7 @@ class MPEBenchmarkRunner:
                 posterior_errors.append(posterior_stats["error"])
                 if self.algorithm == "pil":
                     train_reward += self.config.planner_bonus_coef * float(posterior_stats["quality"].detach().cpu().item())
-                    train_reward -= self.config.privacy_penalty_coef * float(np.mean(self.current_schedule.sigma))
+                    train_reward -= self.config.privacy_penalty_coef * float(np.mean(sigma_vector))
 
             env_rewards.append(env_reward)
             train_rewards.append(train_reward)
@@ -656,12 +696,21 @@ class MPEBenchmarkRunner:
                 probe_messages[agent].append(sent_message.detach().cpu().numpy())
                 probe_targets[agent].append(private_target.detach().cpu().numpy())
 
-                sigma_value = float(self.current_schedule.sigma[agent_index])
+                sigma_value = float(sigma_vector[agent_index])
                 if sigma_value > 0.0:
                     base_var = base_std.pow(2).clamp(min=1e-8)
                     private_var = base_var + sigma_value ** 2
                     kl_value = 0.5 * torch.sum(private_var / base_var - 1.0 - torch.log(private_var / base_var), dim=-1)
                     kl_distortion_sum[agent_index] += float(kl_value.mean().detach().cpu().item())
+                    claimed_runtime_rho_sum[agent_index] += (
+                        self.config.privacy_alpha
+                        * (2.0 * float(clip_vector[agent_index])) ** 2
+                        / (2.0 * sigma_value ** 2)
+                    )
+                    unclipped_sensitivity = 2.0 * float(sent_message.norm(dim=-1).detach().cpu().item())
+                    unclipped_runtime_rho_sum[agent_index] += (
+                        self.config.privacy_alpha * unclipped_sensitivity ** 2 / (2.0 * sigma_value ** 2)
+                    )
 
             received_messages = next_bundle["received"]
             obs = next_obs
@@ -681,6 +730,8 @@ class MPEBenchmarkRunner:
             "sender_std_terms": sender_std_terms,
             "message_norm": (message_norm_sum / safe_counts).tolist(),
             "kl_distortion": (kl_distortion_sum / safe_counts).tolist(),
+            "claimed_runtime_rho": claimed_runtime_rho_sum.tolist(),
+            "unclipped_runtime_rho": unclipped_runtime_rho_sum.tolist(),
             "probe_messages": probe_messages,
             "probe_targets": probe_targets,
         }
@@ -780,6 +831,8 @@ class MPEBenchmarkRunner:
         kl_distortions = []
         uncertainty_values = []
         quality_values = []
+        claimed_runtime_rhos = []
+        unclipped_runtime_rhos = []
         probe_messages = {agent: [] for agent in self.controlled_agents}
         probe_targets = {agent: [] for agent in self.controlled_agents}
 
@@ -788,6 +841,8 @@ class MPEBenchmarkRunner:
             rewards.append(rollout["episode_reward"])
             message_norms.append(np.asarray(rollout["message_norm"], dtype=np.float64))
             kl_distortions.append(np.asarray(rollout["kl_distortion"], dtype=np.float64))
+            claimed_runtime_rhos.append(np.asarray(rollout["claimed_runtime_rho"], dtype=np.float64))
+            unclipped_runtime_rhos.append(np.asarray(rollout["unclipped_runtime_rho"], dtype=np.float64))
             if rollout["posterior_uncertainties"]:
                 uncertainty_values.append(float(torch.stack(rollout["posterior_uncertainties"]).mean().cpu().item()))
             if rollout["posterior_qualities"]:
@@ -798,19 +853,48 @@ class MPEBenchmarkRunner:
 
         empirical_leakage, posterior_error = self._fit_linear_probe(probe_messages, probe_targets)
         current_sigma = self._sigma_vector()
+        claimed_block_rho = (
+            np.mean(claimed_runtime_rhos, axis=0)
+            if claimed_runtime_rhos
+            else np.zeros(len(self.controlled_agents), dtype=np.float64)
+        )
+        naive_block_rho = (
+            np.mean(unclipped_runtime_rhos, axis=0)
+            if unclipped_runtime_rhos
+            else np.zeros(len(self.controlled_agents), dtype=np.float64)
+        )
         if np.any(current_sigma > 0.0):
+            claimed_rho = self.total_rho_spent + self._block_rho(self.current_schedule)
+            claimed_total_rho = self.total_claimed_runtime_rho_spent + claimed_block_rho
             privacy_metrics = summarize_privacy(
                 sigmas=current_sigma,
-                total_rho_spent=self.total_rho_spent + self._block_rho(self.current_schedule),
+                total_rho_spent=claimed_rho,
+                claimed_sensitivity=2.0 * np.asarray(self.current_schedule.clip, dtype=np.float64),
                 alpha=self.config.privacy_alpha,
                 delta=self.config.delta,
+                actual_total_rho_spent=claimed_total_rho,
+                accounting_mode="runtime_clipped_transcript",
+                actual_claim_label="runtime_clipped",
             )
+            privacy_metrics["clip"] = np.asarray(self.current_schedule.clip, dtype=np.float64).tolist()
+            privacy_metrics["runtime_clipped_rho"] = claimed_block_rho.tolist()
+            if self.config.scheduler_mode == "naive_la":
+                naive_total_rho = self.total_unclipped_runtime_rho_spent + naive_block_rho
+                privacy_metrics["naive_unclipped_counterexample"] = {
+                    "runtime_rho": naive_block_rho.tolist(),
+                    "total_rho_spent": naive_total_rho.tolist(),
+                    "epsilon": rdp_to_dp_epsilon(naive_total_rho, self.config.privacy_alpha, self.config.delta).tolist(),
+                    "overspend_ratio": (naive_total_rho / np.maximum(claimed_rho, 1e-8)).tolist(),
+                }
         else:
             zeros = np.zeros(len(self.controlled_agents), dtype=np.float64)
             privacy_metrics = {
                 "sigma": zeros.tolist(),
                 "total_rho_spent": zeros.tolist(),
                 "epsilon": zeros.tolist(),
+                "accounting_mode": "none",
+                "actual_claim_label": "none",
+                "clip": zeros.tolist(),
             }
         return {
             "average_episode_reward": float(np.mean(rewards)),
@@ -821,12 +905,22 @@ class MPEBenchmarkRunner:
             "posterior_error": posterior_error,
             "posterior_uncertainty": float(np.mean(uncertainty_values)) if uncertainty_values else 0.0,
             "posterior_quality": float(np.mean(quality_values)) if quality_values else 0.0,
+            "claimed_runtime_rho": claimed_block_rho.tolist(),
+            "unclipped_runtime_rho": naive_block_rho.tolist(),
             "privacy": privacy_metrics,
         }
 
     def _advance_privacy_schedule(self, block_index: int, eval_info: dict[str, Any]) -> None:
         block_rho = self._block_rho(self.current_schedule)
         self.total_rho_spent += block_rho
+        self.total_claimed_runtime_rho_spent += np.asarray(
+            eval_info.get("claimed_runtime_rho", np.zeros(len(self.controlled_agents), dtype=np.float64)),
+            dtype=np.float64,
+        )
+        self.total_unclipped_runtime_rho_spent += np.asarray(
+            eval_info.get("unclipped_runtime_rho", np.zeros(len(self.controlled_agents), dtype=np.float64)),
+            dtype=np.float64,
+        )
         if self.privacy_scheduler is None:
             return
         self.privacy_scheduler.consume_budget(self.current_schedule.rho, block_length=self._block_length())

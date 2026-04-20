@@ -1,0 +1,8 @@
+[INFO] Root: /home/khanh/Khanh_stuff/Inprogress/PIL
+[INFO] Output root: /home/khanh/Khanh_stuff/Inprogress/PIL/experiments/exp_runs
+[INFO] Seeds: 7,11,23
+[INFO] Planned steps: 8
+[INFO] Started at: 2026-04-20 07:17:41
+
+[STEP 1/8] >>> python experiments/run_pil_aps.py --num_blocks 50 --inner_updates 50 --train_batch_size 64 --eval_batch_size 256 --episode_length 8 --hidden_dim 64 --message_dim 2 --output /home/khanh/Khanh_stuff/Inprogress/PIL/experiments/exp_runs/01_single_trainers/pil_aps_metrics.json
+PIL-APS:   0%|[38;2;46;134;171m          [0m| 0/2500 [00:00<?, ?upd/s]PIL-APS:   0%|[38;2;46;134;171m          [0m| 1/2500 [00:01<1:21:34,  1.96s/upd, blk=1/50, lam=1.00, rho=0.05, sig=3.00]PIL-APS:   0%|[38;2;46;134;171m          [0m| 2/2500 [00:03<1:23:01,  1.99s/upd, blk=1/50, lam=1.00, rho=0.05, sig=3.00]

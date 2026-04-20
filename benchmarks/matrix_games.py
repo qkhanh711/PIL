@@ -22,7 +22,7 @@ from benchmarks.comm_critic import (
 )
 from core.models import build_mlp
 from core.trainer import AdaptivePrivacyScheduler, PrivacySchedule
-from metrics.privacy import summarize_privacy, rho_to_sigma
+from metrics.privacy import rdp_to_dp_epsilon, summarize_privacy, rho_to_sigma
 
 
 @dataclass
@@ -45,6 +45,7 @@ class MatrixGameConfig:
     max_grad_norm: float = 5.0
     signal_prob: float = 0.5
     gamma: float = 0.95
+    discount_gamma: float = 0.95
     posterior_loss_coef: float = 0.12
     planner_bonus_coef: float = 0.06
     privacy_penalty_coef: float = 0.02
@@ -69,6 +70,17 @@ class MatrixGameConfig:
     noise_std_max: float = 2.5
     fixed_baseline_fraction: float = 1.0
     privacy_block_length: int | None = None
+    clip_multiplier: float = 1.2
+    clip_floor: float = 0.15
+    clip_ceiling: float = 3.0
+    clip_margin: float = 0.1
+    clip_margin_tail_coef: float = 1.5
+    enforce_clip_margin_condition: bool = True
+    scheduler_obs_noise: float = 0.15
+    scheduler_var_power: float = 1.5
+    scheduler_refine_steps: int = 2
+    scheduler_variant: str = "heuristic"
+    scheduler_mode: str = "clip_la"
 
     @classmethod
     def from_namespace(cls, args: Any) -> "MatrixGameConfig":
@@ -142,6 +154,8 @@ class MatrixGameRunner:
         self.scheduler = AdaptivePrivacyScheduler(config) if self.algorithm == "pil" else None
         self.fixed_schedule = self._build_fixed_schedule()
         self.total_rho_spent = np.zeros(config.num_agents, dtype=np.float64)
+        self.total_claimed_runtime_rho_spent = np.zeros(config.num_agents, dtype=np.float64)
+        self.total_unclipped_runtime_rho_spent = np.zeros(config.num_agents, dtype=np.float64)
         self.history: list[dict[str, Any]] = []
 
     def _block_length(self) -> int:
@@ -297,6 +311,7 @@ class MatrixGameRunner:
         obs_tensor: torch.Tensor,
         action_tensor: torch.Tensor | None,
         schedule: PrivacySchedule,
+        step_index: int,
         *,
         training: bool,
     ) -> dict[str, torch.Tensor]:
@@ -352,7 +367,8 @@ class MatrixGameRunner:
 
         if action_tensor is None:
             action_tensor = torch.zeros(batch_size, self.config.num_agents, 1, device=self.device)
-        sigma = torch.tensor(schedule.sigma, dtype=torch.float32, device=self.device).view(1, self.config.num_agents, 1)
+        _, step_sigma_np, _ = schedule.step_params(step_index)
+        sigma = torch.tensor(step_sigma_np, dtype=torch.float32, device=self.device).view(1, self.config.num_agents, 1)
         edge_messages: dict[tuple[int, int], torch.Tensor] = {}
         sent_messages = []
         stds = []
@@ -374,11 +390,12 @@ class MatrixGameRunner:
                 sender_input = torch.cat([obs_slice, act_slice, receiver_id], dim=-1)
                 mean, std = sender(sender_input)
                 latent = mean + std * torch.randn_like(std) if training else mean
-                latent = clip_by_norm(latent, self.config.message_clip)
-                if np.any(schedule.sigma > 0.0):
-                    latent = latent + sigma[:, agent_idx, :] * torch.randn_like(latent)
-                edge_messages[(agent_idx, receiver_idx)] = latent
-                outgoing_messages.append(latent)
+                clipped_latent = clip_by_norm(latent, self.config.message_clip)
+                private_latent = latent if self.config.scheduler_mode == "naive_la" else clipped_latent
+                if np.any(np.asarray(step_sigma_np, dtype=np.float64) > 0.0):
+                    private_latent = private_latent + sigma[:, agent_idx, :] * torch.randn_like(latent)
+                edge_messages[(agent_idx, receiver_idx)] = private_latent
+                outgoing_messages.append(private_latent)
                 outgoing_stds.append(std)
             sent_messages.append(torch.mean(torch.stack(outgoing_messages, dim=1), dim=1))
             stds.append(torch.mean(torch.stack(outgoing_stds, dim=1), dim=1))
@@ -409,10 +426,12 @@ class MatrixGameRunner:
         target: torch.Tensor,
         progress: torch.Tensor,
         schedule: PrivacySchedule,
+        step_index: int,
     ) -> dict[str, torch.Tensor] | None:
         if self.posterior is None:
             return None
-        sigma_tensor = torch.tensor(schedule.sigma, dtype=torch.float32, device=self.device).view(1, -1)
+        _, step_sigma_np, _ = schedule.step_params(step_index)
+        sigma_tensor = torch.tensor(step_sigma_np, dtype=torch.float32, device=self.device).view(1, -1)
         sigma_features = sigma_tensor.expand(received_tensor.shape[0], -1)
         posterior_input = torch.cat([received_tensor.reshape(received_tensor.shape[0], -1), progress, sigma_features], dim=-1)
         mean, log_var = self.posterior(posterior_input)
@@ -433,8 +452,10 @@ class MatrixGameRunner:
         posterior_stats: dict[str, torch.Tensor] | None,
         schedule: PrivacySchedule,
         batch_size: int,
+        step_index: int,
     ) -> torch.Tensor:
-        sigma_tensor = torch.tensor(schedule.sigma, dtype=torch.float32, device=self.device).view(1, -1).expand(batch_size, -1)
+        _, step_sigma_np, _ = schedule.step_params(step_index)
+        sigma_tensor = torch.tensor(step_sigma_np, dtype=torch.float32, device=self.device).view(1, -1).expand(batch_size, -1)
         if posterior_stats is None:
             zeros = torch.zeros(batch_size, 2, dtype=torch.float32, device=self.device)
             return torch.cat([sigma_tensor, zeros], dim=-1)
@@ -479,6 +500,8 @@ class MatrixGameRunner:
         allocation_error_sum = torch.zeros(self.config.num_agents, device=self.device)
         uncertainty_sum = torch.zeros(self.config.num_agents, device=self.device)
         posterior_error_sum = torch.zeros(self.config.num_agents, device=self.device)
+        claimed_runtime_rho_sum = torch.zeros(self.config.num_agents, device=self.device)
+        unclipped_runtime_rho_sum = torch.zeros(self.config.num_agents, device=self.device)
         team_reward_sum = torch.zeros(1, device=self.device)
         oracle_reward_sum = torch.zeros(1, device=self.device)
         prediction_error_sum = torch.zeros(1, device=self.device)
@@ -494,8 +517,8 @@ class MatrixGameRunner:
             action_tensor = torch.stack(predictions, dim=1)
 
             progress = obs_tensor[:, 0, 2:3]
-            posterior_stats = self._posterior_stats(received_state, target, progress, schedule)
-            critic_context = self._critic_context(posterior_stats, schedule, batch_size)
+            posterior_stats = self._posterior_stats(received_state, target, progress, schedule, step_index)
+            critic_context = self._critic_context(posterior_stats, schedule, batch_size, step_index)
             trajectory.append(
                 (
                     obs_tensor.reshape(batch_size, -1),
@@ -519,17 +542,19 @@ class MatrixGameRunner:
                 uncertainty_sum += posterior_stats["var"].mean().expand(self.config.num_agents)
                 posterior_error_sum += posterior_stats["error"].expand(self.config.num_agents)
                 if self.algorithm == "pil":
-                    sigma_penalty = self.config.privacy_penalty_coef * float(np.mean(schedule.sigma))
+                    _, step_sigma_np, _ = schedule.step_params(step_index)
+                    sigma_penalty = self.config.privacy_penalty_coef * float(np.mean(step_sigma_np))
                     modified_reward = modified_reward + self.config.planner_bonus_coef * posterior_stats["quality"] - sigma_penalty
 
-            next_bundle = self._message_state(obs_tensor, action_tensor, schedule, training=training)
+            next_bundle = self._message_state(obs_tensor, action_tensor, schedule, step_index, training=training)
             received_state = next_bundle["received"]
 
             if self.algorithm in {"dpmac", "pil"}:
                 sender_std_terms.append(next_bundle["base_std"].mean())
 
             base_var = next_bundle["base_std"].pow(2).clamp(min=1e-8)
-            sigma_tensor = torch.tensor(schedule.sigma, dtype=torch.float32, device=self.device).view(1, self.config.num_agents, 1)
+            _, step_sigma_np, _ = schedule.step_params(step_index)
+            sigma_tensor = torch.tensor(step_sigma_np, dtype=torch.float32, device=self.device).view(1, self.config.num_agents, 1)
             private_var = base_var + sigma_tensor.expand_as(next_bundle["base_std"]).pow(2)
             kl_distortion = 0.5 * torch.sum(private_var / base_var - 1.0 - torch.log(private_var / base_var), dim=-1)
 
@@ -540,6 +565,13 @@ class MatrixGameRunner:
             message_norm_sum += next_bundle["sent"].norm(dim=-1).mean(dim=0)
             distortion_sum += kl_distortion.mean(dim=0)
             allocation_error_sum += torch.abs(action_tensor.squeeze(-1) - target).mean(dim=0)
+            step_rho_np, step_sigma_np, step_clip_np = schedule.step_params(step_index)
+            del step_rho_np
+            sigma_sq = torch.tensor(step_sigma_np, dtype=torch.float32, device=self.device).clamp_min(1e-8).pow(2)
+            clip_sensitivity = torch.tensor(2.0 * np.asarray(step_clip_np, dtype=np.float64), dtype=torch.float32, device=self.device)
+            claimed_runtime_rho_sum += self.config.privacy_alpha * clip_sensitivity.pow(2) / (2.0 * sigma_sq)
+            unclipped_sensitivity = 2.0 * next_bundle["sent"].norm(dim=-1).amax(dim=0)
+            unclipped_runtime_rho_sum += self.config.privacy_alpha * unclipped_sensitivity.pow(2) / (2.0 * sigma_sq)
 
         returns = self._discounted_returns(reward_terms)
         divisor = float(self.num_steps)
@@ -559,6 +591,8 @@ class MatrixGameRunner:
             "message_norm_tensor": message_norm_sum / divisor,
             "distortion_tensor": distortion_sum / divisor,
             "posterior_error_tensor": posterior_error_sum / divisor,
+            "claimed_runtime_rho_tensor": claimed_runtime_rho_sum,
+            "unclipped_runtime_rho_tensor": unclipped_runtime_rho_sum,
         }
 
     def _critic_loss(self, batch: dict[str, Any]) -> torch.Tensor:
@@ -598,6 +632,8 @@ class MatrixGameRunner:
             "message_norm": raw_metrics["message_norm_tensor"].detach().cpu().numpy().tolist(),
             "kl_distortion": raw_metrics["distortion_tensor"].detach().cpu().numpy().tolist(),
             "posterior_error": raw_metrics["posterior_error_tensor"].detach().cpu().numpy().tolist(),
+            "claimed_runtime_rho": raw_metrics["claimed_runtime_rho_tensor"].detach().cpu().numpy().tolist(),
+            "unclipped_runtime_rho": raw_metrics["unclipped_runtime_rho_tensor"].detach().cpu().numpy().tolist(),
         }
 
     @torch.no_grad()
@@ -609,18 +645,39 @@ class MatrixGameRunner:
         welfare_regret = max(float(truthful["oracle_team_reward"]) - float(truthful["team_reward"]), 0.0)
 
         if self.algorithm in {"pil", "dpmac"}:
+            claimed_rho = self.total_rho_spent + self._block_rho(schedule)
+            claimed_block_rho = np.asarray(truthful["claimed_runtime_rho"], dtype=np.float64)
+            claimed_total_rho = self.total_claimed_runtime_rho_spent + claimed_block_rho
             privacy_metrics = summarize_privacy(
                 sigmas=np.asarray(schedule.sigma, dtype=np.float64),
-                total_rho_spent=self.total_rho_spent + self._block_rho(schedule),
+                total_rho_spent=claimed_rho,
+                claimed_sensitivity=2.0 * np.asarray(schedule.clip, dtype=np.float64),
                 alpha=self.config.privacy_alpha,
                 delta=self.config.delta,
+                actual_total_rho_spent=claimed_total_rho,
+                accounting_mode="runtime_clipped_transcript",
+                actual_claim_label="runtime_clipped",
             )
+            privacy_metrics["clip"] = np.asarray(schedule.clip, dtype=np.float64).tolist()
+            privacy_metrics["runtime_clipped_rho"] = claimed_block_rho.tolist()
+            if self.config.scheduler_mode == "naive_la":
+                naive_block_rho = np.asarray(truthful["unclipped_runtime_rho"], dtype=np.float64)
+                naive_total_rho = self.total_unclipped_runtime_rho_spent + naive_block_rho
+                privacy_metrics["naive_unclipped_counterexample"] = {
+                    "runtime_rho": naive_block_rho.tolist(),
+                    "total_rho_spent": naive_total_rho.tolist(),
+                    "epsilon": rdp_to_dp_epsilon(naive_total_rho, self.config.privacy_alpha, self.config.delta).tolist(),
+                    "overspend_ratio": (naive_total_rho / np.maximum(claimed_rho, 1e-8)).tolist(),
+                }
         else:
             zeros = np.zeros(self.config.num_agents, dtype=np.float64)
             privacy_metrics = {
                 "sigma": zeros.tolist(),
                 "total_rho_spent": zeros.tolist(),
                 "epsilon": zeros.tolist(),
+                "accounting_mode": "none",
+                "actual_claim_label": "none",
+                "clip": zeros.tolist(),
             }
 
         return {
@@ -638,6 +695,8 @@ class MatrixGameRunner:
             "message_norm": truthful["message_norm"],
             "kl_distortion": truthful["kl_distortion"],
             "posterior_error": truthful["posterior_error"],
+            "claimed_runtime_rho": truthful["claimed_runtime_rho"],
+            "unclipped_runtime_rho": truthful["unclipped_runtime_rho"],
             "welfare_regret": welfare_regret,
             "privacy": privacy_metrics,
         }
@@ -726,6 +785,8 @@ class MatrixGameRunner:
                     progress.update(1)
 
                 summary = self.evaluate_block(schedule, block_index)
+                self.total_claimed_runtime_rho_spent += np.asarray(summary["claimed_runtime_rho"], dtype=np.float64)
+                self.total_unclipped_runtime_rho_spent += np.asarray(summary["unclipped_runtime_rho"], dtype=np.float64)
                 self._post_block_update(schedule)
                 self.history.append(summary)
                 last_summary = {

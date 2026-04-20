@@ -16,6 +16,7 @@
         "lr": 0.0003,
         "critic_lr": 0.0005,
         "gamma": 0.99,
+        "discount_gamma": 0.99,
         "action_std": 0.15,
         "privacy_sigma": 0.2,
         "privacy_sigma_min": 0.05,
@@ -45,7 +46,18 @@
         "noise_std_min": 0.08,
         "noise_std_max": 1.2,
         "fixed_baseline_fraction": 1.0,
-        "privacy_block_length": 10
+        "privacy_block_length": 10,
+        "clip_multiplier": 1.2,
+        "clip_floor": 0.15,
+        "clip_ceiling": 3.0,
+        "clip_margin": 0.1,
+        "clip_margin_tail_coef": 1.5,
+        "enforce_clip_margin_condition": true,
+        "scheduler_obs_noise": 0.15,
+        "scheduler_var_power": 1.5,
+        "scheduler_refine_steps": 2,
+        "scheduler_variant": "heuristic",
+        "scheduler_mode": "clip_la"
       },
       "scenario": "Cooperative Navigation",
       "algorithm": "maddpg",
@@ -99,6 +111,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -162,6 +181,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -219,6 +245,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -282,6 +315,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -339,6 +379,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -402,6 +449,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -459,6 +513,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -522,6 +583,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -582,6 +650,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -639,6 +714,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -703,6 +785,13 @@
             0.0,
             0.0,
             0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
+            0.0,
+            0.0,
+            0.0
           ]
         },
         "privacy_price": 0.0,
@@ -760,6 +849,13 @@
             0.0
           ],
           "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
             0.0,
             0.0,
             0.0
@@ -824,6 +920,13 @@
             0.0,
             0.0,
             0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
+            0.0,
+            0.0,
+            0.0
           ]
         },
         "privacy_price": 0.0,
@@ -855,6 +958,7 @@
         "lr": 0.0003,
         "critic_lr": 0.0005,
         "gamma": 0.99,
+        "discount_gamma": 0.99,
         "action_std": 0.15,
         "privacy_sigma": 0.2,
         "privacy_sigma_min": 0.05,
@@ -884,7 +988,18 @@
         "noise_std_min": 0.08,
         "noise_std_max": 1.2,
         "fixed_baseline_fraction": 1.0,
-        "privacy_block_length": 10
+        "privacy_block_length": 10,
+        "clip_multiplier": 1.2,
+        "clip_floor": 0.15,
+        "clip_ceiling": 3.0,
+        "clip_margin": 0.1,
+        "clip_margin_tail_coef": 1.5,
+        "enforce_clip_margin_condition": true,
+        "scheduler_obs_noise": 0.15,
+        "scheduler_var_power": 1.5,
+        "scheduler_refine_steps": 2,
+        "scheduler_variant": "heuristic",
+        "scheduler_mode": "clip_la"
       },
       "scenario": "Cooperative Navigation",
       "algorithm": "maddpg",
@@ -938,6 +1053,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1001,6 +1123,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -1058,6 +1187,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1121,6 +1257,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -1178,6 +1321,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1241,6 +1391,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -1298,6 +1455,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1361,6 +1525,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -1421,6 +1592,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -1478,6 +1656,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1542,6 +1727,13 @@
             0.0,
             0.0,
             0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
+            0.0,
+            0.0,
+            0.0
           ]
         },
         "privacy_price": 0.0,
@@ -1599,6 +1791,13 @@
             0.0
           ],
           "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
             0.0,
             0.0,
             0.0
@@ -1663,6 +1862,13 @@
             0.0,
             0.0,
             0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
+            0.0,
+            0.0,
+            0.0
           ]
         },
         "privacy_price": 0.0,
@@ -1694,6 +1900,7 @@
         "lr": 0.0003,
         "critic_lr": 0.0005,
         "gamma": 0.99,
+        "discount_gamma": 0.99,
         "action_std": 0.15,
         "privacy_sigma": 0.2,
         "privacy_sigma_min": 0.05,
@@ -1723,7 +1930,18 @@
         "noise_std_min": 0.08,
         "noise_std_max": 1.2,
         "fixed_baseline_fraction": 1.0,
-        "privacy_block_length": 10
+        "privacy_block_length": 10,
+        "clip_multiplier": 1.2,
+        "clip_floor": 0.15,
+        "clip_ceiling": 3.0,
+        "clip_margin": 0.1,
+        "clip_margin_tail_coef": 1.5,
+        "enforce_clip_margin_condition": true,
+        "scheduler_obs_noise": 0.15,
+        "scheduler_var_power": 1.5,
+        "scheduler_refine_steps": 2,
+        "scheduler_variant": "heuristic",
+        "scheduler_mode": "clip_la"
       },
       "scenario": "Cooperative Navigation",
       "algorithm": "maddpg",
@@ -1777,6 +1995,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1840,6 +2065,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -1897,6 +2129,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1960,6 +2199,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -2017,6 +2263,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2080,6 +2333,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -2137,6 +2397,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2200,6 +2467,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -2260,6 +2534,13 @@
               0.0,
               0.0,
               0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
+              0.0,
+              0.0,
+              0.0
             ]
           },
           "privacy_price": 0.0,
@@ -2317,6 +2598,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2381,6 +2669,13 @@
             0.0,
             0.0,
             0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
+            0.0,
+            0.0,
+            0.0
           ]
         },
         "privacy_price": 0.0,
@@ -2438,6 +2733,13 @@
             0.0
           ],
           "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
             0.0,
             0.0,
             0.0
@@ -2499,6 +2801,13 @@
             0.0
           ],
           "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
             0.0,
             0.0,
             0.0

@@ -20,6 +20,7 @@
         "max_grad_norm": 5.0,
         "signal_prob": 0.5,
         "gamma": 0.95,
+        "discount_gamma": 0.95,
         "posterior_loss_coef": 0.12,
         "planner_bonus_coef": 0.06,
         "privacy_penalty_coef": 0.02,
@@ -43,7 +44,18 @@
         "noise_std_min": 0.05,
         "noise_std_max": 2.5,
         "fixed_baseline_fraction": 1.0,
-        "privacy_block_length": 4
+        "privacy_block_length": 4,
+        "clip_multiplier": 1.2,
+        "clip_floor": 0.15,
+        "clip_ceiling": 3.0,
+        "clip_margin": 0.1,
+        "clip_margin_tail_coef": 1.5,
+        "enforce_clip_margin_condition": true,
+        "scheduler_obs_noise": 0.15,
+        "scheduler_var_power": 1.5,
+        "scheduler_refine_steps": 2,
+        "scheduler_variant": "heuristic",
+        "scheduler_mode": "clip_la"
       },
       "game": "multi_round_sum",
       "algorithm": "i2c",
@@ -91,6 +103,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.257055426239791e+18,
+            1.2612183147015045e+18,
+            1.2799770825829908e+18
+          ],
           "welfare_regret": 0.29544639587402344,
           "privacy": {
             "sigma": [
@@ -104,6 +126,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -153,6 +182,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799522061324124e+18,
+            1.2799161971266028e+18
+          ],
           "welfare_regret": 0.29695558547973633,
           "privacy": {
             "sigma": [
@@ -166,6 +205,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -215,6 +261,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799500071091569e+18,
+            1.2799359883359027e+18
+          ],
           "welfare_regret": 0.3045637607574463,
           "privacy": {
             "sigma": [
@@ -228,6 +284,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -277,6 +340,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799502819870638e+18,
+            1.2799495947922964e+18
+          ],
           "welfare_regret": 0.2994738817214966,
           "privacy": {
             "sigma": [
@@ -290,6 +363,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -339,6 +419,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799509691818312e+18,
+            1.279959078080086e+18
+          ],
           "welfare_regret": 0.3041640520095825,
           "privacy": {
             "sigma": [
@@ -352,6 +442,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -401,6 +498,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799513814986916e+18,
+            1.2799662249056666e+18
+          ],
           "welfare_regret": 0.294245183467865,
           "privacy": {
             "sigma": [
@@ -414,6 +521,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -463,6 +577,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799522061324124e+18,
+            1.2799717224638054e+18
+          ],
           "welfare_regret": 0.29112565517425537,
           "privacy": {
             "sigma": [
@@ -476,6 +600,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -525,6 +656,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799530307661332e+18,
+            1.2799761205103165e+18
+          ],
           "welfare_regret": 0.29136335849761963,
           "privacy": {
             "sigma": [
@@ -538,6 +679,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -587,6 +735,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.279953855399854e+18,
+            1.2799794190452e+18
+          ],
           "welfare_regret": 0.29999488592147827,
           "privacy": {
             "sigma": [
@@ -600,6 +758,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -649,6 +814,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799542677167145e+18,
+            1.2799821678242693e+18
+          ],
           "welfare_regret": 0.2928086519241333,
           "privacy": {
             "sigma": [
@@ -662,6 +837,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -711,6 +893,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799549549114819e+18,
+            1.2799842294085714e+18
+          ],
           "welfare_regret": 0.3031543493270874,
           "privacy": {
             "sigma": [
@@ -724,6 +916,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -773,6 +972,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799545425946214e+18,
+            1.2799854663591526e+18
+          ],
           "welfare_regret": 0.2991979718208313,
           "privacy": {
             "sigma": [
@@ -786,6 +995,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -835,6 +1051,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799539928388076e+18,
+            1.2799865658707804e+18
+          ],
           "welfare_regret": 0.29166120290756226,
           "privacy": {
             "sigma": [
@@ -848,6 +1074,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -897,6 +1130,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799530307661332e+18,
+            1.2799875279434547e+18
+          ],
           "welfare_regret": 0.29089635610580444,
           "privacy": {
             "sigma": [
@@ -910,6 +1153,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -959,6 +1209,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.279951793815552e+18,
+            1.279988490016129e+18
+          ],
           "welfare_regret": 0.31468963623046875,
           "privacy": {
             "sigma": [
@@ -972,6 +1232,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1021,6 +1288,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.279949182475436e+18,
+            1.279989039771943e+18
+          ],
           "welfare_regret": 0.3038410544395447,
           "privacy": {
             "sigma": [
@@ -1034,6 +1311,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1083,6 +1367,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799456090626458e+18,
+            1.279989039771943e+18
+          ],
           "welfare_regret": 0.2894958257675171,
           "privacy": {
             "sigma": [
@@ -1096,6 +1390,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1145,6 +1446,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799406612603208e+18,
+            1.2799891772108964e+18
+          ],
           "welfare_regret": 0.29990094900131226,
           "privacy": {
             "sigma": [
@@ -1158,6 +1469,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1207,6 +1525,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799342016295076e+18,
+            1.2799891772108964e+18
+          ],
           "welfare_regret": 0.29561442136764526,
           "privacy": {
             "sigma": [
@@ -1220,6 +1548,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1269,6 +1604,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.279924718341718e+18,
+            1.279989039771943e+18
+          ],
           "welfare_regret": 0.2863704562187195,
           "privacy": {
             "sigma": [
@@ -1282,6 +1627,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1331,6 +1683,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2799105621295104e+18,
+            1.279988764894036e+18
+          ],
           "welfare_regret": 0.2831515073776245,
           "privacy": {
             "sigma": [
@@ -1344,6 +1706,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1393,6 +1762,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.279885410801025e+18,
+            1.2799880776992686e+18
+          ],
           "welfare_regret": 0.30091673135757446,
           "privacy": {
             "sigma": [
@@ -1406,6 +1785,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1455,6 +1841,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.279836207655682e+18,
+            1.2799871156265943e+18
+          ],
           "welfare_regret": 0.29082709550857544,
           "privacy": {
             "sigma": [
@@ -1468,6 +1864,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1517,6 +1920,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2796825509057004e+18,
+            1.2799857412370596e+18
+          ],
           "welfare_regret": 0.3033491373062134,
           "privacy": {
             "sigma": [
@@ -1530,6 +1943,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1579,6 +1999,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2799996225713603e+18,
+            1.2767206040194253e+18,
+            1.279983817091711e+18
+          ],
           "welfare_regret": 0.29776233434677124,
           "privacy": {
             "sigma": [
@@ -1592,6 +2022,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1642,6 +2079,16 @@
           0.0,
           0.0
         ],
+        "claimed_runtime_rho": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "unclipped_runtime_rho": [
+          1.2799996225713603e+18,
+          1.2767206040194253e+18,
+          1.279983817091711e+18
+        ],
         "welfare_regret": 0.29776233434677124,
         "privacy": {
           "sigma": [
@@ -1655,6 +2102,13 @@
             0.0
           ],
           "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
             0.0,
             0.0,
             0.0
@@ -1682,6 +2136,7 @@
         "max_grad_norm": 5.0,
         "signal_prob": 0.5,
         "gamma": 0.95,
+        "discount_gamma": 0.95,
         "posterior_loss_coef": 0.12,
         "planner_bonus_coef": 0.06,
         "privacy_penalty_coef": 0.02,
@@ -1705,7 +2160,18 @@
         "noise_std_min": 0.05,
         "noise_std_max": 2.5,
         "fixed_baseline_fraction": 1.0,
-        "privacy_block_length": 4
+        "privacy_block_length": 4,
+        "clip_multiplier": 1.2,
+        "clip_floor": 0.15,
+        "clip_ceiling": 3.0,
+        "clip_margin": 0.1,
+        "clip_margin_tail_coef": 1.5,
+        "enforce_clip_margin_condition": true,
+        "scheduler_obs_noise": 0.15,
+        "scheduler_var_power": 1.5,
+        "scheduler_refine_steps": 2,
+        "scheduler_variant": "heuristic",
+        "scheduler_mode": "clip_la"
       },
       "game": "multi_round_sum",
       "algorithm": "i2c",
@@ -1753,6 +2219,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2742414801766973e+18,
+            1.085125823796609e+18,
+            1.2799873905045012e+18
+          ],
           "welfare_regret": 0.2900134325027466,
           "privacy": {
             "sigma": [
@@ -1766,6 +2242,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1815,6 +2298,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2795802963243172e+18,
+            1.2798373071673098e+18,
+            1.279990551600431e+18
+          ],
           "welfare_regret": 0.30235469341278076,
           "privacy": {
             "sigma": [
@@ -1828,6 +2321,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1877,6 +2377,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2795966515597804e+18,
+            1.2798746905626542e+18,
+            1.2799827175800832e+18
+          ],
           "welfare_regret": 0.2996702194213867,
           "privacy": {
             "sigma": [
@@ -1890,6 +2400,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -1939,6 +2456,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2790221567342674e+18,
+            1.2798939320161403e+18,
+            1.2798986049405583e+18
+          ],
           "welfare_regret": 0.2913873791694641,
           "privacy": {
             "sigma": [
@@ -1952,6 +2479,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2001,6 +2535,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.279998935376593e+18,
+            1.279892969943466e+18,
+            1.2797740852487127e+18
+          ],
           "welfare_regret": 0.2828342914581299,
           "privacy": {
             "sigma": [
@@ -2014,6 +2558,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2063,6 +2614,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2796927213882573e+18,
+            1.279995499402756e+18
+          ],
           "welfare_regret": 0.2870662212371826,
           "privacy": {
             "sigma": [
@@ -2076,6 +2637,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2125,6 +2693,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2798063834027786e+18,
+            1.279998660498686e+18
+          ],
           "welfare_regret": 0.29253387451171875,
           "privacy": {
             "sigma": [
@@ -2138,6 +2716,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2187,6 +2772,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2794428573708452e+18,
+            1.279998660498686e+18
+          ],
           "welfare_regret": 0.2904258966445923,
           "privacy": {
             "sigma": [
@@ -2200,6 +2795,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2249,6 +2851,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799985230597325e+18
+          ],
           "welfare_regret": 0.3026547431945801,
           "privacy": {
             "sigma": [
@@ -2262,6 +2874,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2311,6 +2930,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.279998110742872e+18
+          ],
           "welfare_regret": 0.28663647174835205,
           "privacy": {
             "sigma": [
@@ -2324,6 +2953,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2373,6 +3009,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799976984260116e+18
+          ],
           "welfare_regret": 0.28965914249420166,
           "privacy": {
             "sigma": [
@@ -2386,6 +3032,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2435,6 +3088,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799967363533373e+18
+          ],
           "welfare_regret": 0.30688929557800293,
           "privacy": {
             "sigma": [
@@ -2448,6 +3111,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2497,6 +3167,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799945373300818e+18
+          ],
           "welfare_regret": 0.29593199491500854,
           "privacy": {
             "sigma": [
@@ -2510,6 +3190,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2559,6 +3246,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.279976532827177e+18
+          ],
           "welfare_regret": 0.289451003074646,
           "privacy": {
             "sigma": [
@@ -2572,6 +3269,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2621,6 +3325,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.279832084487078e+18
+          ],
           "welfare_regret": 0.30271148681640625,
           "privacy": {
             "sigma": [
@@ -2634,6 +3348,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2683,6 +3404,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799810683126415e+18
+          ],
           "welfare_regret": 0.29025042057037354,
           "privacy": {
             "sigma": [
@@ -2696,6 +3427,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2745,6 +3483,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799862909928735e+18
+          ],
           "welfare_regret": 0.27801012992858887,
           "privacy": {
             "sigma": [
@@ -2758,6 +3506,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2807,6 +3562,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799891772108964e+18
+          ],
           "welfare_regret": 0.2959722876548767,
           "privacy": {
             "sigma": [
@@ -2820,6 +3585,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2869,6 +3641,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799912387951985e+18
+          ],
           "welfare_regret": 0.29126501083374023,
           "privacy": {
             "sigma": [
@@ -2882,6 +3664,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2931,6 +3720,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799926131847332e+18
+          ],
           "welfare_regret": 0.2858726382255554,
           "privacy": {
             "sigma": [
@@ -2944,6 +3743,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -2993,6 +3799,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.279993712696361e+18
+          ],
           "welfare_regret": 0.2971099019050598,
           "privacy": {
             "sigma": [
@@ -3006,6 +3822,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3055,6 +3878,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799945373300818e+18
+          ],
           "welfare_regret": 0.3053892254829407,
           "privacy": {
             "sigma": [
@@ -3068,6 +3901,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3117,6 +3957,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799950870858957e+18
+          ],
           "welfare_regret": 0.30520057678222656,
           "privacy": {
             "sigma": [
@@ -3130,6 +3980,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3179,6 +4036,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799956368417096e+18
+          ],
           "welfare_regret": 0.2963259816169739,
           "privacy": {
             "sigma": [
@@ -3192,6 +4059,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3241,6 +4115,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.27999604915857e+18
+          ],
           "welfare_regret": 0.29773759841918945,
           "privacy": {
             "sigma": [
@@ -3254,6 +4138,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3304,6 +4195,16 @@
           0.0,
           0.0
         ],
+        "claimed_runtime_rho": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "unclipped_runtime_rho": [
+          1.2800000348882207e+18,
+          1.2800000348882207e+18,
+          1.27999604915857e+18
+        ],
         "welfare_regret": 0.29773759841918945,
         "privacy": {
           "sigma": [
@@ -3317,6 +4218,13 @@
             0.0
           ],
           "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
             0.0,
             0.0,
             0.0
@@ -3344,6 +4252,7 @@
         "max_grad_norm": 5.0,
         "signal_prob": 0.5,
         "gamma": 0.95,
+        "discount_gamma": 0.95,
         "posterior_loss_coef": 0.12,
         "planner_bonus_coef": 0.06,
         "privacy_penalty_coef": 0.02,
@@ -3367,7 +4276,18 @@
         "noise_std_min": 0.05,
         "noise_std_max": 2.5,
         "fixed_baseline_fraction": 1.0,
-        "privacy_block_length": 4
+        "privacy_block_length": 4,
+        "clip_multiplier": 1.2,
+        "clip_floor": 0.15,
+        "clip_ceiling": 3.0,
+        "clip_margin": 0.1,
+        "clip_margin_tail_coef": 1.5,
+        "enforce_clip_margin_condition": true,
+        "scheduler_obs_noise": 0.15,
+        "scheduler_var_power": 1.5,
+        "scheduler_refine_steps": 2,
+        "scheduler_variant": "heuristic",
+        "scheduler_mode": "clip_la"
       },
       "game": "multi_round_sum",
       "algorithm": "i2c",
@@ -3415,6 +4335,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.1015419447161651e+18,
+            1.2676450976048087e+18,
+            1.2793227357255107e+18
+          ],
           "welfare_regret": 0.2898939251899719,
           "privacy": {
             "sigma": [
@@ -3428,6 +4358,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3477,6 +4414,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2788603910860308e+18,
+            1.2799979733039186e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.28772568702697754,
           "privacy": {
             "sigma": [
@@ -3490,6 +4437,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3539,6 +4493,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.1199621317357732e+18,
+            1.2799976984260116e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.28935742378234863,
           "privacy": {
             "sigma": [
@@ -3552,6 +4516,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3601,6 +4572,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2799975609870582e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.2796471118927002,
           "privacy": {
             "sigma": [
@@ -3614,6 +4595,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3663,6 +4651,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2799972861091512e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.30633050203323364,
           "privacy": {
             "sigma": [
@@ -3676,6 +4674,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3725,6 +4730,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2799970112312443e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.29523783922195435,
           "privacy": {
             "sigma": [
@@ -3738,6 +4753,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3787,6 +4809,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2799967363533373e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.29280078411102295,
           "privacy": {
             "sigma": [
@@ -3800,6 +4832,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3849,6 +4888,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.27999604915857e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.2982708811759949,
           "privacy": {
             "sigma": [
@@ -3862,6 +4911,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3911,6 +4967,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2799953619638026e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.3003733158111572,
           "privacy": {
             "sigma": [
@@ -3924,6 +4990,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -3973,6 +5046,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2799942624521748e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.2836143374443054,
           "privacy": {
             "sigma": [
@@ -3986,6 +5069,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4035,6 +5125,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2799917885510124e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.29145485162734985,
           "privacy": {
             "sigma": [
@@ -4048,6 +5148,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4097,6 +5204,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2799868407486874e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.30227041244506836,
           "privacy": {
             "sigma": [
@@ -4110,6 +5227,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4159,6 +5283,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2799662249056666e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.30150020122528076,
           "privacy": {
             "sigma": [
@@ -4172,6 +5306,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4221,6 +5362,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.283716082572937,
           "privacy": {
             "sigma": [
@@ -4234,6 +5385,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4283,6 +5441,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.2961235046386719,
           "privacy": {
             "sigma": [
@@ -4296,6 +5464,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4345,6 +5520,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.3012552261352539,
           "privacy": {
             "sigma": [
@@ -4358,6 +5543,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4407,6 +5599,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.28552311658859253,
           "privacy": {
             "sigma": [
@@ -4420,6 +5622,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4469,6 +5678,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2800000348882207e+18
+          ],
           "welfare_regret": 0.29455429315567017,
           "privacy": {
             "sigma": [
@@ -4482,6 +5701,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4531,6 +5757,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799998974492672e+18
+          ],
           "welfare_regret": 0.28540754318237305,
           "privacy": {
             "sigma": [
@@ -4544,6 +5780,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4593,6 +5836,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799997600103137e+18
+          ],
           "welfare_regret": 0.2985435128211975,
           "privacy": {
             "sigma": [
@@ -4606,6 +5859,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4655,6 +5915,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799997600103137e+18
+          ],
           "welfare_regret": 0.3022995591163635,
           "privacy": {
             "sigma": [
@@ -4668,6 +5938,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4717,6 +5994,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799997600103137e+18
+          ],
           "welfare_regret": 0.2809947729110718,
           "privacy": {
             "sigma": [
@@ -4730,6 +6017,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4779,6 +6073,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799997600103137e+18
+          ],
           "welfare_regret": 0.2876037359237671,
           "privacy": {
             "sigma": [
@@ -4792,6 +6096,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4841,6 +6152,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799997600103137e+18
+          ],
           "welfare_regret": 0.2956058382987976,
           "privacy": {
             "sigma": [
@@ -4854,6 +6175,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4903,6 +6231,16 @@
             0.0,
             0.0
           ],
+          "claimed_runtime_rho": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unclipped_runtime_rho": [
+            1.2800000348882207e+18,
+            1.2800000348882207e+18,
+            1.2799997600103137e+18
+          ],
           "welfare_regret": 0.2925906181335449,
           "privacy": {
             "sigma": [
@@ -4916,6 +6254,13 @@
               0.0
             ],
             "epsilon": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "accounting_mode": "none",
+            "actual_claim_label": "none",
+            "clip": [
               0.0,
               0.0,
               0.0
@@ -4966,6 +6311,16 @@
           0.0,
           0.0
         ],
+        "claimed_runtime_rho": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "unclipped_runtime_rho": [
+          1.2800000348882207e+18,
+          1.2800000348882207e+18,
+          1.2799997600103137e+18
+        ],
         "welfare_regret": 0.2925906181335449,
         "privacy": {
           "sigma": [
@@ -4979,6 +6334,13 @@
             0.0
           ],
           "epsilon": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "accounting_mode": "none",
+          "actual_claim_label": "none",
+          "clip": [
             0.0,
             0.0,
             0.0

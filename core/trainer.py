@@ -14,7 +14,7 @@ from torch import nn
 
 from core.models import ActorNet, PosteriorNet, SenderNet
 from metrics.constraints import summarize_constraints
-from metrics.privacy import summarize_privacy, rho_to_sigma
+from metrics.privacy import rdp_gaussian_rho, summarize_privacy, rho_to_sigma
 
 from tqdm.auto import tqdm
 
@@ -49,6 +49,8 @@ class PILConfig:
     contract_uncertainty_coef: float = 0.42
     contract_sigma_coef: float = 0.2
     contract_price_coef: float = 0.04
+    theorem_price_coef: float = 0.1
+    outer_layer_mode: str = "surrogate"
     transfer_scale: float = 1.0
     kalman_gain_floor: float = 1e-4
     kalman_process_noise: float = 1e-4
@@ -84,6 +86,9 @@ class PILConfig:
     clip_floor: float = 0.15
     clip_ceiling: float = 3.0
     clip_margin: float = 0.1
+    clip_margin_tail_coef: float = 1.5
+    enforce_clip_margin_condition: bool = True
+    scheduler_variant: str = "heuristic"
     scheduler_mode: str = "clip_la"
 
     @classmethod
@@ -150,6 +155,9 @@ class AdaptivePrivacyScheduler:
     def _benefit_signal(self) -> float:
         return float(np.mean(self.current_benefits) / (1.0 + np.mean(self.current_benefits)))
 
+    def _outer_layer_mode(self) -> str:
+        return str(getattr(self.config, "outer_layer_mode", "surrogate"))
+
     def _nominal_price_anchor(self) -> float:
         target_rho = np.minimum(np.full(self.num_agents, self.nominal_rho, dtype=np.float64), self.remaining_budget)
         price_terms = (
@@ -193,6 +201,18 @@ class AdaptivePrivacyScheduler:
         clip_seq = scale * base_clip[None, :]
         clip_seq = np.clip(clip_seq, self.config.clip_floor, self.config.clip_ceiling)
         return clip_seq
+
+    def _margin_clip_floor(self, last_summary: dict[str, Any] | None) -> np.ndarray:
+        if not self.config.enforce_clip_margin_condition:
+            return np.full(self.num_agents, self.config.clip_floor, dtype=np.float64)
+        message_bound = (
+            np.asarray(last_summary.get("message_norm", self.previous_clip), dtype=np.float64)
+            if last_summary
+            else self.previous_clip
+        )
+        tail_margin = self.config.clip_margin_tail_coef * np.sqrt(self.config.message_dim * self.config.scheduler_obs_noise)
+        safe_floor = np.maximum(message_bound, self.previous_clip) + tail_margin
+        return np.clip(safe_floor, self.config.clip_floor, self.config.clip_ceiling)
 
     def _variance_path(self, prior_var: float, rho_seq: np.ndarray, clip_seq: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         horizon = rho_seq.shape[0]
@@ -339,19 +359,27 @@ class AdaptivePrivacyScheduler:
         self.posterior_var_state = np.maximum(uncertainty, 1e-6)
         proxy_var = np.maximum(uncertainty + self.config.clip_margin, 1e-6)
         base_clip = self.config.clip_multiplier * np.sqrt(self.config.message_dim * proxy_var)
+        base_clip = np.maximum(base_clip, self._margin_clip_floor(last_summary))
         base_clip = np.clip(base_clip, self.config.clip_floor, self.config.clip_ceiling)
         base_clip = np.minimum(base_clip, self.previous_clip * 1.25 + self.config.clip_floor)
         clip = self._clip_sequence(base_clip)
-        target_total = self._target_total_spend(block_index)
-        raw_price, block_budget_per_agent = self._solve_price(target_total)
-        block_budget_per_agent = np.asarray(block_budget_per_agent, dtype=np.float64).reshape(-1)
-        signal = self._benefit_signal()
-        price_cap = max(
-            self.config.lambda_init,
-            self._nominal_price_anchor(),
-            self.current_lambda * (1.10 + 0.20 * signal),
-        )
-        guide_price = min(raw_price, price_cap, self.config.lambda_max)
+        if self.config.scheduler_variant == "exact_wf":
+            blocks_left = max(1, self.config.num_blocks - block_index)
+            block_budget_per_agent = self.remaining_budget / float(blocks_left * self.block_length)
+            block_budget_per_agent = np.clip(block_budget_per_agent, 0.0, self.config.rho_max)
+            raw_price = 0.0
+            guide_price = 0.0
+        else:
+            target_total = self._target_total_spend(block_index)
+            raw_price, block_budget_per_agent = self._solve_price(target_total)
+            block_budget_per_agent = np.asarray(block_budget_per_agent, dtype=np.float64).reshape(-1)
+            signal = self._benefit_signal()
+            price_cap = max(
+                self.config.lambda_init,
+                self._nominal_price_anchor(),
+                self.current_lambda * (1.10 + 0.20 * signal),
+            )
+            guide_price = min(raw_price, price_cap, self.config.lambda_max)
         rho = np.zeros((self.block_length, self.num_agents), dtype=np.float64)
         block_budgets = block_budget_per_agent * float(self.block_length)
         for agent_idx in range(self.num_agents):
@@ -364,14 +392,24 @@ class AdaptivePrivacyScheduler:
         if float(np.sum(rho)) > 1e-8:
             mean_rho = rho.mean(axis=0)
             implementing_price = self.type_costs * mean_rho * (mean_rho + 1.0) / np.maximum(self.current_benefits, 1e-8)
-            price = float(np.clip(np.mean(implementing_price), self.config.lambda_init, self.config.lambda_max))
+            if self._outer_layer_mode() == "theorem":
+                base_price = raw_price if self.config.scheduler_variant != "exact_wf" else float(np.mean(implementing_price))
+                price = float(np.clip(base_price, 0.0, self.config.lambda_max))
+            else:
+                price = float(np.clip(np.mean(implementing_price), self.config.lambda_init, self.config.lambda_max))
         else:
             price = 0.0
-        if guide_price > 0.0 and price > 0.0:
+        if (
+            self._outer_layer_mode() != "theorem"
+            and self.config.scheduler_variant != "exact_wf"
+            and guide_price > 0.0
+            and price > 0.0
+        ):
             price = float(np.clip(0.5 * price + 0.5 * guide_price, self.config.lambda_init, self.config.lambda_max))
-        stabilized = self._stabilize_rho(rho.mean(axis=0), block_index)
-        original_mean = np.maximum(rho.mean(axis=0), 1e-8)
-        rho *= (stabilized / original_mean)[None, :]
+        if self.config.scheduler_variant != "exact_wf":
+            stabilized = self._stabilize_rho(rho.mean(axis=0), block_index)
+            original_mean = np.maximum(rho.mean(axis=0), 1e-8)
+            rho *= (stabilized / original_mean)[None, :]
         sigma = rho_to_sigma(
             rho,
             alpha=self.config.privacy_alpha,
@@ -443,7 +481,8 @@ class BaseCommunicationTrainer:
         self.scheduler = AdaptivePrivacyScheduler(config) if self.privacy_mode == "adaptive" else None
         self.fixed_schedule = None if self.privacy_mode == "adaptive" else self._build_fixed_schedule()
         self.total_rho_spent = np.zeros(config.num_agents, dtype=np.float64)
-        self.total_actual_rho_spent = np.zeros(config.num_agents, dtype=np.float64)
+        self.total_claimed_runtime_rho_spent = np.zeros(config.num_agents, dtype=np.float64)
+        self.total_unclipped_runtime_rho_spent = np.zeros(config.num_agents, dtype=np.float64)
         self.history: list[dict[str, Any]] = []
 
     def parameters(self) -> list[nn.Parameter]:
@@ -605,6 +644,18 @@ class BaseCommunicationTrainer:
         *,
         price: float = 0.0,
     ) -> torch.Tensor:
+        outer_layer_mode = str(getattr(self.config, "outer_layer_mode", "surrogate"))
+        if outer_layer_mode == "theorem":
+            score = posterior_mean.clamp_min(0.0)
+            if posterior_var is not None:
+                score = score - self.config.contract_uncertainty_coef * posterior_var
+            if sigma is not None:
+                sigma_batch = sigma.expand(posterior_mean.shape[0], -1, -1)
+                score = score - self.config.contract_sigma_coef * sigma_batch.squeeze(-1)
+            score = score - self.config.theorem_price_coef * float(price)
+            score = score.clamp_min(0.0)
+            shares = score / score.sum(dim=1, keepdim=True).clamp_min(1e-8)
+            return demand * shares
         centered = posterior_mean
         if posterior_var is not None:
             centered = centered - self.config.contract_uncertainty_coef * posterior_var
@@ -657,6 +708,8 @@ class BaseCommunicationTrainer:
     ) -> torch.Tensor:
         if not self.use_privacy_planner:
             return actor_output
+        if str(getattr(self.config, "outer_layer_mode", "surrogate")) == "theorem":
+            return contract[:, agent_idx : agent_idx + 1]
         sigma_batch = sigma.expand(actor_output.shape[0], -1, -1)
         uncertainty = posterior_var[:, agent_idx : agent_idx + 1]
         noise_level = sigma_batch[:, agent_idx, :]
@@ -699,7 +752,8 @@ class BaseCommunicationTrainer:
         posterior_error_sum = torch.zeros(self.config.num_agents, device=self.device)
         clip_rate_sum = torch.zeros(self.config.num_agents, device=self.device)
         latent_sensitivity_sum = torch.zeros(self.config.num_agents, device=self.device)
-        actual_rho_sum = torch.zeros(self.config.num_agents, device=self.device)
+        clipped_runtime_rho_sum = torch.zeros(self.config.num_agents, device=self.device)
+        unclipped_runtime_rho_sum = torch.zeros(self.config.num_agents, device=self.device)
 
         for step in range(self.config.episode_length):
             demand = demands[:, step]
@@ -732,10 +786,16 @@ class BaseCommunicationTrainer:
                     messages.append(private_message)
                     intrinsic_stds.append(intrinsic_std)
                     clip_rate_sum[agent_idx] += (latent_norm.squeeze(-1) > clip[:, agent_idx, :].squeeze(-1)).float().mean()
-                    step_sensitivity = 2.0 * latent_norm.max()
-                    latent_sensitivity_sum[agent_idx] += step_sensitivity
+                    clipped_step_sensitivity = (2.0 * clip[:, agent_idx, :].squeeze(-1)).mean()
+                    unclipped_step_sensitivity = 2.0 * latent_norm.max()
+                    latent_sensitivity_sum[agent_idx] += unclipped_step_sensitivity
                     sigma_sq = torch.square(sigma[:, agent_idx, :].mean().clamp_min(1e-8))
-                    actual_rho_sum[agent_idx] += self.config.privacy_alpha * torch.square(step_sensitivity) / (2.0 * sigma_sq)
+                    clipped_runtime_rho_sum[agent_idx] += self.config.privacy_alpha * torch.square(
+                        clipped_step_sensitivity
+                    ) / (2.0 * sigma_sq)
+                    unclipped_runtime_rho_sum[agent_idx] += self.config.privacy_alpha * torch.square(
+                        unclipped_step_sensitivity
+                    ) / (2.0 * sigma_sq)
 
                 message_tensor = torch.stack(messages, dim=1)
                 sender_mean_tensor = torch.stack(sender_means, dim=1)
@@ -877,7 +937,8 @@ class BaseCommunicationTrainer:
             "posterior_error_tensor": posterior_error_sum / divisor,
             "clip_rate_tensor": clip_rate_sum / divisor,
             "latent_sensitivity_tensor": latent_sensitivity_sum,
-            "actual_rho_tensor": actual_rho_sum,
+            "claimed_runtime_rho_tensor": clipped_runtime_rho_sum,
+            "unclipped_runtime_rho_tensor": unclipped_runtime_rho_sum,
         }
 
     def _detach_metrics(self, raw_metrics: dict[str, Any]) -> dict[str, Any]:
@@ -896,7 +957,8 @@ class BaseCommunicationTrainer:
             "posterior_error": raw_metrics["posterior_error_tensor"].detach().cpu().numpy().tolist(),
             "clip_rate": raw_metrics["clip_rate_tensor"].detach().cpu().numpy().tolist(),
             "latent_sensitivity": raw_metrics["latent_sensitivity_tensor"].detach().cpu().numpy().tolist(),
-            "actual_rho": raw_metrics["actual_rho_tensor"].detach().cpu().numpy().tolist(),
+            "claimed_runtime_rho": raw_metrics["claimed_runtime_rho_tensor"].detach().cpu().numpy().tolist(),
+            "unclipped_runtime_rho": raw_metrics["unclipped_runtime_rho_tensor"].detach().cpu().numpy().tolist(),
         }
 
     def select_schedule(self, block_index: int, last_summary: dict[str, Any] | None) -> PrivacySchedule:
@@ -1065,18 +1127,43 @@ class BaseCommunicationTrainer:
             }
         else:
             claimed_rho = self.total_rho_spent + self._block_rho(schedule)
-            actual_block_rho = np.asarray(truthful["actual_rho"], dtype=np.float64)
-            actual_total_rho = self.total_actual_rho_spent + actual_block_rho
+            claimed_block_rho = np.asarray(truthful["claimed_runtime_rho"], dtype=np.float64)
+            claimed_total_rho = self.total_claimed_runtime_rho_spent + claimed_block_rho
             privacy_metrics = summarize_privacy(
                 sigmas=np.asarray(schedule.sigma, dtype=np.float64).mean(axis=0),
                 total_rho_spent=claimed_rho,
                 claimed_sensitivity=2.0 * np.asarray(schedule.clip, dtype=np.float64).max(axis=0),
                 alpha=self.config.privacy_alpha,
                 delta=self.config.delta,
-                actual_total_rho_spent=actual_total_rho,
+                actual_total_rho_spent=claimed_total_rho,
+                accounting_mode="runtime_clipped_transcript",
+                actual_claim_label="runtime_clipped",
             )
             privacy_metrics["clip"] = np.asarray(schedule.clip, dtype=np.float64).tolist()
-            privacy_metrics["actual_rho_runtime"] = actual_block_rho.tolist()
+            privacy_metrics["runtime_clipped_rho"] = claimed_block_rho.tolist()
+            privacy_metrics["runtime_clipped_rho_from_schedule"] = rdp_gaussian_rho(
+                self.config.privacy_alpha,
+                2.0 * np.asarray(schedule.clip, dtype=np.float64),
+                np.asarray(schedule.sigma, dtype=np.float64),
+            ).sum(axis=0).tolist()
+            if self.config.scheduler_mode == "naive_la":
+                naive_block_rho = np.asarray(truthful["unclipped_runtime_rho"], dtype=np.float64)
+                naive_total_rho = self.total_unclipped_runtime_rho_spent + naive_block_rho
+                naive_metrics = summarize_privacy(
+                    sigmas=np.asarray(schedule.sigma, dtype=np.float64).mean(axis=0),
+                    total_rho_spent=claimed_rho,
+                    alpha=self.config.privacy_alpha,
+                    delta=self.config.delta,
+                    actual_total_rho_spent=naive_total_rho,
+                    accounting_mode="naive_unclipped_counterexample",
+                    actual_claim_label="naive_unclipped",
+                )
+                privacy_metrics["naive_unclipped_counterexample"] = {
+                    "runtime_rho": naive_block_rho.tolist(),
+                    "total_rho_spent": naive_total_rho.tolist(),
+                    "epsilon": naive_metrics["actual_epsilon"],
+                    "overspend_ratio": naive_metrics["overspend_ratio"],
+                }
 
         return {
             "block": block_index,
@@ -1099,7 +1186,8 @@ class BaseCommunicationTrainer:
             "posterior_error": truthful["posterior_error"],
             "clip_rate": truthful["clip_rate"],
             "latent_sensitivity": truthful["latent_sensitivity"],
-            "actual_rho": truthful["actual_rho"],
+            "claimed_runtime_rho": truthful["claimed_runtime_rho"],
+            "unclipped_runtime_rho": truthful["unclipped_runtime_rho"],
             "epsilon_ic": constraint_metrics["epsilon_ic"],
             "epsilon_ir": constraint_metrics["epsilon_ir"],
             "baseline_epsilon_ic": np.maximum(
@@ -1156,7 +1244,8 @@ class BaseCommunicationTrainer:
                     progress.update(1)
                 summary = self.evaluate_block(schedule, block_index)
                 self._post_block_update(schedule)
-                self.total_actual_rho_spent += np.asarray(summary["actual_rho"], dtype=np.float64)
+                self.total_claimed_runtime_rho_spent += np.asarray(summary["claimed_runtime_rho"], dtype=np.float64)
+                self.total_unclipped_runtime_rho_spent += np.asarray(summary["unclipped_runtime_rho"], dtype=np.float64)
                 self.history.append(summary)
                 last_summary = summary
                 progress.set_postfix(

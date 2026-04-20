@@ -65,12 +65,16 @@ def summarize_privacy(
     alpha: float,
     delta: float,
     actual_total_rho_spent: np.ndarray | float | None = None,
+    accounting_mode: str = "direct",
+    actual_claim_label: str = "actual",
 ) -> dict[str, Any]:
     epsilon = rdp_to_dp_epsilon(total_rho_spent, alpha, delta)
     payload = {
         "sigma": np.asarray(sigmas, dtype=np.float64).tolist(),
         "total_rho_spent": np.asarray(total_rho_spent, dtype=np.float64).tolist(),
         "epsilon": np.asarray(epsilon, dtype=np.float64).tolist(),
+        "accounting_mode": accounting_mode,
+        "actual_claim_label": actual_claim_label,
     }
     if claimed_sensitivity is not None:
         payload["claimed_sensitivity"] = np.asarray(claimed_sensitivity, dtype=np.float64).tolist()

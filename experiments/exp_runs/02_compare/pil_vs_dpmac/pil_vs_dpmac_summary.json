@@ -6,30 +6,30 @@
   ],
   "checkpoint_source": "final",
   "pil_aps": {
-    "team_reward": 1.6280685663223267,
-    "oracle_team_reward": 1.6299618085225422,
-    "welfare_regret": 0.0018932422002156575,
-    "mean_epsilon": 21.095708284198654,
+    "team_reward": 1.6179409821828206,
+    "oracle_team_reward": 1.6223251819610596,
+    "welfare_regret": 0.004384199778238933,
+    "mean_epsilon": 21.07011345732539,
     "mean_epsilon_ic": 0.0,
     "mean_epsilon_ir": 0.0,
-    "mean_kl_distortion": 0.8083835045496622
+    "mean_kl_distortion": 0.8982166780365838
   },
   "dpmac": {
-    "team_reward": 1.6232229868570964,
-    "oracle_team_reward": 1.6248827775319417,
-    "welfare_regret": 0.0016597906748453777,
+    "team_reward": 1.616272250811259,
+    "oracle_team_reward": 1.622031529744466,
+    "welfare_regret": 0.005759278933207194,
     "mean_epsilon": 23.070113457325387,
-    "mean_epsilon_ic": 0.0,
+    "mean_epsilon_ic": 1.9285413953993058e-05,
     "mean_epsilon_ir": 0.0,
-    "mean_kl_distortion": 0.541448732217153
+    "mean_kl_distortion": 0.7785454392433167
   },
   "deltas": {
-    "team_reward": 0.004845579465230232,
-    "oracle_team_reward": 0.005079030990600586,
-    "welfare_regret": 0.0002334515253702798,
-    "mean_epsilon": -1.9744051731267334,
-    "mean_epsilon_ic": 0.0,
+    "team_reward": 0.0016687313715615382,
+    "oracle_team_reward": 0.0002936522165934985,
+    "welfare_regret": -0.0013750791549682617,
+    "mean_epsilon": -1.9999999999999964,
+    "mean_epsilon_ic": -1.9285413953993058e-05,
     "mean_epsilon_ir": 0.0,
-    "mean_kl_distortion": 0.2669347723325093
+    "mean_kl_distortion": 0.11967123879326713
   }
 }

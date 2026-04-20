@@ -2,16 +2,16 @@
   "games": {
     "binary_sum": {
       "pil": {
-        "mean_final_reward": 0.6837401191393534,
-        "std_final_reward": 0.03423131295743152,
-        "mean_final_error": 0.31625988086064655,
-        "std_final_error": 0.034231312957431516
+        "mean_final_reward": 0.6596987644831339,
+        "std_final_reward": 0.007805491006931121,
+        "mean_final_error": 0.3403012454509735,
+        "std_final_error": 0.007805511152993821
       },
       "dpmac": {
-        "mean_final_reward": 0.6696000695228577,
-        "std_final_reward": 0.01111763227839658,
-        "mean_final_error": 0.33039990067481995,
-        "std_final_error": 0.011117674414022219
+        "mean_final_reward": 0.7128398617108663,
+        "std_final_reward": 0.04172418138694556,
+        "mean_final_error": 0.28716010848681134,
+        "std_final_error": 0.041724201979652056
       },
       "i2c": {
         "mean_final_reward": 0.6787883440653483,

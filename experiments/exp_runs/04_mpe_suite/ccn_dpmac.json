@@ -16,6 +16,7 @@
         "lr": 0.0003,
         "critic_lr": 0.0005,
         "gamma": 0.99,
+        "discount_gamma": 0.99,
         "action_std": 0.15,
         "privacy_sigma": 0.2,
         "privacy_sigma_min": 0.05,
@@ -45,7 +46,18 @@
         "noise_std_min": 0.08,
         "noise_std_max": 1.2,
         "fixed_baseline_fraction": 1.0,
-        "privacy_block_length": 10
+        "privacy_block_length": 10,
+        "clip_multiplier": 1.2,
+        "clip_floor": 0.15,
+        "clip_ceiling": 3.0,
+        "clip_margin": 0.1,
+        "clip_margin_tail_coef": 1.5,
+        "enforce_clip_margin_condition": true,
+        "scheduler_obs_noise": 0.15,
+        "scheduler_var_power": 1.5,
+        "scheduler_refine_steps": 2,
+        "scheduler_variant": "heuristic",
+        "scheduler_mode": "clip_la"
       },
       "scenario": "Cooperative Communication & Navigation",
       "algorithm": "dpmac",
@@ -94,6 +106,32 @@
             "epsilon": [
               3.9701134573253944,
               3.9701134573253944
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              200.0,
+              200.0
+            ],
+            "actual_epsilon": [
+              203.0701134573254,
+              203.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -145,6 +183,32 @@
             "epsilon": [
               4.870113457325394,
               4.870113457325394
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              400.0,
+              400.0
+            ],
+            "actual_epsilon": [
+              403.0701134573254,
+              403.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -196,6 +260,32 @@
             "epsilon": [
               5.770113457325394,
               5.770113457325394
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              600.0,
+              600.0
+            ],
+            "actual_epsilon": [
+              603.0701134573254,
+              603.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -247,6 +337,32 @@
             "epsilon": [
               6.670113457325394,
               6.670113457325394
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              800.0,
+              800.0
+            ],
+            "actual_epsilon": [
+              803.0701134573254,
+              803.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -298,6 +414,32 @@
             "epsilon": [
               7.5701134573253945,
               7.5701134573253945
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1000.0,
+              1000.0
+            ],
+            "actual_epsilon": [
+              1003.0701134573254,
+              1003.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222223,
+              222.22222222222223
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -349,6 +491,32 @@
             "epsilon": [
               8.470113457325395,
               8.470113457325395
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1200.0,
+              1200.0
+            ],
+            "actual_epsilon": [
+              1203.0701134573253,
+              1203.0701134573253
+            ],
+            "overspend_ratio": [
+              222.2222222222222,
+              222.2222222222222
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -400,6 +568,32 @@
             "epsilon": [
               9.370113457325395,
               9.370113457325395
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1400.0,
+              1400.0
+            ],
+            "actual_epsilon": [
+              1403.0701134573253,
+              1403.0701134573253
+            ],
+            "overspend_ratio": [
+              222.2222222222222,
+              222.2222222222222
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -451,6 +645,32 @@
             "epsilon": [
               10.270113457325396,
               10.270113457325396
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1600.0,
+              1600.0
+            ],
+            "actual_epsilon": [
+              1603.0701134573253,
+              1603.0701134573253
+            ],
+            "overspend_ratio": [
+              222.2222222222222,
+              222.2222222222222
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -502,6 +722,32 @@
             "epsilon": [
               11.170113457325396,
               11.170113457325396
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1800.0,
+              1800.0
+            ],
+            "actual_epsilon": [
+              1803.0701134573253,
+              1803.0701134573253
+            ],
+            "overspend_ratio": [
+              222.22222222222217,
+              222.22222222222217
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -553,6 +799,32 @@
             "epsilon": [
               12.070113457325396,
               12.070113457325396
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              2000.0,
+              2000.0
+            ],
+            "actual_epsilon": [
+              2003.0701134573253,
+              2003.0701134573253
+            ],
+            "overspend_ratio": [
+              222.22222222222217,
+              222.22222222222217
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -605,6 +877,32 @@
           "epsilon": [
             3.9701134573253944,
             3.9701134573253944
+          ],
+          "accounting_mode": "runtime_clipped_transcript",
+          "actual_claim_label": "runtime_clipped",
+          "claimed_sensitivity": [
+            2.4,
+            2.4
+          ],
+          "actual_rho_spent": [
+            200.0,
+            200.0
+          ],
+          "actual_epsilon": [
+            203.0701134573254,
+            203.0701134573254
+          ],
+          "overspend_ratio": [
+            222.22222222222226,
+            222.22222222222226
+          ],
+          "clip": [
+            1.2,
+            1.2
+          ],
+          "runtime_clipped_rho": [
+            200.0,
+            200.0
           ]
         },
         "privacy_price": 0.0,
@@ -656,6 +954,32 @@
           "epsilon": [
             12.070113457325396,
             12.070113457325396
+          ],
+          "accounting_mode": "runtime_clipped_transcript",
+          "actual_claim_label": "runtime_clipped",
+          "claimed_sensitivity": [
+            2.4,
+            2.4
+          ],
+          "actual_rho_spent": [
+            2000.0,
+            2000.0
+          ],
+          "actual_epsilon": [
+            2003.0701134573253,
+            2003.0701134573253
+          ],
+          "overspend_ratio": [
+            222.22222222222217,
+            222.22222222222217
+          ],
+          "clip": [
+            1.2,
+            1.2
+          ],
+          "runtime_clipped_rho": [
+            200.0,
+            200.0
           ]
         },
         "privacy_price": 0.0,
@@ -708,6 +1032,32 @@
           "epsilon": [
             12.070113457325396,
             12.070113457325396
+          ],
+          "accounting_mode": "runtime_clipped_transcript",
+          "actual_claim_label": "runtime_clipped",
+          "claimed_sensitivity": [
+            2.4,
+            2.4
+          ],
+          "actual_rho_spent": [
+            2000.0,
+            2000.0
+          ],
+          "actual_epsilon": [
+            2003.0701134573253,
+            2003.0701134573253
+          ],
+          "overspend_ratio": [
+            222.22222222222217,
+            222.22222222222217
+          ],
+          "clip": [
+            1.2,
+            1.2
+          ],
+          "runtime_clipped_rho": [
+            200.0,
+            200.0
           ]
         },
         "privacy_price": 0.0,
@@ -737,6 +1087,7 @@
         "lr": 0.0003,
         "critic_lr": 0.0005,
         "gamma": 0.99,
+        "discount_gamma": 0.99,
         "action_std": 0.15,
         "privacy_sigma": 0.2,
         "privacy_sigma_min": 0.05,
@@ -766,7 +1117,18 @@
         "noise_std_min": 0.08,
         "noise_std_max": 1.2,
         "fixed_baseline_fraction": 1.0,
-        "privacy_block_length": 10
+        "privacy_block_length": 10,
+        "clip_multiplier": 1.2,
+        "clip_floor": 0.15,
+        "clip_ceiling": 3.0,
+        "clip_margin": 0.1,
+        "clip_margin_tail_coef": 1.5,
+        "enforce_clip_margin_condition": true,
+        "scheduler_obs_noise": 0.15,
+        "scheduler_var_power": 1.5,
+        "scheduler_refine_steps": 2,
+        "scheduler_variant": "heuristic",
+        "scheduler_mode": "clip_la"
       },
       "scenario": "Cooperative Communication & Navigation",
       "algorithm": "dpmac",
@@ -815,6 +1177,32 @@
             "epsilon": [
               3.9701134573253944,
               3.9701134573253944
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              200.0,
+              200.0
+            ],
+            "actual_epsilon": [
+              203.0701134573254,
+              203.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -866,6 +1254,32 @@
             "epsilon": [
               4.870113457325394,
               4.870113457325394
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              400.0,
+              400.0
+            ],
+            "actual_epsilon": [
+              403.0701134573254,
+              403.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -917,6 +1331,32 @@
             "epsilon": [
               5.770113457325394,
               5.770113457325394
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              600.0,
+              600.0
+            ],
+            "actual_epsilon": [
+              603.0701134573254,
+              603.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -968,6 +1408,32 @@
             "epsilon": [
               6.670113457325394,
               6.670113457325394
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              800.0,
+              800.0
+            ],
+            "actual_epsilon": [
+              803.0701134573254,
+              803.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1019,6 +1485,32 @@
             "epsilon": [
               7.5701134573253945,
               7.5701134573253945
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1000.0,
+              1000.0
+            ],
+            "actual_epsilon": [
+              1003.0701134573254,
+              1003.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222223,
+              222.22222222222223
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1070,6 +1562,32 @@
             "epsilon": [
               8.470113457325395,
               8.470113457325395
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1200.0,
+              1200.0
+            ],
+            "actual_epsilon": [
+              1203.0701134573253,
+              1203.0701134573253
+            ],
+            "overspend_ratio": [
+              222.2222222222222,
+              222.2222222222222
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1121,6 +1639,32 @@
             "epsilon": [
               9.370113457325395,
               9.370113457325395
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1400.0,
+              1400.0
+            ],
+            "actual_epsilon": [
+              1403.0701134573253,
+              1403.0701134573253
+            ],
+            "overspend_ratio": [
+              222.2222222222222,
+              222.2222222222222
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1172,6 +1716,32 @@
             "epsilon": [
               10.270113457325396,
               10.270113457325396
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1600.0,
+              1600.0
+            ],
+            "actual_epsilon": [
+              1603.0701134573253,
+              1603.0701134573253
+            ],
+            "overspend_ratio": [
+              222.2222222222222,
+              222.2222222222222
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1223,6 +1793,32 @@
             "epsilon": [
               11.170113457325396,
               11.170113457325396
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1800.0,
+              1800.0
+            ],
+            "actual_epsilon": [
+              1803.0701134573253,
+              1803.0701134573253
+            ],
+            "overspend_ratio": [
+              222.22222222222217,
+              222.22222222222217
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1274,6 +1870,32 @@
             "epsilon": [
               12.070113457325396,
               12.070113457325396
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              2000.0,
+              2000.0
+            ],
+            "actual_epsilon": [
+              2003.0701134573253,
+              2003.0701134573253
+            ],
+            "overspend_ratio": [
+              222.22222222222217,
+              222.22222222222217
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1326,6 +1948,32 @@
           "epsilon": [
             3.9701134573253944,
             3.9701134573253944
+          ],
+          "accounting_mode": "runtime_clipped_transcript",
+          "actual_claim_label": "runtime_clipped",
+          "claimed_sensitivity": [
+            2.4,
+            2.4
+          ],
+          "actual_rho_spent": [
+            200.0,
+            200.0
+          ],
+          "actual_epsilon": [
+            203.0701134573254,
+            203.0701134573254
+          ],
+          "overspend_ratio": [
+            222.22222222222226,
+            222.22222222222226
+          ],
+          "clip": [
+            1.2,
+            1.2
+          ],
+          "runtime_clipped_rho": [
+            200.0,
+            200.0
           ]
         },
         "privacy_price": 0.0,
@@ -1377,6 +2025,32 @@
           "epsilon": [
             12.070113457325396,
             12.070113457325396
+          ],
+          "accounting_mode": "runtime_clipped_transcript",
+          "actual_claim_label": "runtime_clipped",
+          "claimed_sensitivity": [
+            2.4,
+            2.4
+          ],
+          "actual_rho_spent": [
+            2000.0,
+            2000.0
+          ],
+          "actual_epsilon": [
+            2003.0701134573253,
+            2003.0701134573253
+          ],
+          "overspend_ratio": [
+            222.22222222222217,
+            222.22222222222217
+          ],
+          "clip": [
+            1.2,
+            1.2
+          ],
+          "runtime_clipped_rho": [
+            200.0,
+            200.0
           ]
         },
         "privacy_price": 0.0,
@@ -1429,6 +2103,32 @@
           "epsilon": [
             12.070113457325396,
             12.070113457325396
+          ],
+          "accounting_mode": "runtime_clipped_transcript",
+          "actual_claim_label": "runtime_clipped",
+          "claimed_sensitivity": [
+            2.4,
+            2.4
+          ],
+          "actual_rho_spent": [
+            2000.0,
+            2000.0
+          ],
+          "actual_epsilon": [
+            2003.0701134573253,
+            2003.0701134573253
+          ],
+          "overspend_ratio": [
+            222.22222222222217,
+            222.22222222222217
+          ],
+          "clip": [
+            1.2,
+            1.2
+          ],
+          "runtime_clipped_rho": [
+            200.0,
+            200.0
           ]
         },
         "privacy_price": 0.0,
@@ -1458,6 +2158,7 @@
         "lr": 0.0003,
         "critic_lr": 0.0005,
         "gamma": 0.99,
+        "discount_gamma": 0.99,
         "action_std": 0.15,
         "privacy_sigma": 0.2,
         "privacy_sigma_min": 0.05,
@@ -1487,7 +2188,18 @@
         "noise_std_min": 0.08,
         "noise_std_max": 1.2,
         "fixed_baseline_fraction": 1.0,
-        "privacy_block_length": 10
+        "privacy_block_length": 10,
+        "clip_multiplier": 1.2,
+        "clip_floor": 0.15,
+        "clip_ceiling": 3.0,
+        "clip_margin": 0.1,
+        "clip_margin_tail_coef": 1.5,
+        "enforce_clip_margin_condition": true,
+        "scheduler_obs_noise": 0.15,
+        "scheduler_var_power": 1.5,
+        "scheduler_refine_steps": 2,
+        "scheduler_variant": "heuristic",
+        "scheduler_mode": "clip_la"
       },
       "scenario": "Cooperative Communication & Navigation",
       "algorithm": "dpmac",
@@ -1536,6 +2248,32 @@
             "epsilon": [
               3.9701134573253944,
               3.9701134573253944
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              200.0,
+              200.0
+            ],
+            "actual_epsilon": [
+              203.0701134573254,
+              203.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1587,6 +2325,32 @@
             "epsilon": [
               4.870113457325394,
               4.870113457325394
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              400.0,
+              400.0
+            ],
+            "actual_epsilon": [
+              403.0701134573254,
+              403.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1638,6 +2402,32 @@
             "epsilon": [
               5.770113457325394,
               5.770113457325394
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              600.0,
+              600.0
+            ],
+            "actual_epsilon": [
+              603.0701134573254,
+              603.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1689,6 +2479,32 @@
             "epsilon": [
               6.670113457325394,
               6.670113457325394
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              800.0,
+              800.0
+            ],
+            "actual_epsilon": [
+              803.0701134573254,
+              803.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222226,
+              222.22222222222226
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1740,6 +2556,32 @@
             "epsilon": [
               7.5701134573253945,
               7.5701134573253945
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1000.0,
+              1000.0
+            ],
+            "actual_epsilon": [
+              1003.0701134573254,
+              1003.0701134573254
+            ],
+            "overspend_ratio": [
+              222.22222222222223,
+              222.22222222222223
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1791,6 +2633,32 @@
             "epsilon": [
               8.470113457325395,
               8.470113457325395
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1200.0,
+              1200.0
+            ],
+            "actual_epsilon": [
+              1203.0701134573253,
+              1203.0701134573253
+            ],
+            "overspend_ratio": [
+              222.2222222222222,
+              222.2222222222222
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1842,6 +2710,32 @@
             "epsilon": [
               9.370113457325395,
               9.370113457325395
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1400.0,
+              1400.0
+            ],
+            "actual_epsilon": [
+              1403.0701134573253,
+              1403.0701134573253
+            ],
+            "overspend_ratio": [
+              222.2222222222222,
+              222.2222222222222
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1893,6 +2787,32 @@
             "epsilon": [
               10.270113457325396,
               10.270113457325396
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1600.0,
+              1600.0
+            ],
+            "actual_epsilon": [
+              1603.0701134573253,
+              1603.0701134573253
+            ],
+            "overspend_ratio": [
+              222.2222222222222,
+              222.2222222222222
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1944,6 +2864,32 @@
             "epsilon": [
               11.170113457325396,
               11.170113457325396
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              1800.0,
+              1800.0
+            ],
+            "actual_epsilon": [
+              1803.0701134573253,
+              1803.0701134573253
+            ],
+            "overspend_ratio": [
+              222.22222222222217,
+              222.22222222222217
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -1995,6 +2941,32 @@
             "epsilon": [
               12.070113457325396,
               12.070113457325396
+            ],
+            "accounting_mode": "runtime_clipped_transcript",
+            "actual_claim_label": "runtime_clipped",
+            "claimed_sensitivity": [
+              2.4,
+              2.4
+            ],
+            "actual_rho_spent": [
+              2000.0,
+              2000.0
+            ],
+            "actual_epsilon": [
+              2003.0701134573253,
+              2003.0701134573253
+            ],
+            "overspend_ratio": [
+              222.22222222222217,
+              222.22222222222217
+            ],
+            "clip": [
+              1.2,
+              1.2
+            ],
+            "runtime_clipped_rho": [
+              200.0,
+              200.0
             ]
           },
           "privacy_price": 0.0,
@@ -2047,6 +3019,32 @@
           "epsilon": [
             5.770113457325394,
             5.770113457325394
+          ],
+          "accounting_mode": "runtime_clipped_transcript",
+          "actual_claim_label": "runtime_clipped",
+          "claimed_sensitivity": [
+            2.4,
+            2.4
+          ],
+          "actual_rho_spent": [
+            600.0,
+            600.0
+          ],
+          "actual_epsilon": [
+            603.0701134573254,
+            603.0701134573254
+          ],
+          "overspend_ratio": [
+            222.22222222222226,
+            222.22222222222226
+          ],
+          "clip": [
+            1.2,
+            1.2
+          ],
+          "runtime_clipped_rho": [
+            200.0,
+            200.0
           ]
         },
         "privacy_price": 0.0,
@@ -2098,6 +3096,32 @@
           "epsilon": [
             12.070113457325396,
             12.070113457325396
+          ],
+          "accounting_mode": "runtime_clipped_transcript",
+          "actual_claim_label": "runtime_clipped",
+          "claimed_sensitivity": [
+            2.4,
+            2.4
+          ],
+          "actual_rho_spent": [
+            2000.0,
+            2000.0
+          ],
+          "actual_epsilon": [
+            2003.0701134573253,
+            2003.0701134573253
+          ],
+          "overspend_ratio": [
+            222.22222222222217,
+            222.22222222222217
+          ],
+          "clip": [
+            1.2,
+            1.2
+          ],
+          "runtime_clipped_rho": [
+            200.0,
+            200.0
           ]
         },
         "privacy_price": 0.0,
@@ -2150,6 +3174,32 @@
           "epsilon": [
             12.070113457325396,
             12.070113457325396
+          ],
+          "accounting_mode": "runtime_clipped_transcript",
+          "actual_claim_label": "runtime_clipped",
+          "claimed_sensitivity": [
+            2.4,
+            2.4
+          ],
+          "actual_rho_spent": [
+            2000.0,
+            2000.0
+          ],
+          "actual_epsilon": [
+            2003.0701134573253,
+            2003.0701134573253
+          ],
+          "overspend_ratio": [
+            222.22222222222217,
+            222.22222222222217
+          ],
+          "clip": [
+            1.2,
+            1.2
+          ],
+          "runtime_clipped_rho": [
+            200.0,
+            200.0
           ]
         },
         "privacy_price": 0.0,

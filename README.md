@@ -112,6 +112,7 @@ Outputs are written into `experiments/*.json`, and comparison plots are written 
 - The synthetic `PIL` trainer now uses posterior-aware action mixing: when posterior uncertainty or privacy noise is high, the policy leans more on the planner contract instead of fully trusting the decentralized actor.
 - `PIL` result files now expose both `last` and `best` checkpoints; for adaptive-privacy runs, `final` is the selected best checkpoint rather than blindly using the last block.
 - The adaptive scheduler is stabilized to avoid overspending privacy budget early and collapsing into very noisy final blocks.
+- Privacy accounting is now split explicitly by claim type: `privacy.total_rho_spent` and `privacy.epsilon` track the clipped mechanism actually claimed by `clip_la`, while `privacy.naive_unclipped_counterexample` is only emitted for `scheduler_mode=naive_la` to show the overspend that appears when one reports an unclipped learning-augmented scheme against the clipped budget claim.
 - The MPE experiments currently use `pettingzoo.mpe`; newer PettingZoo releases deprecate these tasks in favor of `mpe2`, but this repo stays with the locally installed package for quick reproduction.
 - The MPE benchmark now logs privacy-oriented metrics too: `privacy.epsilon`, `privacy.total_rho_spent`, `empirical_leakage`, and `kl_distortion`.
 - MPE comparison runs generate reward and privacy plots such as `plots/mpe_cn_reward_compare.png`, `plots/mpe_cn_epsilon_compare.png`, `plots/mpe_cn_leakage_compare.png`, and `plots/mpe_cn_kl_compare.png`.
